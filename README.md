@@ -64,8 +64,7 @@ dev repo for demo version
 - 暂时使用vue框架下的中后台管理系统d2_admin_smart_kit，后续根据需求更换
 - 框架说明来自[d2_admin](https://d2.pub/zh/doc/d2-admin/component/container.html#%E6%A8%A1%E5%BC%8F-card)
 - 页面组件来自[element-ui](https://element.eleme.cn/#/zh-CN/component/menu)
-- icon来自[fontawesome](https://fontawesome.com/）
-- 开发调试：![启动命令.jpg](https://ws1.sinaimg.cn/large/85df5809gy1gdbvuuo1x0j20kh0db75b.jpg)
+- icon来自[fontawesome](https://fontawesome.com)
 - ...
 
 ## About backdoor
