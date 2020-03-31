@@ -60,14 +60,14 @@ dev repo for demo version
 - .idea           工作目录
 - scrapy.cfg     保存用户设置
 
-## About frontdoor
+## About frontend
 - 暂时使用vue框架下的中后台管理系统d2_admin_smart_kit，后续根据需求更换
 - 框架说明来自[d2_admin](https://d2.pub/zh/doc/d2-admin/component/container.html#%E6%A8%A1%E5%BC%8F-card)
 - 页面组件来自[element-ui](https://element.eleme.cn/#/zh-CN/component/menu)
 - icon来自[fontawesome](https://fontawesome.com)
 - ...
 
-## About backdoor
+## About backend
 - Django教程来自[刘江的博客](https://www.liujiangblog.com/course/django/2)
 - Django DRF框架来自[django-restful-framework](https://q1mi.github.io/Django-REST-framework-documentation/tutorial/2-requests-and-responses_zh)
 - ...
