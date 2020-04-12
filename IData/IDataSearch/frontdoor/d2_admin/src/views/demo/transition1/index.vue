@@ -33,11 +33,7 @@
 </template>
 
 <script>
-import D2PageCover from './components/d2-page-cover'
 export default {
-  components: {
-    D2PageCover
-  },
   data () {
     return {
       imgList: [{
@@ -47,19 +43,12 @@ export default {
       {
         id: 1,
         url: require('./img/demo.jpg')
-      },
-      {
-        id: 2,
-        url: require('./img/demo.jpg')
       }],
       options: [{
         value: '选项1',
-        label: '关键词搜索'
+        label: '论文搜索'
       }, {
         value: '选项2',
-        label: '标题搜索'
-      }, {
-        value: '选项3',
         label: '词表搜索'
       }],
       searchForm: {
@@ -90,10 +79,8 @@ export default {
       this.$refs.searchForm.validate((valid) => {
         if (valid) {
           if (this.searchForm.method === '选项1') {
-            this.$router.push('/keyword')
+            this.$router.push('/paper')
           } else if (this.searchForm.method === '选项2') {
-            this.$router.push('/title')
-          } else if (this.searchForm.method === '选项3') {
             this.$router.push('/corpus')
           }
         }

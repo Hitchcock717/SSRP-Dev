@@ -2,6 +2,8 @@ import store from '@/store'
 import axios from 'axios'
 import { Message } from 'element-ui'
 import util from '@/libs/util'
+// import qs from 'qs'
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 // 创建一个错误
 function errorCreate (msg) {
@@ -46,6 +48,7 @@ service.interceptors.request.use(
     const token = util.cookies.get('token')
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     config.headers['X-Token'] = token
+
     return config
   },
   error => {

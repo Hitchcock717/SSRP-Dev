@@ -41,22 +41,13 @@ const frameIn = [
         component: _import('demo/transition1')
       },
       {
-        path: 'keyword',
-        name: 'keyword',
+        path: 'paper',
+        name: 'paper',
         meta: {
-          title: '关键词搜索',
+          title: '论文搜索',
           auth: true
         },
-        component: _import('demo/keyword')
-      },
-      {
-        path: 'title',
-        name: 'title',
-        meta: {
-          title: '标题搜索',
-          auth: true
-        },
-        component: _import('demo/title')
+        component: _import('demo/paper')
       },
       {
         path: 'corpus',
@@ -66,6 +57,15 @@ const frameIn = [
           auth: true
         },
         component: _import('demo/corpus')
+      },
+      {
+        path: 'recommend',
+        name: 'recommend',
+        meta: {
+          title: '推荐词汇',
+          auth: true
+        },
+        component: _import('demo/recommend')
       },
       {
         path: 'complete',

@@ -1,6 +1,6 @@
 <template>
   <d2-container class="page">
-    <d2-page-cover>
+    <page-cover>
       <el-container style="height: 800px; border: 1px solid #eee">
         <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
           <el-col :span="24">
@@ -47,7 +47,6 @@
             style="width: 800px" empty-text="N/A" max-height="600">
               <el-table-column label="编号" width="80px" prop="id" sortable></el-table-column>
               <el-table-column label="词汇" align="center" prop="phrase"></el-table-column>
-              </el-table-column>
             </el-table>
             <el-pagination
               @size-change="handleSizeChange"
@@ -61,11 +60,11 @@
           </el-main>
         </el-container>
       </el-container>
-    </d2-page-cover>
+    </page-cover>
   </d2-container>
 </template>
 <style lang="scss" scoped>
-  .d2-page-cover {
+  .page-cover {
     @extend %full;
     @extend %unable-select;
     display: flex;

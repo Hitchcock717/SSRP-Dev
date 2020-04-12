@@ -1,8 +1,39 @@
 from django.db import models
-
+from rest_framework import serializers
 # Create your models here.
 
 
+class Message(models.Model):
+	subject = models.TextField(max_length=3)
+	body = models.TextField(max_length=200)
+
+
+class MessageSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Message
+		fields = ('url', 'subject', 'body', 'pk')
+
+
+class Extractor(models.Model):
+	originkws = models.CharField(max_length=200)
+
+
+class Recommend(models.Model):
+	recommendkws = models.CharField(max_length=200)
+
+
+class ExtractorSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Extractor
+		fields = ('url', 'originkws', 'pk')
+
+
+class RecommendSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Recommend
+		fields = ('url', 'recommendkws', 'pk')
+
+'''
 # connect scrapy spiders
 class Idata(models.Model):
 	d_url = models.URLField()
@@ -20,4 +51,4 @@ class Idata(models.Model):
 
 	class Meta:
 		verbose_name = 'idataspider'
-
+'''

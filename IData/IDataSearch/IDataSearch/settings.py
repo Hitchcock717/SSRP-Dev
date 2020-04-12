@@ -26,8 +26,13 @@ SECRET_KEY = 'qfs4)sb^7l8n%d7wq258#)xnag_*+$71naud2k1^^%7sqcphmi'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+# 允许所有的请求头
+CORS_ALLOW_HEADERS = ('*')
+CORS_ORIGIN_WHITELIST = (  '*')
+CORS_ALLOW_METHODS = (  'DELETE',  'GET',  'OPTIONS',  'PATCH',  'POST',  'PUT',  'VIEW', )
 
 # Application definition
 
@@ -47,20 +52,18 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'IDataSearch.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['frontdoor/dist'],  # 添加vue-static路径
+        'DIRS': ['frontdoor/d2_admin/dist'],  # 添加vue-static路径
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,5 +130,5 @@ STATIC_URL = '/static/'
 
 # add for vue.js
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "frontdoor/dist/static")
+    os.path.join(BASE_DIR, "frontdoor/d2_admin/dist/")
 ]

@@ -28,7 +28,7 @@
           <el-checkbox-group v-model="ruleForm.type" :disabled="true">
             <el-checkbox
               v-for="item in checkList"
-              :key="item"
+              :key="item.label"
               :label="item.label"
               name="type">{{item.label}}</el-checkbox>
           </el-checkbox-group>
@@ -66,11 +66,7 @@
 </template>
 
 <script>
-import D2PageCover from './components/d2-page-cover'
 export default {
-  components: {
-    D2PageCover
-  },
   data () {
     return {
       fileList: [

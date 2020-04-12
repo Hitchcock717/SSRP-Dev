@@ -13,6 +13,17 @@ import menuHeader from '@/menu/header'
 import menuAside from '@/menu/aside'
 import { frameInRoutes } from '@/router/routes'
 
+// 导入axios
+import Axios from 'axios'
+
+import qs from 'qs'
+Vue.prototype.$qs = qs
+
+// 全局使用axios
+Vue.prototype.$axios = Axios
+// 配置请求头，非常重要，有了这个才可以正常使用POST等请求后台数据
+Axios.defaults.headers.post['Content-Type'] = 'application/x-www-fromurlencodeed'
+
 // 核心插件
 Vue.use(d2Admin)
 

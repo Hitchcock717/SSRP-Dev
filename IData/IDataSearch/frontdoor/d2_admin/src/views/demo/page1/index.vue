@@ -53,11 +53,7 @@
 </template>
 
 <script>
-import D2PageCover from './components/d2-page-cover'
 export default {
-  components: {
-    D2PageCover
-  },
   data () {
     return {
       fileList: [
