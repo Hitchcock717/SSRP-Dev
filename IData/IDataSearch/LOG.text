@@ -5613,3 +5613,6 @@ KeyError: 'd_url'
 2020-04-16 17:03:41 [scrapy.extensions.logstats] INFO: Crawled 4 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
 2020-04-16 17:04:07 [scrapy.extensions.logstats] INFO: Crawled 4 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
 2020-04-16 09:04:10 [scrapy.extensions.logstats] INFO: Crawled 2590 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2020-04-16 17:04:18 [scrapy.extensions.logstats] INFO: Crawled 19 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2020-04-16 17:04:19 [scrapy.extensions.logstats] INFO: Crawled 16 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2020-04-16 17:04:27 [scrapy.extensions.logstats] INFO: Crawled 26 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
