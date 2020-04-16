@@ -21,9 +21,6 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="创建时间" required>{{gettime}}</el-form-item>
-        <el-form-item label="开启子库" prop="subrepo">
-          <el-switch v-model="ruleForm.subrepo" :disabled="true"></el-switch>
-        </el-form-item>
         <el-form-item label="研究领域" prop="type">
           <el-checkbox-group v-model="ruleForm.type" :disabled="true">
             <el-checkbox
@@ -54,8 +51,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="搜索词表" prop="list">
-          <el-input type="textarea" v-model="ruleForm.list" :disabled="true"></el-input>
+        <el-form-item label="抽取词表" prop="extract_list">
+          <el-select v-model="ruleForm.extract" placeholder="查看抽取词">
+            <el-option class="extr" v-for="(extr, index) in extractors" :key="index.value" :label="index.label"
+              :value="index.value">抽取词: {{extr.originkws}}</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="推荐词表" prop="recomm_list">
+          <el-select  v-model="ruleForm.recomm" placeholder="查看推荐词">
+            <el-option class="recom" v-for="(recom, index) in recommends" :key="index.value" :label="index.label"
+              :value="index.value">推荐词: {{recom.recommendkws}}</el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">完成创建</el-button>
@@ -69,6 +75,8 @@
 export default {
   data () {
     return {
+      extractors: this.$route.query.extractors,
+      recommends: this.$route.query.recommends,
       fileList: [
         {
           name: 'example',
@@ -114,7 +122,8 @@ export default {
         resource: ['知网'],
         desc: 'this is for scientific research',
         method: '标题搜索',
-        list: '脑膜瘤, 免疫组化, 电镜'
+        extract: '',
+        recomm: ''
       },
       rules: {
         name: [
@@ -157,7 +166,14 @@ export default {
     submitForm (ruleForm) {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.$router.push('/notice1')
+          this.$router.push({
+            path: '/startsearch',
+            query: {
+              extractors: JSON.stringify(this.extractors),
+              recommends: JSON.stringify(this.recommends)
+            }
+          })
+          console.log(JSON.stringify(this.extractors))
           // alert('创建成功!')
         } else {
           console.log('error submit!!')
@@ -165,6 +181,11 @@ export default {
         }
       })
     }
+  },
+  created () {
+    // this.extractors = window.localStorage.getItem('extractors')
+    // console.log(this.extractors)
+    // this.recommends = window.localStorage.getItem('recommends')
   }
 }
 </script>

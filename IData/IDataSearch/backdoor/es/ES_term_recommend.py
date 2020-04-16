@@ -161,10 +161,14 @@ class TermRecommendES(object):
         # print(kws1)
         # self.commonSearch(kws1)
         recommend = self.filter(kws)
-        print(recommend)
+        if recommend is not None:
+            return recommend
+        else:
+            recommend.append('后续会扩充词表')
+            return recommend
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     index = 'cnki_term_simple'
     ip = '127.0.0.1'
     retri = TermRecommendES(index,ip)

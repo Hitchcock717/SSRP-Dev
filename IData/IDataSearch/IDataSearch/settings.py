@@ -31,8 +31,10 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 # 允许所有的请求头
 CORS_ALLOW_HEADERS = ('*')
-CORS_ORIGIN_WHITELIST = (  '*')
-CORS_ALLOW_METHODS = (  'DELETE',  'GET',  'OPTIONS',  'PATCH',  'POST',  'PUT',  'VIEW', )
+# CORS_ALLOW_HEADERS = ('x-request-with', 'content-type', 'accept', 'origin', 'authorization', 'x-csrftoken')
+# CORS_ORIGIN_WHITELIST = ('http://localhost:8080',)
+CORS_ALLOW_METHODS = ('DELETE',  'GET',  'OPTIONS',  'PATCH',  'POST',  'PUT',  'VIEW',)
+
 
 # Application definition
 
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'backdoor'
 ]
@@ -114,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

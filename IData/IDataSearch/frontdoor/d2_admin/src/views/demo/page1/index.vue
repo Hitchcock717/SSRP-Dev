@@ -20,9 +20,6 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="创建时间" required>{{gettime}}</el-form-item>
-        <el-form-item label="开启子库" prop="subrepo">
-          <el-switch v-model="ruleForm.subrepo"></el-switch>
-        </el-form-item>
         <el-form-item label="研究领域" prop="type">
           <el-checkbox-group v-model="ruleForm.type">
             <el-checkbox label="基础科学" name="type"></el-checkbox>

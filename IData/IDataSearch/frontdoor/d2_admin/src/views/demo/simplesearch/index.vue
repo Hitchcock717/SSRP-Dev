@@ -3,34 +3,17 @@
     <d2-page-cover>
       <el-form :model="simpleForm" :simples="simples" ref="simpleForm" label-width="150px" class="demo-simpleForm">
         <el-form-item label="简单检索表达式" prop="expression">
-          <el-input type="textarea" :row="1" v-model="simpleForm.expression" :disabled="true"></el-input>
+          <span>{{ query }}</span>
         </el-form-item>
         <el-form-item label="搜索结果数(条)" prop="number">
-          {{simpleForm.number}}
-        </el-form-item>
-        <el-form-item label="排序条件" prop="sort">
-          <el-select id="sort" v-model="simpleForm.sort" placeholder="请选择排序条件">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-              name="method">{{item.label}}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="筛选数据来源" prop="resource">
-          <el-checkbox-group v-model="simpleForm.resource">
-            <el-checkbox label="知网"></el-checkbox>
-            <el-checkbox label="维普"></el-checkbox>
-            <el-checkbox label="万方"></el-checkbox>
-          </el-checkbox-group>
+          <el-button @click="viewResult(result)" type="primary" class="viewResult">查看搜索结果</el-button>
+          <span class="number">{{ result }}</span>
         </el-form-item>
         <el-form-item label="子库" prop="subrepo">
-          <el-button @click="submit" type="primary" class="nextpage">创建</el-button>
+          <el-button @click="submit" type="primary" class="nextpage">进入子库</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" stripe="true" style="width: 800px" fit="true" empty-text="N/A" :default-sort = "{prop: 'id', order: 'descending'}" max-height="300">
+      <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" stripe=true style="width: 800px" fit="true" empty-text="N/A" :default-sort = "{prop: 'id', order: 'descending'}" max-height="300">
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -95,24 +78,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
+      simples: '',
+      query: 'query = keywords in ' + this.$route.query.keywords,
       currentPage: 1,
       pagesize: 5,
-      options: [{
-        value: '选项1',
-        label: '相关度'
-      }, {
-        value: '选项2',
-        label: '发表时间'
-      }, {
-        value: '选项3',
-        label: '被引频次'
-      }, {
-        value: '选项4',
-        label: '下载频次'
-      }],
       tableData: [{
         id: '1',
         title: '扫描电子显微镜显微分析技术在地球科学中的应用',
@@ -168,71 +141,20 @@ export default {
         source: '期刊',
         fund: '国家自然科学基金项目(批准号:41402031)资助',
         kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '6',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '7',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '8',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '9',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '10',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
       }],
       simpleForm: {
-        expression: 'query = [kws = 脑膜瘤 OR 免疫组化 OR 电镜]',
-        number: '13214',
-        type: ['基础科学'],
-        resource: ['知网']
       }
     }
   },
+  computed: {
+    ...mapState('expand/results', {
+      result: state => state.result
+    })
+  },
   methods: {
+    viewResult (result) {
+      this.result.push(result)
+    },
     handleSizeChange (val) {
       this.pagesize = val
     },
@@ -245,6 +167,9 @@ export default {
     submit () {
       this.$router.push('/subrepo')
     }
+  },
+  created () {
+    this.$store.dispatch('expand/results/getResult')
   }
 }
 </script>

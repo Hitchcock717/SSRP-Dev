@@ -77,6 +77,15 @@ const frameIn = [
         component: _import('demo/complete')
       },
       {
+        path: 'startsearch',
+        name: 'startsearch',
+        meta: {
+          title: '开始检索',
+          auth: true
+        },
+        component: _import('demo/startsearch')
+      },
+      {
         path: 'notice1',
         name: 'notice1',
         meta: {

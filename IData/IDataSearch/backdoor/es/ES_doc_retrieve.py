@@ -7,14 +7,18 @@
 '''
 
 import json
-from ES_connect import *
+# from ES_ct import *
+from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
 
 class DocRetireveES(object):
 
     def __init__(self, index_name, ip):
-        self.conn = Connect2ES(index_name, ip)
+        # self.conn = Connect2ES(index_name, ip)
+        self.index_name = index_name
+        # 无用户名密码状态
+        self.es = Elasticsearch([ip])
 
     # **********************************start basic query******************************** #
 
@@ -93,40 +97,40 @@ class DocRetireveES(object):
     def single_result(self, search_field, kws):
         if type(search_field) == str:
             body = self.single_query(search_field, kws)
-            # res = self.conn.es.search(self.conn.index_name, body=body)
-            res = helpers.scan(client=self.conn.es,
+            # res = self.es.search(self.index_name, body=body)
+            res = helpers.scan(client=self.es,
                                query=body,
-                               index=self.conn.index_name)
+                               index=self.index_name)
             count, result = self.highlight(res, search_field)
 
             if count == 0:  # 若搜索结果为空，则改用短语前缀搜索
                 body = self.single_query(search_field, kws, match_method='match_phrase_prefix')
-                # res = self.conn.es.search(self.conn.index_name, body=body)
-                res = helpers.scan(client=self.conn.es,
+                # res = self.es.search(self.index_name, body=body)
+                res = helpers.scan(client=self.es,
                                    query=body,
-                                   index=self.conn.index_name)
+                                   index=self.index_name)
                 count, result = self.highlight(res, search_field)
 
-            return count, result
+            return body, count, result
 
     # 简单搜索（同时包含单字段和多字段）
     def basic_search(self, search_field, kws):
         if type(search_field) == list:
             body = self.multi_query(search_field, kws)
-            # res = self.conn.es.search(self.conn.index_name, body=body)
-            res = helpers.scan(client=self.conn.es,
+            # res = self.es.search(self.index_name, body=body)
+            res = helpers.scan(client=self.es,
                                query=body,
-                               index=self.conn.index_name)
+                               index=self.index_name)
             counts, results = self.highlight(res, search_field)
             # print(counts, results)
 
             if counts == 0:  # 若搜索结果为空，则改用短语前缀搜索[区别：对每个字段分别搜索，而不是整体]
                 for field in search_field:
                     body = self.single_query(field, kws, match_method='match_phrase_prefix')
-                    # res = self.conn.es.search(self.conn.index_name, body=body)
-                    res = helpers.scan(client=self.conn.es,
+                    # res = self.es.search(self.index_name, body=body)
+                    res = helpers.scan(client=self.es,
                                        query=body,
-                                       index=self.conn.index_name)
+                                       index=self.index_name)
                     count, result = self.highlight(res, search_field)
                     counts += count
                     results += result
@@ -146,13 +150,15 @@ class DocRetireveES(object):
                 results = tmp
                 counts = len(results)
 
-            print(counts, results)
-            return counts, results
+            # print(counts, results)
+            print(counts)
+            return body, counts, results
 
         elif type(search_field) == str:
             counts, results = self.single_result(search_field, kws)
 
-            print(counts, results)
+            # print(counts, results)
+            print(counts)
             return counts, results
 
     # **********************************end basic query******************************** #
@@ -273,13 +279,13 @@ class DocRetireveES(object):
     # ES查询
     def advance_search(self, in_fields, in_kws, ex_fields, ex_kws, date_field, start, end, in_method):
         query = self.advance_query(in_fields, in_kws, ex_fields, ex_kws, date_field, start, end, in_method)
-        # res = self.conn.es.search(self.conn.index_name, body=query)
-        res = helpers.scan(client=self.conn.es,
+        # res = self.es.search(self.index_name, body=query)
+        res = helpers.scan(client=self.es,
                            query=query,
-                           index=self.conn.index_name)
+                           index=self.index_name)
         counts, results = self.highlight(res, in_fields)
         print(counts)
-        return counts, results
+        return query, counts, results
 
     # **********************************end advance query******************************** #
 
@@ -380,13 +386,13 @@ class DocRetireveES(object):
     # ES查询
     def advance_search_with_regexp(self, in_fields, in_reg, ex_fields, ex_reg, date_field, start, end, in_method):
         query = self.advance_query_with_regexp(in_fields, in_reg, ex_fields, ex_reg, date_field, start, end, in_method)
-        # res = self.conn.es.search(self.conn.index_name, body=query)
-        res = helpers.scan(client=self.conn.es,
+        # res = self.es.search(self.index_name, body=query)
+        res = helpers.scan(client=self.es,
                            query=query,
-                           index=self.conn.index_name)
+                           index=self.index_name)
         counts, results = self.highlight(res, in_fields)
         print(counts)
-        return counts, results
+        return query, counts, results
 
     # **********************************end regexp query******************************** #
 
@@ -402,9 +408,9 @@ if __name__ == "__main__":
     # doc.basic_search(basic_field, basic_kws)
 
     # ***************** 测试简单搜索[多字段] ***************** #
-    multi_fields = ['title', 'kws']
+    multi_fields = ['abstract', 'kws', 'title', 'info', 'fund', 'source']
     multi_kws = '氨基酸'
-    # doc.basic_search(multi_fields, multi_kws)
+    doc.basic_search(multi_fields, multi_kws)
 
     # ***************** 测试高级搜索[与或非] ***************** #
     #  -------------------------------------------------

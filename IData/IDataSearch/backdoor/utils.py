@@ -1,6 +1,7 @@
 import os
 from .es.ES_kws_retrieve import KeywordRetrieveES
 from .es.ES_term_recommend import TermRecommendES
+from .es.ES_doc_retrieve import DocRetireveES
 
 
 # ******************* 处理关键词 ***************** #
@@ -26,7 +27,7 @@ class ExtractAndRecommend(object):
         # extract keywords
         if raw_dict['subject'] == '关键词':
             kwss = raw_dict['body']
-            kws_li = kwss.split(',')
+            kws_li = kwss.split('，')
             try:
                 if kws_li is not None:
                     for kws in kws_li:
@@ -56,10 +57,28 @@ class ExtractAndRecommend(object):
         for keyword in extr_kws:
             retri = TermRecommendES(self.index, self.ip)
             kws_li = retri.filter(keyword)
-            self.recom_kws.extend(kws_li)
             try:
-                if self.recom_kws is not None:
+                if kws_li is not None:
+                    self.recom_kws.extend(kws_li)
                     return self.recom_kws
+
             except Exception as e:
-                print(e)
+                return '暂无推荐'
+
+
+class GetRawResult(object):
+
+    def __init__(self):
+        # ES文档索引地址
+        self.index = 'cnki_doc'  # 预先存储，后续更改index
+        self.ip = '127.0.0.1'
+
+    def get_raw_result(self, multi_kws):
+        doc = DocRetireveES(self.index, self.ip)
+        multi_fields = ['abstract', 'kws', 'title', 'info', 'fund', 'source']  # 查询所有包含kws的字段
+        results = doc.basic_search(multi_fields, multi_kws)
+        query = results[0]
+        counts = results[1]
+        docs = results[2]
+        return query, counts, docs
 

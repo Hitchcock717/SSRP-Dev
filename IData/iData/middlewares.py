@@ -9,16 +9,16 @@ import base64
 from scrapy import signals
 import random
 import time
-# from iData.settings import AB_PROXY_SERVER
+from iData.settings import AB_PROXY_SERVER
 
-'''
+
 # 阿布云ip代理配置，包括账号密码 
 proxyServer = AB_PROXY_SERVER['proxyServer']
 proxyUser = AB_PROXY_SERVER['proxyUser']
 proxyPass = AB_PROXY_SERVER['proxyPass']
 # for Python3
 proxyAuth = "Basic " + base64.urlsafe_b64encode(bytes((proxyUser + ":" + proxyPass), "ascii")).decode("utf8")
-'''
+
 
 class ABProxyMiddleware(object):
 # 阿布云ip代理配置 

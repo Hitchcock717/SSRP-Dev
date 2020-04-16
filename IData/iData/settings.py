@@ -10,12 +10,12 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 import os
 import sys
-import django
+# import django
 
-sys.path.append('/Users/felix_zhao/Desktop/SSRP Dev/IData/IDataSearch')
-os.environ['DJANGO_SETTINGS_MODULE'] = 'IDataSearch.settings'
-django.setup()
-print('1')
+# *****active django*****
+# sys.path.append('/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch')
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'IDataSearch.settings'
+# django.setup()
 
 BOT_NAME = 'iData'
 
@@ -39,7 +39,7 @@ ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32
-DOWNLOAD_DELAY = 5
+DOWNLOAD_DELAY = 8
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -85,7 +85,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'iData.pipelines.IdataPipeline': 300,
+    'iData.pipelines.ElasticsearchPipline': 300,
     # 'iData.pipelines.MongoDBPipeline': 300,
     # 'iData.pipelines.CsvPipeline': 300,
     'scrapy_redis.pipelines.RedisPipeline': 400,
@@ -112,17 +112,17 @@ AUTOTHROTTLE_ENABLED = True
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-# AB_PROXY_SERVER = {
-#   'proxyServer': "http://http-dyn.abuyun.com:9010",
-#   'proxyUser': "HDIS6I912597KDVP",
-#   'proxyPass': "66602FC6D18B2304"
-# }
+AB_PROXY_SERVER = {
+   'proxyServer': "http://http-dyn.abuyun.com:9010",
+   'proxyUser': "HDIS6I912597KDVP",
+   'proxyPass': "66602FC6D18B2304"
+}
 
 # redis配置
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_ENCODING = 'utf-8'
-REDIS_PARAMS = {'password': '123456'}
+# REDIS_PARAMS = {'password': '123456'}  增加安全性
 
 
 # 使用scrapy-redis组件的去重队列

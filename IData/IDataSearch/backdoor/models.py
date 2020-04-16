@@ -1,3 +1,5 @@
+from datetime import datetime
+from django.utils import timezone
 from django.db import models
 from rest_framework import serializers
 # Create your models here.
@@ -18,14 +20,14 @@ class Extractor(models.Model):
 	originkws = models.CharField(max_length=200)
 
 
-class Recommend(models.Model):
-	recommendkws = models.CharField(max_length=200)
-
-
 class ExtractorSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Extractor
 		fields = ('url', 'originkws', 'pk')
+
+
+class Recommend(models.Model):
+	recommendkws = models.CharField(max_length=200)
 
 
 class RecommendSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,8 +35,31 @@ class RecommendSerializer(serializers.HyperlinkedModelSerializer):
 		model = Recommend
 		fields = ('url', 'recommendkws', 'pk')
 
+
+class Simplesearch(models.Model):
+	title = models.CharField(max_length=200)
+	author = models.CharField(max_length=50)
+	source = models.CharField(max_length=10)
+	info = models.TextField()
+	date = models.TextField()
+	kws = models.CharField(max_length=50)
+	cited = models.TextField()
+	downed = models.TextField()
+	download = models.TextField()
+	abstract = models.TextField()
+	fund = models.TextField()
+
+
+class SimplesearchSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Simplesearch
+		fields = ('url', 'title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'download', 'abstract', 'fund', 'pk')
+
+
+
 '''
 # connect scrapy spiders
+
 class Idata(models.Model):
 	d_url = models.URLField()
 	title = models.CharField(max_length=200)
@@ -51,4 +76,5 @@ class Idata(models.Model):
 
 	class Meta:
 		verbose_name = 'idataspider'
+
 '''

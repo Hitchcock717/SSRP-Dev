@@ -2,7 +2,7 @@
   <d2-container>
     <el-form :model="wordForm" ref="wordForm" label-width="250px" class="demo-wordForm" :class='{fixed:isFixed}'>
       <el-form-item>
-        <el-button size="default" @click="handleSubmit" type="primary" class="button-save">完成创建</el-button>
+        <el-button size="default" @click="handleSubmit" type="primary" class="button-complete">保存词汇</el-button>
       </el-form-item>
       <el-form-item>
         <el-card class="box-card1">
@@ -36,7 +36,8 @@ export default {
   data () {
     return {
       isFixed: '',
-      wordForm: {}
+      wordForm: {
+      }
     }
   },
   computed: {
@@ -67,7 +68,14 @@ export default {
     handleSubmit () {
       this.$refs.wordForm.validate((valid) => {
         if (valid) {
-          this.$router.push('/complete')
+          this.$router.push({
+            path: '/complete',
+            query: {
+              extractors: JSON.stringify(this.extractors),
+              recommends: JSON.stringify(this.recommends)
+            }
+          })
+          alert('成功保存词汇!')
         }
       })
     }
@@ -89,7 +97,11 @@ export default {
   margin-top: 50px;
  }
  .button-save {
-  float:right;
+  float: right;
+  margin-left: 25px;
+ }
+ .button-complete {
+  float: right;
  }
  .demo-wordForm.fixed {
   position: fixed;

@@ -10,6 +10,8 @@
       <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/es/ES_data" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/es/.idea" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/migrations" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/iData" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/iData/spiders" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

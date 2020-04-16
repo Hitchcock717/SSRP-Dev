@@ -18,7 +18,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary"
-            @click="addMessage({ subject: textForm.subject, body: textForm.body })"
+            @click="addMessage({ subject: textForm.subject, body: textForm.body})"
             :disabled="!textForm.subject || !textForm.body"
             class="button-add">添加</el-button>
         </el-form-item>

@@ -15,6 +15,7 @@ const actions = {
     recommendService.fetchRecommends()
       .then(recommends => {
         commit('setrecommends', recommends)
+        commit('saverecommends', recommends)
       })
   },
   deleteRecommend ({ commit }, recomId) {
@@ -26,6 +27,10 @@ const actions = {
 const mutations = {
   setrecommends (state, recommends) {
     state.recommends = recommends
+  },
+  saverecommends (state, recommends) {
+    const parsed = JSON.stringify(recommends)
+    localStorage.setItem('recommends', parsed)
   },
   deleterecommend (state, recomId) {
     state.recommends = state.recommends.filter(obj => obj.pk !== recomId)

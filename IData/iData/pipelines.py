@@ -14,7 +14,14 @@ from scrapy import Item
 
 import copy
 
+# 将爬虫爬取的数据存储搜索服务器中
+class ElasticsearchPipline(object):
+ 
+    def process_item(self, item, spider):
+        item.save_es()
+        return item
 
+'''
 # 将数据写入ES
 class IdataPipeline(object):
 
@@ -23,7 +30,7 @@ class IdataPipeline(object):
         # asynItem = copy.deepcopy(item)
         item.save()
         return item
-
+'''
 
 '''
 class MongoDBPipeline(object):

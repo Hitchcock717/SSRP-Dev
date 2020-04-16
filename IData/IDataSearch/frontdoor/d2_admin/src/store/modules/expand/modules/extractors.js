@@ -15,10 +15,11 @@ const actions = {
     extractorService.fetchExtractors()
       .then(extractors => {
         commit('setextractors', extractors)
+        commit('saveextractors', extractors)
       })
   },
   deleteExtractor ({ commit }, extrId) {
-    extractorService.deleteextractor(extrId)
+    extractorService.deleteExtractor(extrId)
     commit('deleteextractor', extrId)
   }
 }
@@ -26,6 +27,10 @@ const actions = {
 const mutations = {
   setextractors (state, extractors) {
     state.extractors = extractors
+  },
+  saveextractors (state, extractors) {
+    const parsed = JSON.stringify(extractors)
+    localStorage.setItem('extractors', parsed)
   },
   deleteextractor (state, extrId) {
     state.extractors = state.extractors.filter(obj => obj.pk !== extrId)

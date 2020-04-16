@@ -27,11 +27,11 @@ class IDataSpider(RedisCrawlSpider):
 
     redis_key = "ida_redis"
 
-    kws = '氨基酸'
+    # kws = '氨基酸'
 
-    maxpage = 5
+    # maxpage = 5
 
-    def __init__(self,*args, **kwargs):
+    def __init__(self, keyword='', *args, **kwargs):
         self.main_url = 'https://search.cn-ki.net'
         self.search_url = 'https://search.cn-ki.net/search?'
         self.cited_url = 'http://cnki.cn-ki.net/kcms/detail/frame/list.aspx?'
@@ -42,6 +42,7 @@ class IDataSpider(RedisCrawlSpider):
             'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7'
         }
         super(IDataSpider, self).__init__(*args, **kwargs)
+        self.keyword = [keyword]
 
     def pre_cookie(self):
         raw_cookies = 'num=zhaobowen9876@163.com; ucks=PpfejJzymT4loE7gnLOF1WGNVHSQi5tC::idata; data=%7B%22ASP.NET_SessionId%22%3A%20%22xrdbfwky4kq5kmd1jk3zti2y%22%2C%20%22SID_kns%22%3A%20%22123119%22%2C%20%22RsPerPage%22%3A%20%2220%22%2C%20%22sort_type%22%3A%20%221%22%2C%20%22query_id%22%3A%20%220%22%2C%20%22Ecp_ClientId%22%3A%20%223200226212405887996%22%7D; session=eyJfcGVybWFuZW50Ijp0cnVlLCJzZWFyY2hfaWQiOnsiIGIiOiJjazFpWnpOMmIzQjVNV1ZWTkVGc1pBPT0ifX0.ETgDBw.IY6QiKq_t52dXvYsI2rXjvLiePk'
@@ -56,7 +57,7 @@ class IDataSpider(RedisCrawlSpider):
     def start_requests(self):
         cookies = self.pre_cookie()
         data = {
-                'keyword': self.kws,
+                'keyword': self.keyword,
                 'db': 'CFLS'
         }
         query_string = parse.urlencode(data)
@@ -132,7 +133,7 @@ class IDataSpider(RedisCrawlSpider):
         for page in range(2, page_num):
         # for page in range(2, self.maxpage):
             data = {
-                'keyword': self.kws,
+                'keyword': self.keyword,
                 'db': 'CFLS',
                 'p': page
             }

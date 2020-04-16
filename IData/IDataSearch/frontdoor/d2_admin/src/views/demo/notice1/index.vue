@@ -27,13 +27,9 @@
         </el-timeline>
       </div>
       <el-form :inline="true" :model="numberForm" ref="numberForm" label-width="190px" class="demo-numberForm">
-        <el-form-item label="搜索结果数(条)" prop="number">
-          <el-input
-            v-model="numberForm.number" :disabled="true"></el-input>
-        </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="view">查看项目信息</el-button>
-          <el-button size="default" @click="submit" type="primary">确定</el-button>
+          <el-button type="primary" @click="view" class="view">查看项目信息</el-button>
+          <el-button size="default" @click="submit" type="primary" class="confirm">确定</el-button>
         </el-form-item>
       </el-form>
     </d2-page-cover>
@@ -44,8 +40,8 @@
 export default {
   data () {
     return {
+      result: this.$route.query.result,
       numberForm: {
-        number: '13214',
         timeout: null
       }
     }
@@ -55,8 +51,25 @@ export default {
       this.$router.push('/complete')
     },
     submit () {
-      this.$router.push('/simplesearch')
+      this.$router.push({
+        path: '/simplesearch',
+        query: JSON.stringify(result)
+      })
+      console.log(result)
     }
   }
 }
 </script>
+
+<style scoped>
+  .block {
+    width: 600px;
+  }
+  .confirm {
+    float: right;
+    margin-right: 25px;
+  }
+  .view {
+    margin-left: 500px;
+  }
+</style>
