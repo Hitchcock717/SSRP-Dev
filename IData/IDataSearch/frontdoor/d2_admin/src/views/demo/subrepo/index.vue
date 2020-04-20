@@ -175,9 +175,10 @@ export default {
           let relationField = JSON.stringify(this.tableData[i][nextrelation])
           if (typeField === undefined || infoField === undefined || regexField === undefined || relationField === undefined) {
             alert('必填项不能为空!')
+          } else {
+            alert('保存表达式成功!')
           }
         }
-        alert('保存表达式成功!')
       }
     },
     onScroll () {
@@ -217,38 +218,43 @@ export default {
       var allData = this.tableData
       var pubDate = this.ruleForm.date
 
-      if (pubDate === undefined) {
-        var dateEmptyDict = { 'startdate': 'null', 'endate': 'null' }
-        allData.push(dateEmptyDict)
-        console.log(JSON.stringify(allData))
+      if (JSON.stringify(allData) === '[{}]') {
+        alert('无法提交空表格!')
       } else {
-        var startDate = JSON.stringify(pubDate[0]).substring(1, 11)
-        var endDate = JSON.stringify(pubDate[1]).substring(1, 11)
-        var dateDict = { 'startdate': startDate, 'endate': endDate }
-        allData.push(dateDict)
-        console.log(JSON.stringify(allData))
-      }
+        if (pubDate === undefined) {
+          var dateEmptyDict = { 'startdate': 'null', 'endate': 'null' }
+          allData.push(dateEmptyDict)
+          console.log(JSON.stringify(allData))
+        } else {
+          var startDate = JSON.stringify(pubDate[0]).substring(1, 11)
+          var endDate = JSON.stringify(pubDate[1]).substring(1, 11)
+          var dateDict = { 'startdate': startDate, 'endate': endDate }
+          allData.push(dateDict)
+          console.log(JSON.stringify(allData))
+        }
 
-      GetExpression({
-        expression: JSON.stringify(allData)
-      })
-        .then(res => {
-          this.result = res
-          alert('创建成功!')
-          this.$refs.ruleForm.validate((valid) => {
-            if (valid) {
-              this.$router.push({
-                name: 'detailsearch',
-                params: {
-                  result: JSON.stringify(this.result)
-                }
-              })
-            }
+        GetExpression({
+          expression: JSON.stringify(allData)
+        })
+          .then(res => {
+            this.result = res
+            console.log(JSON.stringify(this.result))
+            alert('创建成功!')
+            this.$refs.ruleForm.validate((valid) => {
+              if (valid) {
+                this.$router.push({
+                  name: 'detailsearch',
+                  params: {
+                    result: JSON.stringify(this.result)
+                  }
+                })
+              }
+            })
           })
-        })
-        .catch(res => {
-          console.log(res)
-        })
+          .catch(res => {
+            console.log(res)
+          })
+      }
     },
     resetForm (ruleForm) {
       this.$refs.ruleForm.resetFields()

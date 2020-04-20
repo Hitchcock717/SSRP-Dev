@@ -19,13 +19,14 @@ from rest_framework import routers
 
 from django.conf.urls import url
 from backdoor import views
-from backdoor.views import MessageViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset
+from backdoor.views import MessageViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset
 
 router = routers.DefaultRouter()
 router.register('messages', MessageViewSet)
 router.register('extractors', ExtractorViewset)
 router.register('recommends', RecommedViewset)
 router.register('simplesearch', SimplesearchViewset)
+router.register('detailesearch', DetailsearchViewset)
 
 
 app_name = 'backdoor'
@@ -44,6 +45,8 @@ urlpatterns = [
     url('api/rawresult/', views.rawresult),
 
     url('api/getexpression/', views.getexpression),
+
+    url('api/filteresult/', views.filteresult),
 
     # http://localhost:8000/api/admin/
     path('api/admin/', admin.site.urls),

@@ -56,6 +56,25 @@ class SimplesearchSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('url', 'title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'download', 'abstract', 'fund', 'pk')
 
 
+class Detailsearch(models.Model):
+	title = models.CharField(max_length=200)
+	author = models.CharField(max_length=50)
+	source = models.CharField(max_length=10)
+	info = models.TextField()
+	date = models.TextField()
+	kws = models.CharField(max_length=50)
+	cited = models.TextField()
+	downed = models.TextField()
+	download = models.TextField()
+	abstract = models.TextField()
+	fund = models.TextField()
+
+
+class DetailsearchSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Detailsearch
+		fields = ('url', 'title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'download', 'abstract', 'fund', 'pk')
+
 
 '''
 # connect scrapy spiders

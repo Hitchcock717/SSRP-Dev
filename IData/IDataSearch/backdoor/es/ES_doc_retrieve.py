@@ -155,11 +155,14 @@ class DocRetireveES(object):
             return body, counts, results
 
         elif type(search_field) == str:
-            [counts, results] = self.single_result(search_field, kws)
+            results = self.single_result(search_field, kws)
+            body = results[0]
+            counts = results[1]
+            doc = results[2]
 
             # print(counts, results)
             print(counts)
-            return counts, results
+            return body, counts, doc
 
     # **********************************end basic query******************************** #
 
@@ -964,8 +967,8 @@ if __name__ == "__main__":
 
     # ***************** 测试简单搜索[单字段] ***************** #
     basic_field = 'kws'
-    basic_kws = '氨基酸'
-    # doc.basic_search(basic_field, basic_kws)
+    basic_kws = '电镜'
+    doc.basic_search(basic_field, basic_kws)
 
     # ***************** 测试简单搜索[多字段] ***************** #
     multi_fields = ['abstract', 'kws', 'title', 'info', 'fund', 'source']

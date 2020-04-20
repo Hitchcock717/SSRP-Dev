@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
-from .models import Message, Extractor, Recommend, Simplesearch, MessageSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer
+from .models import Message, Extractor, Recommend, Simplesearch, Detailsearch, MessageSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer
 
 
 @api_view(('GET',))
@@ -456,8 +456,8 @@ def rawresult(request):
         print(id_pool)
         rawresults = []
         if len(id_pool) < 2:  # init
-            # updates = Simplesearch.objects.all()[:id_pool[0]]
-            updates = Simplesearch.objects.all()[:50]  # for test
+            updates = Simplesearch.objects.all()[:id_pool[0]]
+            # updates = Simplesearch.objects.all()[:50]  # for test
 
             # 自增序号刷新
             uid = 1
@@ -475,8 +475,8 @@ def rawresult(request):
                 return Response('No suitable data!')
 
         elif len(id_pool) == 2:
-            # updates = Simplesearch.objects.all()[id_pool[0]:id_pool[1]]
-            updates = Simplesearch.objects.all()[:20]  # for test
+            updates = Simplesearch.objects.all()[id_pool[0]:id_pool[1]]
+            # updates = Simplesearch.objects.all()[:20]  # for test
 
             # 自增序号刷新
             uid = 1
@@ -516,19 +516,145 @@ def getexpression(request):
             # (1).有且仅有一个表达式
             if len(expression_body) == 2 and expression_body[0]['regex'] == '否':
                 expression_context = expression_body[0]
+
+                # 转换成ES中的字段
+                if expression_context['type'] == '标题':
+                    expression_context['type'] = 'title'
+                elif expression_context['type'] == '作者':
+                    expression_context['type'] = 'author'
+                elif expression_context['type'] == '来源':
+                    expression_context['type'] = 'source'
+                elif expression_context['type'] == '机构/单位':
+                    expression_context['type'] = 'info'
+                elif expression_context['type'] == '基金':
+                    expression_context['type'] = 'fund'
+                elif expression_context['type'] == '关键词':
+                    expression_context['type'] = 'kws'
+                elif expression_context['type'] == '摘要':
+                    expression_context['type'] = 'abstract'
+
                 # 1.1.有且仅有必填项 无正则
-                expression_type = expression_context['type'].split()
+                expression_type = expression_context['type']
                 expression_info = expression_context['info']
 
                 detail = GetDetailResult()
                 results = detail.get_only_expression(expression_type, expression_info)
+
+                sum_doc = results[2]
+                set_only = []
+                set_only.append(sum_doc[0])
+
+                # drop reqeated
+                for item in sum_doc:
+                    k = 0
+                    for iitem in set_only:
+                        if item['title'] != iitem['title']:
+                            k += 1
+                        else:
+                            break
+
+                        if k == len(set_only):
+                            set_only.append(item)  # [{no repeated}]
+
+                # 过滤后的搜索结果数
+                filter_count = len(set_only)
+
+                # 清洗字段
+                for each_word_doc in set_only:
+
+                    title = each_word_doc['title']
+                    author = each_word_doc['author']
+                    source = each_word_doc['source']
+                    info = each_word_doc['info']
+                    date = each_word_doc['date']
+                    kws = each_word_doc['kws']
+                    if kws == 'nan':
+                        kws = '暂无'
+                    fund = each_word_doc['fund']
+                    abstract = each_word_doc['abstract']
+                    cited = each_word_doc['cited'].rstrip('.0')
+                    if cited == 'nan':
+                        cited = '0'
+
+                    downed = each_word_doc['downed'].rstrip('.0')
+                    if downed == 'nan':
+                        downed = '0'
+                    download = each_word_doc['download']
+
+                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date, kws=kws,
+                                       fund=fund, abstract=abstract, cited=cited, downed=downed, download=download)
+                    det.save()
+
                 data = {
                     'query': results[0],
-                    'count': results[1],
-                    'doc': results[2]
+                    'raw_count': results[1],
+                    'filter_search_count': filter_count,
+                    'doc': sum_doc
                 }
+                print(data)
                 return Response(data)
 
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('GET',))
+def filteresult(request):
+    if request.method == 'GET':
+        id_pool = []
+
+        latest = Detailsearch.objects.last()
+        raw_dict = model_to_dict(latest)
+
+        # 查询增量数据
+        pre_id = raw_dict['id']  # 历史id
+        if pre_id in id_pool:
+            id_pool = id_pool
+        elif len(id_pool) > 2:
+            id_pool.pop(index=0)
+            id_pool.append(pre_id)
+        else:
+            id_pool.append(pre_id)
+
+        print(id_pool)
+        filteresults = []
+        if len(id_pool) < 2:  # init
+            updates = Detailsearch.objects.all()[:id_pool[0]]
+            # updates = Detailsearch.objects.all()[:5]  # for test
+
+            # 自增序号刷新
+            uid = 1
+            for update in updates:
+                update_dict = model_to_dict(update)
+                update_dict['id'] = str(uid)
+                uid += 1
+
+                filteresults.append(update_dict)
+
+            if filteresults is not None:
+                print(filteresults)
+                return Response(filteresults)
+            else:
+                return Response('No suitable data!')
+
+        elif len(id_pool) == 2:
+            updates = Detailsearch.objects.all()[id_pool[0]:id_pool[1]]
+            # updates = Detailsearch.objects.all()[:5]  # for test
+
+            # 自增序号刷新
+            uid = 1
+            for update in updates:
+                update_dict = model_to_dict(update)
+                update_dict['id'] = str(uid)
+                uid += 1
+
+                filteresults.append(update_dict)
+
+            if filteresults is not None:
+                print(filteresults)
+                return Response(filteresults)
+            else:
+                return Response('No suitable data!')
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -553,6 +679,9 @@ class SimplesearchViewset(viewsets.ModelViewSet):
     queryset = Simplesearch.objects.all()
     serializer_class = SimplesearchSerializer
 
+class DetailsearchViewset(viewsets.ModelViewSet):
+    queryset = Detailsearch.objects.all()
+    serializer_class = DetailsearchSerializer
 
 
 

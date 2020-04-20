@@ -1,73 +1,23 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
-      <el-form :model="simpleForm" :simples="simples" ref="simpleForm" label-width="150px" class="demo-simpleForm">
-        <el-form-item label="高级检索表达式" prop="expression">
-          <el-input type="textarea" :row="1" v-model="simpleForm.expression" :disabled="true"></el-input>
+      <el-form :model="detailForm" ref="detailForm" label-width="150px" class="demo-detailForm" :class='{fixed:isFixed}'>
+        <el-form-item label="简单检索表达式" prop="expression">
+          <el-button @click="viewQuery" type="primary" class="viewQuery">查看检索表达式</el-button>
         </el-form-item>
-        <el-form-item label="搜索结果数(条)" prop="number">
-          {{simpleForm.number}}
-        </el-form-item>
-        <el-form-item label="排序条件" prop="sort">
-          <el-select id="sort" v-model="simpleForm.sort" placeholder="请选择排序条件">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-              name="method">{{item.label}}
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="筛选数据来源" prop="resource">
-          <el-checkbox-group v-model="simpleForm.resource">
-            <el-checkbox label="知网"></el-checkbox>
-            <el-checkbox label="维普"></el-checkbox>
-            <el-checkbox label="万方"></el-checkbox>
-          </el-checkbox-group>
+        <el-form-item label="过滤后结果数(条)" prop="number">
+          <el-button @click="viewResult" type="primary" class="viewResult">查看搜索结果</el-button>
         </el-form-item>
         <el-form-item label="citespace分析" prop="subrepo">
           <el-button @click="submit" type="primary" class="citespace">进入</el-button>
         </el-form-item>
-      </el-form>
-      <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" stripe="true" style="width: 800px" fit="true" empty-text="N/A" :default-sort = "{prop: 'id', order: 'descending'}" max-height="300">
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="编号:">
-                <span>{{props.row.id}}</span>
-              </el-form-item>
-              <el-form-item label="标题:">
-                <span>{{props.row.title}}</span>
-              </el-form-item>
-              <el-form-item label="作者:">
-                <span>{{props.row.author}}</span>
-              </el-form-item>
-              <el-form-item label="单位/机构:">
-                <span>{{props.row.info}}</span>
-              </el-form-item>
-              <el-form-item label="来源:">
-                <span>{{props.row.source}}</span>
-              </el-form-item>
-              <el-form-item label="关键词:">
-                <span>{{props.row.kws}}</span>
-              </el-form-item>
-              <el-form-item label="发表时间:">
-                <span>{{props.row.date}}</span>
-              </el-form-item>
-              <el-form-item label="被引频次:">
-                <span>{{props.row.cited}}</span>
-              </el-form-item>
-              <el-form-item label="下载频次:">
-                <span>{{props.row.downed}}</span>
-              </el-form-item>
-              <el-form-item label="基金:">
-                <span>{{props.row.fund}}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column label="编号" width="60px" prop="id" sortable></el-table-column>
+        <el-form-item label="导入结果" prop="import">
+          <el-button @click="importResult" type="primary" class="importResult">导入</el-button>
+        </el-form-item>
+       </el-form>
+       <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="500"
+        highlight-current-row @current-change="handleChange" ref="simpleTable">
+        <el-table-column label="编号" width="60px" prop="id"></el-table-column>
         <el-table-column label="标题" width="250px" align="center" prop="title"></el-table-column>
         <el-table-column label="作者" prop="author"></el-table-column>
         <el-table-column label="发表时间" prop="date" sortable></el-table-column>
@@ -75,18 +25,18 @@
         <el-table-column label="下载频次" width="80px" prop="downed" sortable></el-table-column>
         <el-table-column fixed="right" label="操作" width="80">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="viewRow(scope.$index, tableData)" type="text" size="small">
+            <el-button @click="setCurrent(scope.row)" type="text" size="small">
             详情
             </el-button>
           </template>
         </el-table-column>
-      </el-table>
+       </el-table>
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[5, 10, 15]"
-        :page-size="1"
+        :page-sizes="[50, 100]"
+        :page-size="50"
         layout="total, sizes, prev, pager, next, jumper"
         :total="tableData.length">
       </el-pagination>
@@ -95,161 +45,100 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
+      result: JSON.parse(this.$route.params.result),
+      isFixed: '',
       currentPage: 1,
-      pagesize: 5,
-      options: [{
-        value: '选项1',
-        label: '相关度'
-      }, {
-        value: '选项2',
-        label: '发表时间'
-      }, {
-        value: '选项3',
-        label: '被引频次'
-      }, {
-        value: '选项4',
-        label: '下载频次'
-      }],
-      tableData: [{
-        id: '1',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2015-08-20',
-        cited: '3',
-        downed: '3221',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '2',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2018-09-20',
-        cited: '3223',
-        downed: '31',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '3',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '4',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '5',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '6',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '7',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '8',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '9',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '10',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }],
-      simpleForm: {
-        expression: 'query= [kws = 脑膜瘤 OR 免疫组化 OR 电镜 OR 天氨酸 OR 天冬氨酸 OR 进化 OR 肿瘤 OR 桔梗 OR 亮氨酸 && author = 刘青 OR 杨猛 OR 徐刚 && fund = ALL && date = 2010 - 2019]',
-        number: '10',
-        type: ['基础科学'],
-        resource: ['知网']
+      currentRow: '',
+      pagesize: 50,
+      tableData: [],
+      detailForm: {
       }
     }
   },
+  computed: {
+    ...mapState('expand/filterResult', {
+      filterResult: state => state.filterResult
+    })
+  },
   methods: {
+    importResult () {
+      console.log(this.filterResult)
+      // let docResult = 'doc'
+      // this.tableData = this.result[docResult]
+      this.tableData = this.filterResult
+    },
+    onScroll () {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      var offsetTop = this.$refs.wordForm.offsetTop
+      console.log('scrollTop:' + scrollTop + 'offsetTop:' + offsetTop)
+      if (scrollTop > offsetTop) {
+        this.isFixed = true
+      } else {
+        this.isFixed = false
+      }
+    },
+    viewQuery () {
+      let queryBody = 'query'
+      alert('您的简单检索表达式为: ' + JSON.stringify(this.result[queryBody]))
+    },
+    viewResult () {
+      // let filterCount = 'filter_search_count'
+      alert('子库搜索结果为' + this.filterResult.length + '条!')
+    },
     handleSizeChange (val) {
       this.pagesize = val
     },
     handleCurrentChange (val) {
       this.currentPage = val
     },
-    viewRow (index, rows) {
-      this.$router.push('/detail2')
+    setCurrent (row) {
+      this.$refs.simpleTable.setCurrentRow(row)
+      var res = this.currentRow
+
+      let pkid = 'id'
+      for (var i = 0, len = this.filterResult.length; i < len; i++) {
+        for (var key in this.filterResult[i]) {
+          if (key === pkid && this.filterResult[i][key] === res[pkid]) {
+            var selected = this.filterResult[i]
+            this.$router.push({
+              name: 'detail2',
+              params: {
+                selected: selected
+              }
+            })
+            console.log(selected)
+          }
+        }
+      }
+    },
+    handleChange (val) {
+      this.currentRow = val
     },
     submit () {
-      this.$router.push('/citespace')
+      this.$router.push({
+        path: '/citespace'
+      })
     }
+  },
+  created () {
+    window.addEventListener('scroll', this.onScroll)
+    this.$store.dispatch('expand/filterResult/getfilterResult')
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.onScroll)
   }
 }
 </script>
 
 <style scoped>
+  .demo-detailForm {
+    margin-right: 100px;
+    margin-top: 150px;
+  }
   .demo-table-expand {
     font-size: 0;
   }
