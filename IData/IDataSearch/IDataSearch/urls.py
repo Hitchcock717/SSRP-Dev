@@ -41,7 +41,9 @@ urlpatterns = [
 
     url('api/startspider/', views.startspider),
 
-    # url('api/rawresult/', views.rawresult),
+    url('api/rawresult/', views.rawresult),
+
+    url('api/getexpression/', views.getexpression),
 
     # http://localhost:8000/api/admin/
     path('api/admin/', admin.site.urls),

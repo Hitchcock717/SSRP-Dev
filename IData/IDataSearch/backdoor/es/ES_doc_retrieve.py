@@ -155,7 +155,7 @@ class DocRetireveES(object):
             return body, counts, results
 
         elif type(search_field) == str:
-            counts, results = self.single_result(search_field, kws)
+            [counts, results] = self.single_result(search_field, kws)
 
             # print(counts, results)
             print(counts)
@@ -264,6 +264,7 @@ class DocRetireveES(object):
 
         if in_match != "":
             in_clause_body = in_clause % in_match
+            print(in_clause_body)
         if ex_match != "":
             ex_clause_body = ex_clause % ex_match
         if ex_clause_body != "":
@@ -396,6 +397,565 @@ class DocRetireveES(object):
 
     # **********************************end regexp query******************************** #
 
+    # **********************************start nested advance query******************************** #
+
+    # 内部嵌套高级检索体
+    def nested_advance_query(self, in_fields, in_kws, ex_fields, ex_kws, in_method):
+        # *************预期构造格式************* #
+        # {
+        #    "query": {
+        #        "bool": {
+        #            "should": [
+        #                {"prefix": {"age": 40}},
+        #                {"bool": {"must": [
+        #                    {"prefix": {"address": "mill"}},
+        #                    {"prefix": {"address": "lane"}}
+        #                   ]
+        #                 }}
+        #                ],
+        #                "filter": [
+        #                   {"range":
+        #                       {"createdate":
+        #                           {"gte": "1900-01-01",
+        #                            "lte": "2020-01-01"
+        #                           }
+        #                       }
+        #                   }
+        #               ]
+        #        }
+        #    }
+        # }
+
+        # *************构造内部检索规则************* #
+        if in_method == '1':  # inside_method 区分 "与"|"或"
+            in_clause = '{"bool":{"must":[ %s ]'
+        else:
+            in_clause = '{"bool":{"should":[ %s ]'
+
+        ex_clause = '"must_not":[ %s ]'
+
+        match_clause = '{ "prefix": { "%s":"%s" } }'
+
+        # *************根据构造规则获取局部匹配格式************* #
+
+        in_kws_li = []  # 包含搜索词列表
+        ex_kws_li = []  # 不包含搜索词列表
+
+
+        # 预处理搜索词列表
+        if in_kws != '':
+            in_kws_li = in_kws.split(',')
+        if ex_kws != '':
+            ex_kws_li =  ex_kws.split(',')
+
+        in_match = ''  # 全部包含搜索词匹配格式
+        ex_match = ''  # 全部不包含搜索词匹配格式
+
+        if len(in_fields) > 0:  # must/should
+            for in_field in in_fields:
+                for in_kw in in_kws_li:
+                    if in_match != '':  # 存在匹配格式
+                        in_match += ','  # 逗号分隔
+                    tmp_match_clause = match_clause % (in_field, in_kw)  # 前缀匹配
+                    in_match += tmp_match_clause
+
+        if len(ex_fields) > 0:  # must_not 同理
+            for ex_field in ex_fields:
+                for ex_kw in ex_kws_li:
+                    if ex_match != '':
+                        ex_match += ','
+                    tmp_match_clause = match_clause % (ex_field, ex_kw)
+                    ex_match += tmp_match_clause
+
+        # *************内部嵌套检索体结构************* #
+
+        in_clause_body = ""  # 与、或检索体
+        ex_clause_body = ""  # 非检索体
+
+        if in_match != "":
+            in_clause_body = in_clause % in_match
+            print(in_clause_body)
+        if ex_match != "":
+            ex_clause_body = ex_clause % ex_match
+        if ex_clause_body != "":
+            query = in_clause_body + "," + ex_clause_body + "}}"
+            print(query)
+        else:
+            query = in_clause_body + "}}"
+            print(query)
+
+        body = json.loads(query)
+        return body
+
+    # 内部嵌套高级检索体
+    def nested_advance_query_with_regexp(self, in_fields, in_kws, ex_fields, ex_kws, in_method):
+        # *************预期构造格式************* #
+        # {
+        #    "query": {
+        #        "bool": {
+        #            "should": [
+        #                {"regexp": {"age": 40}},
+        #                {"bool": {"must": [
+        #                    {"regexp": {"address": "mill"}},
+        #                    {"regexp": {"address": "lane"}}
+        #                   ]
+        #                 }}
+        #                ],
+        #                "filter": [
+        #                   {"range":
+        #                       {"createdate":
+        #                           {"gte": "1900-01-01",
+        #                            "lte": "2020-01-01"
+        #                           }
+        #                       }
+        #                   }
+        #               ]
+        #        }
+        #    }
+        # }
+
+        # *************构造内部检索规则************* #
+        if in_method == '1':  # inside_method 区分 "与"|"或"
+            in_clause = '{"bool":{"must":[ %s ]'
+        else:
+            in_clause = '{"bool":{"should":[ %s ]'
+
+        ex_clause = '"must_not":[ %s ]'
+
+        match_clause = '{ "regexp": { "%s":"%s" } }'
+
+        # *************根据构造规则获取局部匹配格式************* #
+
+        in_kws_li = []  # 包含搜索词列表
+        ex_kws_li = []  # 不包含搜索词列表
+
+        # 预处理搜索词列表
+        if in_kws != '':
+            in_kws_li = in_kws.split(',')
+        if ex_kws != '':
+            ex_kws_li = ex_kws.split(',')
+
+        in_match = ''  # 全部包含搜索词匹配格式
+        ex_match = ''  # 全部不包含搜索词匹配格式
+
+        if len(in_fields) > 0:  # must/should
+            for in_field in in_fields:
+                for in_kw in in_kws_li:
+                    if in_match != '':  # 存在匹配格式
+                        in_match += ','  # 逗号分隔
+                    tmp_match_clause = match_clause % (in_field, in_kw)  # 前缀匹配
+                    in_match += tmp_match_clause
+
+        if len(ex_fields) > 0:  # must_not 同理
+            for ex_field in ex_fields:
+                for ex_kw in ex_kws_li:
+                    if ex_match != '':
+                        ex_match += ','
+                    tmp_match_clause = match_clause % (ex_field, ex_kw)
+                    ex_match += tmp_match_clause
+
+        # *************内部嵌套检索体结构************* #
+
+        in_clause_body = ""  # 与、或检索体
+        ex_clause_body = ""  # 非检索体
+
+        if in_match != "":
+            in_clause_body = in_clause % in_match
+            print(in_clause_body)
+        if ex_match != "":
+            ex_clause_body = ex_clause % ex_match
+        if ex_clause_body != "":
+            query = in_clause_body + "," + ex_clause_body + "}}"
+            print(query)
+        else:
+            query = in_clause_body + "}}"
+            print(query)
+
+        body = json.loads(query)
+        return body
+
+    # **********************************start wrapped advance query******************************** #
+    # 构建内部嵌套高级检索体
+    def build_nested_advance_query(self, raw_expression_group):
+        query_collection = []
+        each_nested_query_with_relation = []
+        query_content = []
+        for raw_expression_dict in raw_expression_group:
+
+            in_field = raw_expression_dict['type'].split()
+            query_content.append(in_field)
+            in_kws = raw_expression_dict['info']
+            regex_flag = raw_expression_dict['regex']
+            next_relation = raw_expression_dict['nextrelation']
+
+            global x
+            if next_relation == '并且':
+                x = '1'
+            elif next_relation == '或者':
+                x = '2'
+            elif next_relation == '不含':
+                x = '0'
+            else:
+                x = ''
+
+            if regex_flag == '否':
+
+                if raw_expression_dict['relation'] and raw_expression_dict['otherinfo']:
+                    in_relation = raw_expression_dict['relation']
+                    other_in_kws = raw_expression_dict['otherinfo']
+                    if in_relation == '并含':
+                        in_method = '1'
+                        in_kws = in_kws + ',' + other_in_kws
+                        ex_field = []
+                        ex_kws = ''
+                        query_content.append(in_kws)
+                        query_content.append(ex_field)
+                        query_content.append(ex_kws)
+                        query_content.append(in_method)
+                        each_nested_query = self.nested_advance_query(query_content[0], query_content[1], query_content[2],
+                                                                      query_content[3], query_content[4])
+                        each_nested_query_with_relation.append(each_nested_query)
+                        each_nested_query_with_relation.append(x)
+                        query_collection.append(each_nested_query_with_relation)
+                        query_content.clear()
+
+                    elif in_relation == '或含':
+                        in_method = '2'
+                        in_kws = in_kws + ',' + other_in_kws
+                        ex_field = []
+                        ex_kws = ''
+                        query_content.append(in_kws)
+                        query_content.append(ex_field)
+                        query_content.append(ex_kws)
+                        query_content.append(in_method)
+                        each_nested_query = self.nested_advance_query(query_content[0], query_content[1], query_content[2],
+                                                                  query_content[3], query_content[4])
+                        each_nested_query_with_relation.append(each_nested_query)
+                        each_nested_query_with_relation.append(x)
+                        query_collection.append(each_nested_query_with_relation)
+                        query_content.clear()
+
+                    else:
+                        in_method = '2'  # default
+                        ex_field = in_field
+                        ex_kws = other_in_kws
+                        in_kws = in_kws
+                        query_content.append(in_kws)
+                        query_content.append(ex_field)
+                        query_content.append(ex_kws)
+                        query_content.append(in_method)
+                        each_nested_query = self.nested_advance_query(query_content[0], query_content[1], query_content[2],
+                                                                      query_content[3], query_content[4])
+                        each_nested_query_with_relation.append(each_nested_query)
+                        each_nested_query_with_relation.append(x)
+                        query_collection.append(each_nested_query_with_relation)
+                        query_content.clear()
+
+                else:
+                    in_method = '2'  # default
+                    ex_field = []
+                    ex_kws = ''
+                    in_kws = in_kws
+                    query_content.append(in_kws)
+                    query_content.append(ex_field)
+                    query_content.append(ex_kws)
+                    query_content.append(in_method)
+                    each_nested_query = self.nested_advance_query(query_content[0], query_content[1], query_content[2], query_content[3], query_content[4])
+                    each_nested_query_with_relation.append(each_nested_query)
+                    each_nested_query_with_relation.append(x)
+                    query_collection.append(each_nested_query_with_relation)
+                    query_content.clear()
+
+            else:
+                if raw_expression_dict['relation'] and raw_expression_dict['otherinfo']:
+                    in_relation = raw_expression_dict['relation']
+                    other_in_kws = raw_expression_dict['otherinfo']
+                    if in_relation == '并含':
+                        in_method = '1'
+                        in_kws = in_kws + ',' + other_in_kws
+                        ex_field = []
+                        ex_kws = ''
+                        query_content.append(in_kws)
+                        query_content.append(ex_field)
+                        query_content.append(ex_kws)
+                        query_content.append(in_method)
+                        each_nested_query = self.nested_advance_query_with_regexp(query_content[0], query_content[1],
+                                                                      query_content[2],
+                                                                      query_content[3], query_content[4])
+                        each_nested_query_with_relation.append(each_nested_query)
+                        each_nested_query_with_relation.append(x)
+                        query_collection.append(each_nested_query_with_relation)
+                        query_content.clear()
+
+                    elif in_relation == '或含':
+                        in_method = '2'
+                        in_kws = in_kws + ',' + other_in_kws
+                        ex_field = []
+                        ex_kws = ''
+                        query_content.append(in_kws)
+                        query_content.append(ex_field)
+                        query_content.append(ex_kws)
+                        query_content.append(in_method)
+                        each_nested_query = self.nested_advance_query_with_regexp(query_content[0], query_content[1],
+                                                                      query_content[2],
+                                                                      query_content[3], query_content[4])
+                        each_nested_query_with_relation.append(each_nested_query)
+                        each_nested_query_with_relation.append(x)
+                        query_collection.append(each_nested_query_with_relation)
+                        query_content.clear()
+
+                    else:
+                        in_method = '2'  # default
+                        ex_field = in_field
+                        ex_kws = other_in_kws
+                        in_kws = in_kws
+                        query_content.append(in_kws)
+                        query_content.append(ex_field)
+                        query_content.append(ex_kws)
+                        query_content.append(in_method)
+                        each_nested_query = self.nested_advance_query_with_regexp(query_content[0], query_content[1],
+                                                                      query_content[2],
+                                                                      query_content[3], query_content[4])
+                        each_nested_query_with_relation.append(each_nested_query)
+                        each_nested_query_with_relation.append(x)
+                        query_collection.append(each_nested_query_with_relation)
+                        query_content.clear()
+
+                else:
+                    in_method = '2'  # default
+                    ex_field = []
+                    ex_kws = ''
+                    in_kws = in_kws
+                    query_content.append(in_kws)
+                    query_content.append(ex_field)
+                    query_content.append(ex_kws)
+                    query_content.append(in_method)
+                    each_nested_query = self.nested_advance_query_with_regexp(query_content[0], query_content[1], query_content[2],
+                                                                  query_content[3], query_content[4])
+                    each_nested_query_with_relation.append(each_nested_query)
+                    each_nested_query_with_relation.append(x)
+                    query_collection.append(each_nested_query_with_relation)
+                    query_content.clear()
+
+        print(query_collection)
+        return query_collection
+
+    # 构建外部嵌套高级检索体
+    def wrapped_advance_query(self, raw_expression_group, date_field, start, end):
+        query_groups = self.build_nested_advance_query(raw_expression_group)  # [[''],['']]
+
+        range_clause = '"filter":[ { "range": { "%s" :{ "gte":"%s","lte":"%s" } } } ]'  # range查询用于日期过滤
+
+        # 有且仅有两个检索体
+        if len(query_groups) == 2:
+            in_method = query_groups[0][1]
+            front_query = query_groups[0][0]
+            back_query = query_groups[1][0]
+            in_match = front_query + ',' + back_query
+
+            # *************构造检索规则************* #
+
+            query = '{"query":{' \
+                    '"bool":{'
+            range_clause_body = range_clause % (date_field, start, end)  # 过滤规则:日期
+
+            if in_method == '1':  # in_method 区分 "与"|"或"
+                in_clause = '"must":[ %s ]'
+                in_clause_body = in_clause % in_match
+                query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+                print(query_body)
+                return query_body
+
+            if in_method == '2':
+                in_clause = '"should":[ %s ]'
+                in_clause_body = in_clause % in_match
+                query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+                print(query_body)
+                return query_body
+
+            if in_method == '0':
+                in_clause = '"should":[ %s ]'
+                ex_clause = '"must_not":[ %s ]'
+                in_match = front_query
+                in_clause_body = in_clause % in_match
+                ex_match = back_query
+                ex_clause_body = ex_clause % ex_match
+                query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
+                print(query_body)
+                return query_body
+
+        else:  # 大于两个检索体
+            top_two_query = query_groups[:1]
+            in_method = top_two_query[0][1]
+            front_query = top_two_query[0][0]
+            back_query = top_two_query[1][0]
+            in_match = front_query + ',' + back_query
+
+            # *************构造前两个检索规则************* #
+
+            top_two_query_body = []
+            query = '"bool":{'
+
+            if in_method == '1':  # in_method 区分 "与"|"或"
+                in_clause = '"must":[ %s ]'
+                in_clause_body = in_clause % in_match
+                query_body = query + in_clause_body + '}'
+                top_two_query_body.append(query_body)
+
+            if in_method == '2':
+                in_clause = '"should":[ %s ]'
+                in_clause_body = in_clause % in_match
+                query_body = query + in_clause_body + '}'
+                top_two_query_body.append(query_body)
+
+            if in_method == '0':
+                in_clause = '"should":[ %s ]'
+                ex_clause = '"must_not":[ %s ]'
+                in_match = front_query
+                in_clause_body = in_clause % in_match
+                ex_match = back_query
+                ex_clause_body = ex_clause % ex_match
+                query_body = query + in_clause_body + ',' + ex_clause_body + '}'
+                top_two_query_body.append(query_body)
+
+            base_query_body = top_two_query_body[0]
+
+            # 有且仅有三个检索体
+            if len(query_groups) == 3:
+                in_method = query_groups[1][1]
+                front_query = query_groups[2][0]
+                back_query = base_query_body
+
+                # *************构造检索规则************* #
+                query = '{"query":{' \
+                        '"bool":{'
+
+                range_clause_body = range_clause % (date_field, start, end)  # 过滤规则:日期
+
+                if in_method == '1':  # in_method 区分 "与"|"或"
+                    in_clause = '"must":[ %s ]'
+                    in_clause_body = in_clause % in_match
+                    query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+                    print(query_body)
+                    return query_body
+
+                if in_method == '2':
+                    in_clause = '"should":[ %s ]'
+                    in_clause_body = in_clause % in_match
+                    query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+                    print(query_body)
+                    return query_body
+
+                if in_method == '0':
+                    in_clause = '"should":[ %s ]'
+                    ex_clause = '"must_not":[ %s ]'
+                    in_match = front_query
+                    in_clause_body = in_clause % in_match
+                    ex_match = back_query
+                    ex_clause_body = ex_clause % ex_match
+                    query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
+                    print(query_body)
+                    return query_body
+
+            else:
+                # 从第三个列表开始, 继续嵌套, 此时列表>=4
+                other_query = []
+
+                for i in range(2, len(query_groups)-1):
+                    if query_groups[i][1] != '':
+
+                        in_method = query_groups[i-1][1]
+                        add_query = query_groups[i][0]
+
+                        if i == 2:
+                            in_match = add_query + ',' + base_query_body  # 仅适用于第三个列表
+                        else:
+                            in_match = add_query + ',' + other_query[0]
+                            other_query.clear()
+
+                        # *************构造检索规则************* #
+
+                        query = '"bool":{'
+
+                        if in_method == '1':  # in_method 区分 "与"|"或"
+                            in_clause = '"must":[ %s ]'
+                            in_clause_body = in_clause % in_match
+                            other_query_body = query + in_clause_body + '}'
+                            print(other_query_body)
+                            other_query.append(other_query_body)
+
+                        if in_method == '2':
+                            in_clause = '"should":[ %s ]'
+                            in_clause_body = in_clause % in_match
+                            other_query_body = query + in_clause_body + '}'
+                            print(other_query_body)
+                            other_query.append(other_query_body)
+
+                        if in_method == '0':
+                            in_clause = '"should":[ %s ]'
+                            ex_clause = '"must_not":[ %s ]'
+                            in_match = add_query
+                            in_clause_body = in_clause % in_match
+                            ex_match = base_query_body
+                            ex_clause_body = ex_clause % ex_match
+                            other_query_body = query + in_clause_body + ',' + ex_clause_body + '}'
+                            print(other_query_body)
+                            other_query.append(other_query_body)
+
+                    else:  # 最后一个检索体: 需要修改检索头部 + 添加日期范围
+
+                        in_method = query_groups[i-1][1]
+                        add_query = query_groups[i][0]
+
+                        in_match = add_query + ',' + other_query[0]  # 预想other_query最后剩下除末尾元素以外的检索体
+                        # *************构造检索规则************* #
+
+                        query = '{"query":{' \
+                                '"bool":{'
+                        range_clause_body = range_clause % (date_field, start, end)  # 过滤规则:日期
+
+                        if in_method == '1':  # in_method 区分 "与"|"或"
+                            in_clause = '"must":[ %s ]'
+                            in_clause_body = in_clause % in_match
+                            query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+                            print(query_body)
+                            return query_body
+
+                        if in_method == '2':
+                            in_clause = '"should":[ %s ]'
+                            in_clause_body = in_clause % in_match
+                            query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+                            print(query_body)
+                            return query_body
+
+                        if in_method == '0':
+                            in_clause = '"should":[ %s ]'
+                            ex_clause = '"must_not":[ %s ]'
+                            in_match = front_query
+                            in_clause_body = in_clause % in_match
+                            ex_match = back_query
+                            ex_clause_body = ex_clause % ex_match
+                            query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
+                            print(query_body)
+                            return query_body
+
+    # ES查询
+    def wrapped_advance_search(self, raw_expression_group, date_field, start, end):
+        query = self.wrapped_advance_query(raw_expression_group, date_field, start, end)
+        # res = self.es.search(self.index_name, body=query)
+
+        in_fields = []
+        for raw_expression_dict in raw_expression_group:
+            in_field = raw_expression_dict['type']
+            in_fields.append(in_field)
+
+        res = helpers.scan(client=self.es,
+                           query=query,
+                           index=self.index_name)
+        counts, results = self.highlight(res, in_fields)
+        print(counts)
+        return query, counts, results
+
 
 if __name__ == "__main__":
     index = 'cnki_doc'
@@ -410,7 +970,7 @@ if __name__ == "__main__":
     # ***************** 测试简单搜索[多字段] ***************** #
     multi_fields = ['abstract', 'kws', 'title', 'info', 'fund', 'source']
     multi_kws = '氨基酸'
-    doc.basic_search(multi_fields, multi_kws)
+    # doc.basic_search(multi_fields, multi_kws)
 
     # ***************** 测试高级搜索[与或非] ***************** #
     #  -------------------------------------------------
@@ -422,9 +982,9 @@ if __name__ == "__main__":
     #  -------------------------------------------------
 
     include_fields = ["kws"]
-    include_kws = "氨基酸"
-    exclude_fields = [""]
-    exclude_kws = ""
+    include_kws = "氨基酸, 电镜"
+    exclude_fields = ['kws']
+    exclude_kws = "大鼠"
     date = "date"
     start = "1900-01-01"
     end = "2020-01-01"
@@ -449,3 +1009,50 @@ if __name__ == "__main__":
     end_reg = "2020-01-01"
     in_method_reg = "2"
     # doc.advance_search_with_regexp(inreg_fields, in_reg, exreg_fields, ex_reg, date_reg, start_reg, end_reg, in_method_reg)
+
+    # ***************** 测试内部嵌套高级搜索 ***************** #
+
+    nested_in_fields = ["kws"]
+    nested_in_kws = "氨基酸"
+    nested_exclude_fields = []
+    nested_exclude_kws = ""
+    nested_in_method = "2"
+    # doc.nested_advance_query(nested_include_fields, nested_include_kws, nested_exclude_fields, nested_exclude_kws, nested_in_method)
+
+    # ***************** 测试内部嵌套高级搜索[正则] ***************** #
+
+    nested_inreg_fields = ["kws"]
+    nested_inreg_kws = "氨基酸"
+    nested_exreg_fields = []
+    nested_exreg_kws = ""
+    nested_inreg_method = "2"
+    # doc.nested_advance_query(nested_inreg_fields, nested_inreg_kws, nested_exreg_fields, nested_exreg_kws, nested_inreg_method)
+
+    # ***************** 测试构建内部嵌套高级搜索 ***************** #
+    raw_expression_group = [{"type":"来源","info":"驱蚊器·","regex":"是","nextrelation":"或含"},{"type":"来源","info":"确认","regex":"是","nextrelation":"不含"},{"type":"关键词","info":"人情味·","relation":"或含","regex":"否","nextrelation":"无"}]
+    # doc.build_nested_advance_query(raw_expression_group)
+
+    # ***************** 测试外部嵌套高级搜索 ***************** #
+    raw_expression_group1 = [{"type": "来源", "info": "驱蚊器·", "regex": "是", "nextrelation": "或含"},
+                             {"type": "来源", "info": "确认", "regex": "是", "nextrelation": "不含"},
+                             {"type": "关键词", "info": "人情味·", "relation": "或含", "regex": "否", "nextrelation": "无"}]
+    wrapped_date = "date"
+    wrapped_start = "1900-01-01"
+    wrapped_end = "2020-01-01"
+
+    # doc.wrapped_advance_query(raw_expression_group1, wrapped_date, wrapped_start, wrapped_end)
+
+    # ***************** 测试嵌套高级搜索 ***************** #
+    #  -------------------------------------------------
+    # | fields: list                                    |
+    # | kws: str                                        |
+    # | date: str                                       |
+    # | start, end: YYYY-MM-DD                          |
+    # | in_method: "1"->must; other(default 2)->should  |
+    #  -------------------------------------------------
+    raw_expression_group2 = [{"type":"来源","info":"驱蚊器·","regex":"是","nextrelation":"或含"},{"type":"来源","info":"确认","regex":"是","nextrelation":"不含"},{"type":"关键词","info":"人情味·","relation":"或含","regex":"否","nextrelation":"无"}]
+    wrapped_date2 = "date"
+    wrapped_start2 = "1900-01-01"
+    wrapped_end2 = "2020-01-01"
+    # doc.wrapped_advance_search(raw_expression_group2, wrapped_date2, wrapped_start2, wrapped_end2)
+

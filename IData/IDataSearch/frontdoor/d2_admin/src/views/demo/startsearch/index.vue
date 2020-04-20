@@ -15,7 +15,6 @@
       <el-form :model="searchForm" ref="searchForm" label-width="100px" class="demo-Form">
         <el-form-item>
           <el-button type="primary" class="spider" @click="startSpider">启动爬虫</el-button>
-          <el-button type="primary" class="save"  @click="handleSubmit">查看进度</el-button>
         </el-form-item>
       </el-form>
     </d2-page-cover>
@@ -70,20 +69,20 @@ export default {
           this.result = res
           console.log(this.result)
           alert('成功启动爬虫')
+          this.$refs.searchForm.validate((valid) => {
+            if (valid) {
+              this.$router.push({
+                path: '/notice1',
+                query: {
+                  result: JSON.stringify(this.result)
+                }
+              })
+            }
+          })
         })
         .catch(err => {
           console.log(err)
         })
-    },
-    handleSubmit () {
-      this.$refs.searchForm.validate((valid) => {
-        if (valid) {
-          this.$router.push({
-            path: '/notice1',
-            query: this.result
-          })
-        }
-      })
     }
   }
 }

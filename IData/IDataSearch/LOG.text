@@ -5616,3 +5616,164 @@ KeyError: 'd_url'
 2020-04-16 17:04:18 [scrapy.extensions.logstats] INFO: Crawled 19 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
 2020-04-16 17:04:19 [scrapy.extensions.logstats] INFO: Crawled 16 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
 2020-04-16 17:04:27 [scrapy.extensions.logstats] INFO: Crawled 26 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2020-04-16 17:04:41 [scrapy.extensions.logstats] INFO: Crawled 4 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2020-04-16 17:05:07 [scrapy.extensions.logstats] INFO: Crawled 4 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2020-04-16 09:05:10 [scrapy.extensions.logstats] INFO: Crawled 2590 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2020-04-16 17:05:15 [scrapy.crawler] INFO: Received SIGTERM, shutting down gracefully. Send again to force 
+2020-04-16 17:05:15 [scrapy.crawler] INFO: Received SIGTERM, shutting down gracefully. Send again to force 
+2020-04-16 17:05:15 [scrapy.core.engine] INFO: Closing spider (shutdown)
+2020-04-16 17:05:15 [scrapy.crawler] INFO: Received SIGTERM, shutting down gracefully. Send again to force 
+2020-04-16 17:05:15 [scrapy.crawler] INFO: Received SIGTERM, shutting down gracefully. Send again to force 
+2020-04-16 17:05:15 [scrapy.core.engine] INFO: Closing spider (shutdown)
+2020-04-16 17:05:15 [scrapy.crawler] INFO: Received SIGTERM, shutting down gracefully. Send again to force 
+2020-04-16 09:05:15 [scrapy.crawler] INFO: Received SIGTERM, shutting down gracefully. Send again to force 
+2020-04-16 17:05:15 [scrapy.core.engine] INFO: Closing spider (shutdown)
+2020-04-16 09:05:15 [scrapy.core.engine] INFO: Closing spider (shutdown)
+2020-04-16 17:05:15 [scrapy.core.engine] INFO: Closing spider (shutdown)
+2020-04-16 17:05:15 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 19124,
+ 'downloader/request_count': 23,
+ 'downloader/request_method_count/GET': 23,
+ 'downloader/response_bytes': 88751,
+ 'downloader/response_count': 23,
+ 'downloader/response_status_count/200': 18,
+ 'downloader/response_status_count/503': 5,
+ 'elapsed_time_seconds': 67916.955402,
+ 'finish_reason': 'shutdown',
+ 'finish_time': datetime.datetime(2020, 4, 16, 9, 5, 15, 930712),
+ 'httperror/response_ignored_count': 1,
+ 'httperror/response_ignored_status_count/503': 1,
+ 'log_count/ERROR': 6,
+ 'log_count/INFO': 603,
+ 'memusage/max': 68218880,
+ 'memusage/startup': 63352832,
+ 'request_depth_max': 3,
+ 'response_received_count': 19,
+ 'retry/count': 4,
+ 'retry/max_reached': 1,
+ 'retry/reason_count/503 Service Unavailable': 4,
+ 'scheduler/dequeued/redis': 23,
+ 'scheduler/enqueued/redis': 23,
+ 'spider_exceptions/AttributeError': 3,
+ 'start_time': datetime.datetime(2020, 4, 15, 14, 13, 18, 975310)}
+2020-04-16 17:05:15 [scrapy.core.engine] INFO: Spider closed (shutdown)
+2020-04-16 17:05:16 [scrapy.core.engine] INFO: Closing spider (shutdown)
+2020-04-16 17:05:16 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 22089,
+ 'downloader/request_count': 26,
+ 'downloader/request_method_count/GET': 26,
+ 'downloader/response_bytes': 125758,
+ 'downloader/response_count': 26,
+ 'downloader/response_status_count/200': 26,
+ 'elapsed_time_seconds': 28068.232379,
+ 'finish_reason': 'shutdown',
+ 'finish_time': datetime.datetime(2020, 4, 16, 9, 5, 15, 981999),
+ 'log_count/ERROR': 8,
+ 'log_count/INFO': 480,
+ 'memusage/max': 69271552,
+ 'memusage/startup': 63361024,
+ 'request_depth_max': 3,
+ 'response_received_count': 26,
+ 'scheduler/dequeued/redis': 26,
+ 'scheduler/enqueued/redis': 33,
+ 'spider_exceptions/AttributeError': 1,
+ 'start_time': datetime.datetime(2020, 4, 16, 1, 17, 27, 749620)}
+2020-04-16 17:05:16 [scrapy.core.engine] INFO: Spider closed (shutdown)
+2020-04-16 09:05:16 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/exception_count': 47,
+ 'downloader/exception_type_count/twisted.internet.error.ConnectionRefusedError': 9,
+ 'downloader/exception_type_count/twisted.web._newclient.ResponseNeverReceived': 38,
+ 'downloader/request_bytes': 2538936,
+ 'downloader/request_count': 2904,
+ 'downloader/request_method_count/GET': 2904,
+ 'downloader/response_bytes': 717751,
+ 'downloader/response_count': 2857,
+ 'downloader/response_status_count/200': 2590,
+ 'downloader/response_status_count/302': 267,
+ 'elapsed_time_seconds': 158525.485919,
+ 'finish_reason': 'shutdown',
+ 'finish_time': datetime.datetime(2020, 4, 16, 9, 5, 16, 15417),
+ 'log_count/ERROR': 28,
+ 'log_count/INFO': 1453,
+ 'memusage/max': 64827392,
+ 'memusage/startup': 63311872,
+ 'request_depth_max': 10,
+ 'response_received_count': 2590,
+ 'retry/count': 47,
+ 'retry/reason_count/twisted.internet.error.ConnectionRefusedError': 9,
+ 'retry/reason_count/twisted.web._newclient.ResponseNeverReceived': 38,
+ 'scheduler/dequeued/redis': 2904,
+ 'scheduler/enqueued/redis': 452,
+ 'spider_exceptions/AttributeError': 27,
+ 'start_time': datetime.datetime(2020, 4, 14, 13, 3, 10, 529498)}
+2020-04-16 09:05:16 [scrapy.core.engine] INFO: Spider closed (shutdown)
+2020-04-16 17:05:16 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/exception_count': 1,
+ 'downloader/exception_type_count/twisted.web._newclient.ResponseNeverReceived': 1,
+ 'downloader/request_bytes': 16851,
+ 'downloader/request_count': 20,
+ 'downloader/request_method_count/GET': 20,
+ 'downloader/response_bytes': 76894,
+ 'downloader/response_count': 19,
+ 'downloader/response_status_count/200': 16,
+ 'downloader/response_status_count/503': 3,
+ 'elapsed_time_seconds': 67916.627995,
+ 'finish_reason': 'shutdown',
+ 'finish_time': datetime.datetime(2020, 4, 16, 9, 5, 16, 32074),
+ 'log_count/ERROR': 5,
+ 'log_count/INFO': 602,
+ 'memusage/max': 68218880,
+ 'memusage/startup': 63320064,
+ 'request_depth_max': 3,
+ 'response_received_count': 16,
+ 'retry/count': 4,
+ 'retry/reason_count/503 Service Unavailable': 3,
+ 'retry/reason_count/twisted.web._newclient.ResponseNeverReceived': 1,
+ 'scheduler/dequeued/redis': 20,
+ 'scheduler/enqueued/redis': 22,
+ 'spider_exceptions/AttributeError': 2,
+ 'start_time': datetime.datetime(2020, 4, 15, 14, 13, 19, 404079)}
+2020-04-16 17:05:16 [scrapy.core.engine] INFO: Spider closed (shutdown)
+2020-04-16 17:05:16 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 3850,
+ 'downloader/request_count': 5,
+ 'downloader/request_method_count/GET': 5,
+ 'downloader/response_bytes': 15674,
+ 'downloader/response_count': 5,
+ 'downloader/response_status_count/200': 4,
+ 'downloader/response_status_count/503': 1,
+ 'elapsed_time_seconds': 67954.692948,
+ 'finish_reason': 'shutdown',
+ 'finish_time': datetime.datetime(2020, 4, 16, 9, 5, 16, 72649),
+ 'log_count/ERROR': 1,
+ 'log_count/INFO': 603,
+ 'memusage/max': 66076672,
+ 'memusage/startup': 63262720,
+ 'request_depth_max': 3,
+ 'response_received_count': 4,
+ 'retry/count': 1,
+ 'retry/reason_count/503 Service Unavailable': 1,
+ 'scheduler/dequeued/redis': 5,
+ 'scheduler/enqueued/redis': 5,
+ 'start_time': datetime.datetime(2020, 4, 15, 14, 12, 41, 379701)}
+2020-04-16 17:05:16 [scrapy.core.engine] INFO: Spider closed (shutdown)
+2020-04-16 17:05:16 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 3377,
+ 'downloader/request_count': 4,
+ 'downloader/request_method_count/GET': 4,
+ 'downloader/response_bytes': 16366,
+ 'downloader/response_count': 4,
+ 'downloader/response_status_count/200': 4,
+ 'elapsed_time_seconds': 68948.376278,
+ 'finish_reason': 'shutdown',
+ 'finish_time': datetime.datetime(2020, 4, 16, 9, 5, 16, 82673),
+ 'log_count/ERROR': 1,
+ 'log_count/INFO': 620,
+ 'memusage/max': 66441216,
+ 'memusage/startup': 63348736,
+ 'request_depth_max': 3,
+ 'response_received_count': 4,
+ 'scheduler/dequeued/redis': 4,
+ 'scheduler/enqueued/redis': 4,
+ 'start_time': datetime.datetime(2020, 4, 15, 13, 56, 7, 706395)}
+2020-04-16 17:05:16 [scrapy.core.engine] INFO: Spider closed (shutdown)

@@ -1,56 +1,23 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
-      <el-form :model="simpleForm" :simples="simples" ref="simpleForm" label-width="150px" class="demo-simpleForm">
+      <el-form :model="simpleForm" ref="simpleForm" label-width="150px" class="demo-simpleForm" :class='{fixed:isFixed}'>
         <el-form-item label="简单检索表达式" prop="expression">
-          <span>{{ query }}</span>
+          <el-button @click="viewQuery" type="primary" class="viewQuery">查看检索表达式</el-button>
         </el-form-item>
-        <el-form-item label="搜索结果数(条)" prop="number">
-          <el-button @click="viewResult(result)" type="primary" class="viewResult">查看搜索结果</el-button>
-          <span class="number">{{ result }}</span>
+        <el-form-item label="过滤后结果数(条)" prop="number">
+          <el-button @click="viewResult" type="primary" class="viewResult">查看搜索结果</el-button>
         </el-form-item>
         <el-form-item label="子库" prop="subrepo">
           <el-button @click="submit" type="primary" class="nextpage">进入子库</el-button>
         </el-form-item>
-      </el-form>
-      <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" stripe=true style="width: 800px" fit="true" empty-text="N/A" :default-sort = "{prop: 'id', order: 'descending'}" max-height="300">
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="编号:">
-                <span>{{props.row.id}}</span>
-              </el-form-item>
-              <el-form-item label="标题:">
-                <span>{{props.row.title}}</span>
-              </el-form-item>
-              <el-form-item label="作者:">
-                <span>{{props.row.author}}</span>
-              </el-form-item>
-              <el-form-item label="单位/机构:">
-                <span>{{props.row.info}}</span>
-              </el-form-item>
-              <el-form-item label="来源:">
-                <span>{{props.row.source}}</span>
-              </el-form-item>
-              <el-form-item label="关键词:">
-                <span>{{props.row.kws}}</span>
-              </el-form-item>
-              <el-form-item label="发表时间:">
-                <span>{{props.row.date}}</span>
-              </el-form-item>
-              <el-form-item label="被引频次:">
-                <span>{{props.row.cited}}</span>
-              </el-form-item>
-              <el-form-item label="下载频次:">
-                <span>{{props.row.downed}}</span>
-              </el-form-item>
-              <el-form-item label="基金:">
-                <span>{{props.row.fund}}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column label="编号" width="60px" prop="id" sortable></el-table-column>
+        <el-form-item label="导入结果" prop="import">
+          <el-button @click="importResult" type="primary" class="importResult">导入</el-button>
+        </el-form-item>
+       </el-form>
+       <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="500"
+        highlight-current-row @current-change="handleChange" ref="simpleTable">
+        <el-table-column label="编号" width="60px" prop="id"></el-table-column>
         <el-table-column label="标题" width="250px" align="center" prop="title"></el-table-column>
         <el-table-column label="作者" prop="author"></el-table-column>
         <el-table-column label="发表时间" prop="date" sortable></el-table-column>
@@ -58,18 +25,18 @@
         <el-table-column label="下载频次" width="80px" prop="downed" sortable></el-table-column>
         <el-table-column fixed="right" label="操作" width="80">
           <template slot-scope="scope">
-            <el-button @click.native.prevent="viewRow(scope.$index, tableData)" type="text" size="small">
+            <el-button @click="setCurrent(scope.row)" type="text" size="small">
             详情
             </el-button>
           </template>
         </el-table-column>
-      </el-table>
+       </el-table>
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[5, 10, 15]"
-        :page-size="1"
+        :page-sizes="[50, 100]"
+        :page-size="50"
         layout="total, sizes, prev, pager, next, jumper"
         :total="tableData.length">
       </el-pagination>
@@ -82,78 +49,43 @@ import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      simples: '',
-      query: 'query = keywords in ' + this.$route.query.keywords,
+      result: JSON.parse(this.$route.query.result),
+      isFixed: '',
       currentPage: 1,
-      pagesize: 5,
-      tableData: [{
-        id: '1',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2015-08-20',
-        cited: '3',
-        downed: '3221',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '2',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2018-09-20',
-        cited: '3223',
-        downed: '31',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '3',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '4',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '5',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }],
+      currentRow: '',
+      pagesize: 50,
+      tableData: [],
       simpleForm: {
       }
     }
   },
   computed: {
-    ...mapState('expand/results', {
-      result: state => state.result
+    ...mapState('expand/rawResult', {
+      rawResult: state => state.rawResult
     })
   },
   methods: {
-    viewResult (result) {
-      this.result.push(result)
+    importResult () {
+      console.log(this.rawResult)
+      this.tableData = this.rawResult
+    },
+    onScroll () {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      var offsetTop = this.$refs.wordForm.offsetTop
+      console.log('scrollTop:' + scrollTop + 'offsetTop:' + offsetTop)
+      if (scrollTop > offsetTop) {
+        this.isFixed = true
+      } else {
+        this.isFixed = false
+      }
+    },
+    viewQuery () {
+      let queryBody = 'query'
+      alert('您的简单检索表达式为: query = keyword in [' + this.result[queryBody] + ']')
+    },
+    viewResult () {
+      let filterCount = 'filter_search_count'
+      alert('过滤后搜索结果为' + this.result[filterCount] + '条!')
     },
     handleSizeChange (val) {
       this.pagesize = val
@@ -161,20 +93,54 @@ export default {
     handleCurrentChange (val) {
       this.currentPage = val
     },
-    viewRow (index, rows) {
-      this.$router.push('/detail1')
+    setCurrent (row) {
+      this.$refs.simpleTable.setCurrentRow(row)
+      var res = this.currentRow
+
+      let pkid = 'id'
+      for (var i = 0, len = this.rawResult.length; i < len; i++) {
+        for (var key in this.rawResult[i]) {
+          if (key === pkid && this.rawResult[i][key] === res[pkid]) {
+            var selected = this.rawResult[i]
+            this.$router.push({
+              name: 'detail1',
+              params: {
+                selected: selected
+              }
+            })
+            console.log(selected)
+          }
+        }
+      }
+    },
+    handleChange (val) {
+      this.currentRow = val
     },
     submit () {
-      this.$router.push('/subrepo')
+      this.$router.push({
+        name: 'subrepo',
+        params: {
+          rawResult: this.rawResult
+        }
+      })
+      console.log(this.rawResult)
     }
   },
   created () {
-    this.$store.dispatch('expand/results/getResult')
+    window.addEventListener('scroll', this.onScroll)
+    this.$store.dispatch('expand/rawResult/getrawResult')
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.onScroll)
   }
 }
 </script>
 
 <style scoped>
+  .demo-simpleForm {
+    margin-right: 100px;
+    margin-top: 150px;
+  }
   .demo-table-expand {
     font-size: 0;
   }

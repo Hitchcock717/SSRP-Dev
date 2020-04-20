@@ -3,7 +3,7 @@
     <d2-page-cover>
       <el-container style="height: 800px; border: 1px solid #eee">
         <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-          <el-menu :default-openeds="['1', '3']">
+          <el-menu :default-openeds="['1', '3']" class="corpus">
             <el-submenu index="1">
               <template slot="title"><i class="el-icon-message"></i><router-link to="/page1">词表库</router-link></template>
               <el-menu-item-group>
@@ -14,7 +14,7 @@
             </el-submenu>
           </el-menu>
           <div class="note">
-            <el-button round size="mini" class="selectedItem" v-for="item in selectedItems" :key="item">{{item.name}} <i class="red fa fa-close (alias)"
+            <el-button round size="mini" class="selectedItem" v-for="(item,index) in selectedItems" :key="index">{{item.name}} <i class="red fa fa-close (alias)"
             v-on:click="deleteSelectedItem($index)"></i></el-button>
             <input v-model="inputItem" placeholder="请输入想要收藏的词汇" class="write" type="text" v-on:focus="showDropmenu" v-on:keyup.enter="addItem">
             <el-button type="primary" class="success" @click="addItem">确定</el-button>
@@ -22,13 +22,13 @@
           <div v-show="isShowDropmenu">
             <p class="recom">推荐词</p>
             <div v-for="item in cataList" v-show="item.isShow" :key="item">
-                <el-button round type="mini" v-for="one in item.items" class="item" v-on:click="addByClick(one)" :key="item">{{one}}</el-button>
+                <el-button round type="mini" v-for="(one,index) in item.items" class="item" v-on:click="addByClick(one)" :key="index">{{one}}</el-button>
             </div>
           </div>
         </el-aside>
         <el-container>
           <el-main>
-            <el-table :data="tableData">
+            <el-table :data="tableData" class="basicinfo">
               <el-table-column prop="title" label="标题" width="250">
               </el-table-column>
               <el-table-column prop="author" label="作者" width="100">
@@ -59,6 +59,7 @@
               <el-table-column prop="downed" label="下载频次" width="80">
               </el-table-column>
             </el-table>
+            <el-button type="primary" class="import" @click="importResult">导入详情结果</el-button>
             <el-button type="primary" class="return" @click="submit">返回检索结果页</el-button>
           </el-main>
         </el-container>
@@ -82,6 +83,12 @@
   .el-aside {
     color: #333;
   }
+  .corpus {
+    margin-top: 80px;
+  }
+  .basicinfo {
+    margin-top: 60px;
+  }
   .abstract {
     margin-top: 20px;
   }
@@ -103,6 +110,11 @@
   .recom {
     margin-top: 50px;
   }
+  .import {
+    margin-top: 10px;
+    margin-left: 20px;
+    float: right;
+  }
   .return {
     margin-top: 10px;
     float: right;
@@ -112,26 +124,11 @@
 <script>
 export default {
   data () {
-    const item = {
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        info: '北京大学物理学院电子显微镜实验室',
-        date: '2015-08-20',
-        source: '期刊'
-      },
-      item2 = {
-        abstract: '阐述了扫描电子显微镜的基本原理、图像种类、各种信号的主要特性,并对扫描电子显微镜显微分析技术在地球科学研究领域的应用现状、前景进行了评述.场发射扫描电子显微镜分辨率高,可以实现极微区的原位精细观察和研究.具备低真空模式的扫描电子显微镜,对于不具有导电性的地质样品,无需蒸镀导电膜,即可直接实现矿物等样品表面的观察分析,显示具有广泛的应用前景.装配背散射探头、X射线能谱仪、阴极荧光谱仪、背散射电子衍射仪等附件的扫描电子显微镜,可同时获取地质样品的多重信息,如:微区尺度形貌像、阴极荧光分析、背散射图像、成分信息、晶体结构特征等.本文通过实例讨论了扫描电子显微镜的地质应用,并强调阴极荧光谱仪在地学研究中的应用不应局限于矿物结构图像分析,尚应加强阴极荧光谱峰的矿物成因分析应用,其可有效揭示矿物晶格缺陷、微量元素组成差异,有助于更精准地进行矿物生长条件重建.'
-      },
-      item3 = {
-        kws: '扫描电子显微镜； 信号探测器； 矿物',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        cited: '3',
-        downed: '3221'
-      }
     return {
-      tableData: Array(1).fill(item),
-      detailData: Array(1).fill(item2),
-      otherData: Array(1).fill(item3),
+      selected: this.$route.params.selected, // params传参页面刷新即消失
+      tableData: [],
+      detailData: [],
+      otherData: [],
       selectedItems: [{
         name: '生物电镜'
       }],
@@ -147,34 +144,52 @@ export default {
     }
   },
   methods: {
+    importResult () {
+      console.log(this.selected)
+      // data in table 1
+      let title = 'title'
+      let author = 'author'
+      let source = 'source'
+      let info = 'info'
+      let date = 'date'
+      var tableDict1 = { 'title': this.selected[title], 'author': this.selected[author], 'source': this.selected[source], 'info': this.selected[info], 'date': this.selected[date] }
+      this.tableData = Array(1).fill(tableDict1)
+
+      // data in table 2
+      let abstract = 'abstract'
+      var tableDict2 = { 'abstract': this.selected[abstract] }
+      this.detailData = Array(1).fill(tableDict2)
+
+      // data in table 3
+      let kws = 'kws'
+      let fund = 'fund'
+      let cited = 'cited'
+      let downed = 'downed'
+      var tableDict3 = { 'kws': this.selected[kws], 'fund': this.selected[fund], 'cited': this.selected[cited], 'downed': this.selected[downed] }
+      this.otherData = Array(1).fill(tableDict3)
+    },
     showDropmenu: function (event) {
       console.log('showDropmenu')
       this.isShowDropmenu = true
     },
-    // hideDropmenu: function (event) {
-    // this.isShowDropmenu = false
-    // console.log('hideDropmenu')
-    // },
-    test: function () {
-      console.log('test')
-    },
-    addItem: function () {
+    addItem () {
       if (this.inputItem !== '') {
         this.selectedItems.push({ name: this.inputItem })
         this.inputItem = ''
+        console.log(this.selected)
       }
     },
-    deleteSelectedItem: function (index) {
+    deleteSelectedItem (index) {
       this.selectedItems.splice(index, 1)
     },
-    showCataList: function (index) {
+    showCataList (index) {
       var i = this.cataList.length
 
       while (i--) {
         i === index ? this.cataList[i].isShow = true : this.cataList[i].isShow = false
       }
     },
-    addByClick: function (name) {
+    addByClick (name) {
       var i = this.selectedItems.length
       while (i--) {
         if (this.selectedItems[i].name === name) {

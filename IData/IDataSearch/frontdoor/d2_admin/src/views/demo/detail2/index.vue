@@ -15,7 +15,7 @@
             </el-submenu>
           </el-menu>
           <div class="note">
-            <el-button round size="mini" class="selectedItem" v-for="item in selectedItems" :key="item">{{item.name}} <i class="red fa fa-close (alias)"
+            <el-button round size="mini" class="selectedItem" v-for="(item,index) in selectedItems" :key="index">{{item.name}} <i class="red fa fa-close (alias)"
             v-on:click="deleteSelectedItem($index)"></i></el-button>
             <input v-model="inputItem" placeholder="请输入想要收藏的词汇" class="write" type="text" v-on:focus="showDropmenu" v-on:keyup.enter="addItem">
             <el-button type="primary" class="success" @click="addItem">确定</el-button>
@@ -23,7 +23,7 @@
           <div v-show="isShowDropmenu">
             <p class="recom">推荐词</p>
             <div v-for="item in cataList" v-show="item.isShow" :key="item">
-                <el-button round type="mini" v-for="one in item.items" class="item" v-on:click="addByClick(one)" :key="item">{{one}}</el-button>
+                <el-button round type="mini" v-for="(one,index) in item.items" class="item" v-on:click="addByClick(one)" :key="index">{{one}}</el-button>
             </div>
           </div>
         </el-aside>

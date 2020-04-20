@@ -28,7 +28,7 @@
       </div>
       <el-form :inline="true" :model="numberForm" ref="numberForm" label-width="190px" class="demo-numberForm">
         <el-form-item>
-          <el-button type="primary" @click="view" class="view">查看项目信息</el-button>
+          <el-button size="default" @click="view" type="primary" class="view">查看搜索结果</el-button>
           <el-button size="default" @click="submit" type="primary" class="confirm">确定</el-button>
         </el-form-item>
       </el-form>
@@ -40,22 +40,23 @@
 export default {
   data () {
     return {
-      result: this.$route.query.result,
+      result: JSON.parse(this.$route.query.result),
       numberForm: {
-        timeout: null
       }
     }
   },
   methods: {
     view () {
-      this.$router.push('/complete')
+      let count = 'raw_search_count'
+      alert('已为您初步搜索到' + this.result[count] + '条数据!')
     },
     submit () {
       this.$router.push({
         path: '/simplesearch',
-        query: JSON.stringify(result)
+        query: {
+          result: JSON.stringify(this.result)
+        }
       })
-      console.log(result)
     }
   }
 }
