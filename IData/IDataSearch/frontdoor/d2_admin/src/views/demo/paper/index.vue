@@ -78,7 +78,7 @@ export default {
 <style scoped>
  .demo-textForm {
   margin-right: 200px;
-  margin-top: 100px;
+  margin-top: 200px;
  }
  .button-save {
   float:right;

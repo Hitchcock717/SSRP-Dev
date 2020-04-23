@@ -14,7 +14,7 @@
             </el-submenu>
           </el-menu>
           <div class="note">
-            <el-button round size="mini" class="selectedItem" v-for="(item,index) in selectedItems" :key="index">{{item.name}} <i class="red fa fa-close (alias)"
+            <el-button round size="mini" class="selectedItem" v-for="item in selectedItems" :key="item.name">{{item.name}} <i class="red fa fa-close (alias)"
             v-on:click="deleteSelectedItem($index)"></i></el-button>
             <input v-model="inputItem" placeholder="请输入想要收藏的词汇" class="write" type="text" v-on:focus="showDropmenu" v-on:keyup.enter="addItem">
             <el-button type="primary" class="success" @click="addItem">确定</el-button>

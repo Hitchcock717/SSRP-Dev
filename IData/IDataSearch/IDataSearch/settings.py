@@ -92,6 +92,15 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        # 使用数据库缓存
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        # 用于保存缓存数据的表的名字
+        'LOCATION': 'my_cache_table',
+        'TIMEOUT': None
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

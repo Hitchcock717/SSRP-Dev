@@ -58,6 +58,7 @@ class ExtractAndRecommend(object):
         for keyword in extr_kws:
             retri = TermRecommendES(self.index, self.ip)
             kws_li = retri.filter(keyword)
+            print(kws_li)
             try:
                 if kws_li is not None:
                     self.recom_kws.extend(kws_li)

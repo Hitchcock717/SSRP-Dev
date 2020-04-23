@@ -19,7 +19,7 @@ from rest_framework import routers
 
 from django.conf.urls import url
 from backdoor import views
-from backdoor.views import MessageViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset
+from backdoor.views import MessageViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset
 
 router = routers.DefaultRouter()
 router.register('messages', MessageViewSet)
@@ -27,6 +27,7 @@ router.register('extractors', ExtractorViewset)
 router.register('recommends', RecommedViewset)
 router.register('simplesearch', SimplesearchViewset)
 router.register('detailesearch', DetailsearchViewset)
+router.register('temp', TempViewset)
 
 
 app_name = 'backdoor'

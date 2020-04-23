@@ -76,6 +76,17 @@ class DetailsearchSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('url', 'title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'download', 'abstract', 'fund', 'pk')
 
 
+class Temp(models.Model):
+	record_id = models.TextField()
+	record_db = models.TextField()
+
+
+class TempSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Temp
+		fields = ('url', 'record_id', 'record_db', 'pk')
+
+
 '''
 # connect scrapy spiders
 

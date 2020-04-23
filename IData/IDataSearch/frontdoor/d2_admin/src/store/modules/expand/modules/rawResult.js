@@ -15,7 +15,6 @@ const actions = {
     rawResultService.fetchrawResult()
       .then(rawResult => {
         commit('setrawResult', rawResult)
-        console.log(rawResult)
       })
   }
 }

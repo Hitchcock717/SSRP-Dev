@@ -22,7 +22,6 @@
 </template>
 
 <script>
-// import { mapState, mapActions } from 'vuex'
 import { StartSpider } from '@/api/demo/spiderService'
 export default {
   data () {
@@ -62,8 +61,8 @@ export default {
     startSpider () {
       StartSpider({
         spiders: ['idata'],
-        extractors: JSON.stringify(this.$route.query.extractors),
-        recommends: JSON.stringify(this.$route.query.recommends)
+        extractors: this.$route.query.extractors,
+        recommends: this.$route.query.recommends
       })
         .then(res => {
           this.result = res

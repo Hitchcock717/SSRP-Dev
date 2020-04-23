@@ -51,16 +51,14 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="抽取词表" prop="extract_list">
+        <el-form-item label="抽取词表" prop="extract">
           <el-select v-model="ruleForm.extract" placeholder="查看抽取词">
-            <el-option class="extr" v-for="(extr, index) in extractors" :key="index.value" :label="index.label"
-              :value="index.value">抽取词: {{extr.originkws}}</el-option>
+            <el-option class="extr" v-for="(extr, index) in extractors" :key="index" :value="extr.originkws">{{extr.originkws}}</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="推荐词表" prop="recomm_list">
+        <el-form-item label="推荐词表" prop="recomm">
           <el-select  v-model="ruleForm.recomm" placeholder="查看推荐词">
-            <el-option class="recom" v-for="(recom, index) in recommends" :key="index.value" :label="index.label"
-              :value="index.value">推荐词: {{recom.recommendkws}}</el-option>
+            <el-option class="recom" v-for="(recom, index) in recommends" :key="index" :value="recom.recommendkws">{{recom.recommendkws}}</el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -75,8 +73,8 @@
 export default {
   data () {
     return {
-      extractors: this.$route.query.extractors,
-      recommends: this.$route.query.recommends,
+      extractors: JSON.parse(this.$route.query.extractors), // 注意解析格式
+      recommends: JSON.parse(this.$route.query.recommends),
       fileList: [
         {
           name: 'example',
@@ -121,7 +119,7 @@ export default {
         type: ['基础科学'],
         resource: ['知网'],
         desc: 'this is for scientific research',
-        method: '标题搜索',
+        method: '论文搜索',
         extract: '',
         recomm: ''
       },
@@ -173,7 +171,8 @@ export default {
               recommends: JSON.stringify(this.recommends)
             }
           })
-          console.log(JSON.stringify(this.extractors))
+          console.log(this.extractors)
+          console.log(this.recommends)
           // alert('创建成功!')
         } else {
           console.log('error submit!!')
@@ -181,11 +180,6 @@ export default {
         }
       })
     }
-  },
-  created () {
-    // this.extractors = window.localStorage.getItem('extractors')
-    // console.log(this.extractors)
-    // this.recommends = window.localStorage.getItem('recommends')
   }
 }
 </script>

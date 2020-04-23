@@ -1,6 +1,7 @@
 import re
 import ast
 import json
+import pickle
 import subprocess
 from .utils import ExtractAndRecommend, GetRawResult, GetDetailResult
 from .main import execute_spider
@@ -13,13 +14,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
-from .models import Message, Extractor, Recommend, Simplesearch, Detailsearch, MessageSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer
+from django.core.cache import caches
+from .models import Message, Extractor, Recommend, Simplesearch, Detailsearch, Temp, MessageSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer
 
 
 @api_view(('GET',))
 def extract(request):
-
-    id_pool = []
 
     latest = Message.objects.last()
     raw_dict = model_to_dict(latest)
@@ -31,22 +31,27 @@ def extract(request):
 
     base_router = 'http://127.0.0.1:8000/api/extract/'
 
-    # 查询增量数据
-    pre_id = raw_dict['id']  # 历史id
-    if pre_id in id_pool:
-        id_pool = id_pool
-    elif len(id_pool) > 2:
-        id_pool.pop(index=0)
-        id_pool.append(pre_id)
-    else:
-        id_pool.append(pre_id)
-
     extractors = []
     extractors_group = []
 
-    if len(id_pool) < 2:
+    db = 'extractor'
+    raw_temps = Temp.objects.filter(record_db=db)
+    print(raw_temps)
 
-        updates = Message.objects.all()[:id_pool[0]]
+    if raw_temps:
+        temps = []
+        for raw_temp in raw_temps:  # 最新的extractor id
+            raw_temp_dict = model_to_dict(raw_temp)
+            temps.append(raw_temp_dict)
+        temp_dict = temps[-1]
+        print(temp_dict)
+        pre_id = temp_dict['record_id']
+        post_id = raw_dict['id']  # 更新id
+        temp = Temp(record_id=post_id, record_db=db)
+        temp.save()
+
+        updates = Message.objects.filter(id__gt=pre_id)
+        print(updates)
         for update in updates:
             update_dict = model_to_dict(update)
             ex = ExtractAndRecommend()
@@ -78,7 +83,6 @@ def extract(request):
 
                         if k == len(set_only):
                             set_only.append(item)
-
                 for only in set_only:
                     pkid = only['id']
                     extractor = ExtractorSerializer(data=only, context=serializer_context)
@@ -92,17 +96,25 @@ def extract(request):
                 if extractors is not None:
                     extractors.sort(key=lambda x: (x['pk']), reverse=False)
                     extractors_group.extend(extractors)
+                    extractors.clear()
                 else:
                     print('The extractors are empty!')
 
         try:
             if extractors_group is not None:
+                print(extractors_group)
                 return Response(extractors_group)
         except Exception as e:
             return Response('None extracted objects!')
 
-    elif len(id_pool) == 2:
-        updates = Message.objects.all()[id_pool[0]:id_pool[1]]
+    else:
+        pre_id = raw_dict['id']
+        print(pre_id)
+        temp = Temp(record_id=pre_id, record_db=db)
+        temp.save()
+
+        updates = Message.objects.all()
+        print(updates)
         for update in updates:
             update_dict = model_to_dict(update)
             ex = ExtractAndRecommend()
@@ -134,6 +146,7 @@ def extract(request):
 
                         if k == len(set_only):
                             set_only.append(item)
+
                 for only in set_only:
                     pkid = only['id']
                     extractor = ExtractorSerializer(data=only, context=serializer_context)
@@ -147,11 +160,13 @@ def extract(request):
                 if extractors is not None:
                     extractors.sort(key=lambda x: (x['pk']), reverse=False)
                     extractors_group.extend(extractors)
+                    extractors.clear()
                 else:
                     print('The extractors are empty!')
 
         try:
             if extractors_group is not None:
+                print(extractors_group)
                 return Response(extractors_group)
         except Exception as e:
             return Response('None extracted objects!')
@@ -159,8 +174,6 @@ def extract(request):
 
 @api_view(('GET',))
 def recommend(request):
-
-    id_pool = []
 
     latest = Message.objects.last()
     raw_dict = model_to_dict(latest)
@@ -171,132 +184,149 @@ def recommend(request):
 
     base_router = 'http://127.0.0.1:8000/api/extract/'
 
-    # 查询增量数据
-    pre_id = raw_dict['id']  # 历史id
-    if pre_id in id_pool:
-        id_pool = id_pool
-    elif len(id_pool) > 2:
-        id_pool.pop(index=0)
-        id_pool.append(pre_id)
-    else:
-        id_pool.append(pre_id)
-
     recommends = []
     recommends_group = []
 
-    if len(id_pool) < 2:
+    db = 'recommend'
+    raw_temps = Temp.objects.filter(record_db=db)
 
-        updates = Message.objects.all()[:id_pool[0]]
+    if raw_temps:
+        temps = []
+        for raw_temp in raw_temps:
+            raw_temp_dict = model_to_dict(raw_temp)
+            temps.append(raw_temp_dict)
+        temp_dict = temps[-1]
+        pre_id = temp_dict['record_id']
+        post_id = raw_dict['id']
+        temp = Temp(record_id=post_id, record_db=db)
+        temp.save()
+
+        updates = Message.objects.filter(id__gt=pre_id)
+        print(updates)
         for update in updates:
             update_dict = model_to_dict(update)
 
             ex = ExtractAndRecommend()
             recom_kws = ex.recommend_kws(update_dict)
 
-            for rkws in recom_kws:
-                recom = Recommend(recommendkws=rkws)
-                recom.save()
+            try:
+                if recom_kws:
+                    for rkws in recom_kws:
+                        recom = Recommend(recommendkws=rkws)
+                        recom.save()
 
-                # retrieve kws
-                data = Recommend.objects.filter(recommendkws=rkws)
+                        # retrieve kws
+                        data = Recommend.objects.filter(recommendkws=rkws)
 
-                raw_d_dict = []
-                for d in data:
-                    d_dict = model_to_dict(d)
-                    raw_d_dict.append(d_dict)
+                        raw_d_dict = []
+                        for d in data:
+                            d_dict = model_to_dict(d)
+                            raw_d_dict.append(d_dict)
 
-                set_only = []
-                set_only.append(raw_d_dict[0])
+                        set_only = []
+                        set_only.append(raw_d_dict[0])
 
-                # drop reqeated
-                for item in raw_d_dict:
-                    k = 0
-                    for iitem in set_only:
-                        if item['recommendkws'] != iitem['recommendkws']:
-                            k += 1
+                        # drop reqeated
+                        for item in raw_d_dict:
+                            k = 0
+                            for iitem in set_only:
+                                if item['recommendkws'] != iitem['recommendkws']:
+                                    k += 1
+                                else:
+                                    break
+
+                                if k == len(set_only):
+                                    set_only.append(item)
+
+                        for only in set_only:
+                            pkid = only['id']
+                            recommend = RecommendSerializer(data=only, context=serializer_context)
+                            if recommend.is_valid():
+                                ordered_li = recommend.validated_data
+                                ordered_li['pk'] = pkid
+                                ordered_li['url'] = base_router + str(pkid) + '/'
+                                ordered_li = dict(ordered_li)
+                                recommends.append(ordered_li)
+
+                        if recommends:
+                            recommends.sort(key=lambda x: (x['pk']), reverse=False)
+                            recommends_group.extend(recommends)
+                            recommends.clear()
                         else:
-                            break
-
-                        if k == len(set_only):
-                            set_only.append(item)
-
-                for only in set_only:
-                    pkid = only['id']
-                    recommend = RecommendSerializer(data=only, context=serializer_context)
-                    if recommend.is_valid():
-                        ordered_li = recommend.validated_data
-                        ordered_li['pk'] = pkid
-                        ordered_li['url'] = base_router + str(pkid) + '/'
-                        ordered_li = dict(ordered_li)
-                        recommends.append(ordered_li)
-
-                if recommends is not None:
-                    recommends.sort(key=lambda x: (x['pk']), reverse=False)
-                    recommends_group.extend(recommends)
-                else:
-                    print('The recommends are empty!')
+                            print('The recommends are empty!')
+            except Exception as e:
+                return Response(['暂无推荐'])
 
         try:
             return Response(recommends_group)
         except Exception as e:
-            return Response('None extracted objects!')
+            return Response(['暂无推荐'])
 
-    elif len(id_pool) == 2:
+    else:
+        pre_id = raw_dict['id']
+        print(pre_id)
+        temp = Temp(record_id=pre_id, record_db=db)
+        temp.save()
 
-        updates = Message.objects.all()[id_pool[0]:id_pool[1]]
-
+        updates = Message.objects.all()
+        print(updates)
         for update in updates:
             update_dict = model_to_dict(update)
             ex = ExtractAndRecommend()
             recom_kws = ex.recommend_kws(update_dict)
 
-            for rkws in recom_kws:
-                recom = Recommend(recommendkws=rkws)
-                recom.save()
+            try:
+                if recom_kws:
+                    for rkws in recom_kws:
+                        recom = Recommend(recommendkws=rkws)
+                        recom.save()
 
-                # retrieve kws
-                data = Recommend.objects.filter(recommendkws=rkws)
+                        # retrieve kws
+                        data = Recommend.objects.filter(recommendkws=rkws)
 
-                raw_d_dict = []
-                for d in data:
-                    d_dict = model_to_dict(d)
-                    raw_d_dict.append(d_dict)
+                        raw_d_dict = []
+                        for d in data:
+                            d_dict = model_to_dict(d)
+                            raw_d_dict.append(d_dict)
 
-                set_only = []
-                set_only.append(raw_d_dict[0])
+                        set_only = []
+                        set_only.append(raw_d_dict[0])
 
-                # drop reqeated
-                for item in raw_d_dict:
-                    k = 0
-                    for iitem in set_only:
-                        if item['recommendkws'] != iitem['recommendkws']:
-                            k += 1
+                        # drop reqeated
+                        for item in raw_d_dict:
+                            k = 0
+                            for iitem in set_only:
+                                if item['recommendkws'] != iitem['recommendkws']:
+                                    k += 1
+                                else:
+                                    break
+
+                                if k == len(set_only):
+                                    set_only.append(item)
+
+                        for only in set_only:
+                            pkid = only['id']
+                            recommend = RecommendSerializer(data=only, context=serializer_context)
+                            if recommend.is_valid():
+                                ordered_li = recommend.validated_data
+                                ordered_li['pk'] = pkid
+                                ordered_li['url'] = base_router + str(pkid) + '/'
+                                ordered_li = dict(ordered_li)
+                                recommends.append(ordered_li)
+
+                        if recommends is not None:
+                            recommends.sort(key=lambda x: (x['pk']), reverse=False)
+                            recommends_group.extend(recommends)
+                            recommends.clear()
                         else:
-                            break
-
-                        if k == len(set_only):
-                            set_only.append(item)
-
-                for only in set_only:
-                    pkid = only['id']
-                    recommend = RecommendSerializer(data=only, context=serializer_context)
-                    if recommend.is_valid():
-                        ordered_li = recommend.validated_data
-                        ordered_li['pk'] = pkid
-                        ordered_li['url'] = base_router + str(pkid) + '/'
-                        ordered_li = dict(ordered_li)
-                        recommends.append(ordered_li)
-
-                if recommends is not None:
-                    recommends.sort(key=lambda x: (x['pk']), reverse=False)
-                    recommends_group.extend(recommends)
-                else:
-                    print('The recommends are empty!')
+                            print('The recommends are empty!')
+            except Exception as e:
+                return Response(['暂无推荐'])
 
         try:
             return Response(recommends_group)
         except Exception as e:
-            return Response('None extracted objects!')
+            return Response(['暂无推荐'])
 
 
 @api_view(('POST', 'GET',))
@@ -305,16 +335,20 @@ def startspider(request):
         raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
         raw_dict_key = list(raw_dict.keys())[0]
         spider_dict = ast.literal_eval(raw_dict_key)
+        print(spider_dict)
         spider_names = spider_dict['spiders']
 
         # 转义符处理
         drop_slash_extractors = re.sub('\\\\*', '', spider_dict['extractors'])
-        drop_quotation_extractors = re.sub('""', '', drop_slash_extractors)
+        drop_quotation_extractors = re.sub('^"|"$', '', drop_slash_extractors)
+        print(drop_quotation_extractors)
 
         drop_slash_recommends = re.sub('\\\\*', '', spider_dict['recommends'])
-        drop_quotation_recommends = re.sub('""', '', drop_slash_recommends)
+        drop_quotation_recommends = re.sub('^"|"$', '', drop_slash_recommends)
+        print(drop_quotation_recommends)
 
         spider_extractors = ast.literal_eval(drop_quotation_extractors.strip(']['))  # tuple
+        print(spider_extractors)
         spider_recommends = ast.literal_eval(drop_quotation_recommends.strip(']['))
         # extractors_dict = {item['originkws']:item for item in spider_extractors}  # list[dict{}] ---> dict{dict{}}
 
@@ -438,27 +472,28 @@ def startspider(request):
 @api_view(('GET',))
 def rawresult(request):
     if request.method == 'GET':
-        id_pool = []
 
         latest = Simplesearch.objects.last()
         raw_dict = model_to_dict(latest)
 
-        # 查询增量数据
-        pre_id = raw_dict['id']  # 历史id
-        if pre_id in id_pool:
-            id_pool = id_pool
-        elif len(id_pool) > 2:
-            id_pool.pop(index=0)
-            id_pool.append(pre_id)
-        else:
-            id_pool.append(pre_id)
+        db = 'rawresult'
+        raw_temps = Temp.objects.filter(record_db=db)
 
-        print(id_pool)
-        rawresults = []
-        if len(id_pool) < 2:  # init
-            updates = Simplesearch.objects.all()[:id_pool[0]]
+        if raw_temps:
+            temps = []
+            for raw_temp in raw_temps:
+                raw_temp_dict = model_to_dict(raw_temp)
+                temps.append(raw_temp_dict)
+            temp_dict = temps[-1]
+            pre_id = temp_dict['record_id']
+            post_id = raw_dict['id']
+            temp = Temp(record_id=post_id, record_db=db)
+            temp.save()
+
+            updates = Simplesearch.objects.filter(id__gt=pre_id)
             # updates = Simplesearch.objects.all()[:50]  # for test
 
+            rawresults = []
             # 自增序号刷新
             uid = 1
             for update in updates:
@@ -474,10 +509,16 @@ def rawresult(request):
             else:
                 return Response('No suitable data!')
 
-        elif len(id_pool) == 2:
-            updates = Simplesearch.objects.all()[id_pool[0]:id_pool[1]]
+        else:
+            pre_id = raw_dict['id']
+            print(pre_id)
+            temp = Temp(record_id=pre_id, record_db=db)
+            temp.save()
+
+            updates = Simplesearch.objects.all()
             # updates = Simplesearch.objects.all()[:20]  # for test
 
+            rawresults = []
             # 自增序号刷新
             uid = 1
             for update in updates:
@@ -571,6 +612,8 @@ def getexpression(request):
                     if kws == 'nan':
                         kws = '暂无'
                     fund = each_word_doc['fund']
+                    if fund == 'nan':
+                        fund = '暂无'
                     abstract = each_word_doc['abstract']
                     cited = each_word_doc['cited'].rstrip('.0')
                     if cited == 'nan':
@@ -601,25 +644,27 @@ def getexpression(request):
 @api_view(('GET',))
 def filteresult(request):
     if request.method == 'GET':
-        id_pool = []
 
         latest = Detailsearch.objects.last()
         raw_dict = model_to_dict(latest)
 
-        # 查询增量数据
-        pre_id = raw_dict['id']  # 历史id
-        if pre_id in id_pool:
-            id_pool = id_pool
-        elif len(id_pool) > 2:
-            id_pool.pop(index=0)
-            id_pool.append(pre_id)
-        else:
-            id_pool.append(pre_id)
+        db = 'filteresult'
+        raw_temps = Temp.objects.filter(record_db=db)
 
-        print(id_pool)
-        filteresults = []
-        if len(id_pool) < 2:  # init
-            updates = Detailsearch.objects.all()[:id_pool[0]]
+        if raw_temps:
+            temps = []
+            for raw_temp in raw_temps:
+                raw_temp_dict = model_to_dict(raw_temp)
+                temps.append(raw_temp_dict)
+            temp_dict = temps[-1]
+            pre_id = temp_dict['record_id']
+            post_id = raw_dict['id']
+            temp = Temp(record_id=post_id, record_db=db)
+            temp.save()
+
+            filteresults = []
+
+            updates = Detailsearch.objects.filter(id__gt=pre_id)
             # updates = Detailsearch.objects.all()[:5]  # for test
 
             # 自增序号刷新
@@ -637,8 +682,14 @@ def filteresult(request):
             else:
                 return Response('No suitable data!')
 
-        elif len(id_pool) == 2:
-            updates = Detailsearch.objects.all()[id_pool[0]:id_pool[1]]
+        else:
+            pre_id = raw_dict['id']
+            print(pre_id)
+            temp = Temp(record_id=pre_id, record_db=db)
+            temp.save()
+
+            filteresults = []
+            updates = Detailsearch.objects.all()
             # updates = Detailsearch.objects.all()[:5]  # for test
 
             # 自增序号刷新
@@ -650,7 +701,7 @@ def filteresult(request):
 
                 filteresults.append(update_dict)
 
-            if filteresults is not None:
+            if filteresults:
                 print(filteresults)
                 return Response(filteresults)
             else:
@@ -679,11 +730,15 @@ class SimplesearchViewset(viewsets.ModelViewSet):
     queryset = Simplesearch.objects.all()
     serializer_class = SimplesearchSerializer
 
+
 class DetailsearchViewset(viewsets.ModelViewSet):
     queryset = Detailsearch.objects.all()
     serializer_class = DetailsearchSerializer
 
 
+class TempViewset(viewsets.ModelViewSet):
+    queryset = Temp.objects.all()
+    serializer_class = TempSerializer
 
 
 

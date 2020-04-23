@@ -12,7 +12,10 @@
           <el-button @click="submit" type="primary" class="nextpage">进入子库</el-button>
         </el-form-item>
         <el-form-item label="导入结果" prop="import">
-          <el-button @click="importResult" type="primary" class="importResult">导入</el-button>
+          <el-button
+            @click="importResult"
+            type="primary"
+            class="importResult">导入</el-button>
         </el-form-item>
        </el-form>
        <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="500"
@@ -66,7 +69,7 @@ export default {
   },
   methods: {
     importResult () {
-      console.log(this.rawResult)
+      console.log(JSON.stringify(this.rawResult))
       this.tableData = this.rawResult
     },
     onScroll () {
@@ -92,6 +95,15 @@ export default {
     },
     handleCurrentChange (val) {
       this.currentPage = val
+    },
+    beforeRouteLeave (to, from, next) {
+      if (to.name === 'detail1') {
+        let condition = JSON.stringify(this.rawResult)
+        localStorage.setItem('condition', condition)
+      } else {
+        localStorage.removeItem('condition')
+      }
+      next()
     },
     setCurrent (row) {
       this.$refs.simpleTable.setCurrentRow(row)
@@ -127,6 +139,10 @@ export default {
     }
   },
   created () {
+    let condition = localStorage.getItem('condition')
+    if (condition !== null) {
+      this.rawResult = JSON.parse(condition)
+    }
     window.addEventListener('scroll', this.onScroll)
     this.$store.dispatch('expand/rawResult/getrawResult')
   },
