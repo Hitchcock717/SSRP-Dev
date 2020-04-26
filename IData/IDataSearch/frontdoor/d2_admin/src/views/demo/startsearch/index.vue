@@ -59,6 +59,7 @@ export default {
       })
     },
     startSpider () {
+      alert('正在启动...')
       StartSpider({
         spiders: ['idata'],
         extractors: this.$route.query.extractors,

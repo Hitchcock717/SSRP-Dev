@@ -1,6 +1,6 @@
 <template>
   <d2-container class="page">
-    <page-cover>
+    <d2-page-cover>
       <el-container style="height: 800px; border: 1px solid #eee">
         <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
           <el-col :span="24">
@@ -49,13 +49,12 @@
               <el-table-column label="标题" width="100px" align="center" prop="title"></el-table-column>
               <el-table-column label="作者" prop="author"></el-table-column>
               <el-table-column label="发表时间" prop="date" sortable></el-table-column>
-              <el-table-column label="被引频次" width="80px" prop="cited" sortable></el-table-column>
-              <el-table-column label="下载频次" width="80px" prop="downed" sortable></el-table-column>
               <el-table-column fixed="right" label="操作" width="80">
                 <template slot-scope="scope">
-                  <el-button @click.native.prevent="viewRow(scope.$index, tableData)" type="text" size="small">
+                  <el-button @click="viewRow(scope.$index, scope.row)" type="text" size="small">
                   详情
                   </el-button>
+                  <el-button size="small" type="text" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -71,11 +70,11 @@
           </el-main>
         </el-container>
       </el-container>
-    </page-cover>
+    </d2-page-cover>
   </d2-container>
 </template>
 <style lang="scss" scoped>
-  .page-cover {
+  .d2-page-cover {
     @extend %full;
     @extend %unable-select;
     display: flex;
@@ -121,122 +120,25 @@
 export default {
   data () {
     return {
+      collect: this.$route.params.collect,
       currentPage: 1,
       pagesize: 5,
-      tableData: [{
-        id: '1',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2015-08-20',
-        cited: '3',
-        downed: '3221',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '2',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2018-09-20',
-        cited: '3223',
-        downed: '31',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '3',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '4',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '5',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '6',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '7',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '8',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '9',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }, {
-        id: '10',
-        title: '扫描电子显微镜显微分析技术在地球科学中的应用',
-        author: '陈莉; 徐军; 陈晶',
-        date: '2020-01-14',
-        cited: '31',
-        downed: '321',
-        info: '北京大学物理学院电子显微镜实验室',
-        source: '期刊',
-        fund: '国家自然科学基金项目(批准号:41402031)资助',
-        kws: '扫描电子显微镜； 信号探测器； 矿物'
-      }]
+      tableData: []
     }
   },
+  mounted () {
+    let title = 'title'
+    let author = 'author'
+    let info = 'info'
+    let date = 'date'
+
+    var tableDict = { title: this.collect[title], 'author': this.collect[author], 'info': this.collect[info], 'date': this.collect[date] }
+    this.tableData.push(tableDict)
+  },
   methods: {
+    handleDelete (index, row) {
+      this.tableData.splice(index, 1)
+    },
     handleSizeChange (val) {
       this.pagesize = val
     },

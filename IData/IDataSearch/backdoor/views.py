@@ -437,6 +437,8 @@ def startspider(request):
             if kws == 'nan':
                 kws = '暂无'
             fund = each_word_doc['fund']
+            if fund == 'nan':
+                fund = '暂无'
             abstract = each_word_doc['abstract']
             cited = each_word_doc['cited'].rstrip('.0')
             if cited == 'nan':

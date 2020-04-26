@@ -14,7 +14,7 @@
             </el-submenu>
           </el-menu>
           <div class="note">
-            <el-button round size="mini" class="selectedItem" v-for="item in selectedItems" :key="item.name">{{item.name}} <i class="red fa fa-close (alias)"
+            <el-button round size="mini" class="selectedItem" v-for="item in selectedItems" :key="item.name">{{item.name}}<i class="red fa fa-close (alias)"
             v-on:click="deleteSelectedItem($index)"></i></el-button>
             <input v-model="inputItem" placeholder="请输入想要收藏的词汇" class="write" type="text" v-on:focus="showDropmenu" v-on:keyup.enter="addItem">
             <el-button type="primary" class="success" @click="addItem">确定</el-button>
@@ -22,7 +22,7 @@
           <div v-show="isShowDropmenu">
             <p class="recom">推荐词</p>
             <div v-for="item in cataList" v-show="item.isShow" :key="item">
-                <el-button round type="mini" v-for="(one,index) in item.items" class="item" v-on:click="addByClick(one)" :key="index">{{one}}</el-button>
+                <el-button round type="mini" v-for="one in item.items" class="item" v-on:click="addByClick(one)" :key="one">{{one}}</el-button>
             </div>
           </div>
         </el-aside>
@@ -37,16 +37,16 @@
               </el-table-column>
               <el-table-column prop="date" label="发表时间" width="80">
               </el-table-column>
-              <el-table-column prop="source" label="来源" width="80">
+              <el-table-column fixed="right" label="操作" align="center" width="80">
+                <template>
+                  <el-button @click="collect" type="text" size="small">收藏</el-button>
+                </template>
               </el-table-column>
             </el-table>
             <el-table :data="detailData" class="abstract">
               <el-table-column prop="abstract" label="摘要" width="610">
               </el-table-column>
-              <el-table-column fixed="right" label="操作" align="center" width="80">
-                <template slot-scope="scope">
-                  <el-button @click.native.prevent="viewRow(scope.$index, tableData)" type="text" size="small">收藏</el-button>
-                </template>
+              <el-table-column prop="source" label="来源" width="80">
               </el-table-column>
             </el-table>
             <el-table :data="otherData" class="other">
@@ -125,7 +125,7 @@
 export default {
   data () {
     return {
-      selected: this.$route.params.selected, // params传参页面刷新即消失
+      selected: JSON.parse(this.$route.query.selected), // params传参页面刷新即消失
       tableData: [],
       detailData: [],
       otherData: [],
@@ -143,21 +143,31 @@ export default {
       }]
     }
   },
+  mounted () {
+    // 获取页面数据, 清除key
+    if (localStorage.getItem('rawResult')) {
+      this.rawResult = JSON.parse(localStorage.getItem('rawResult'))
+      console.log(this.rawResult)
+      localStorage.removeItem('rawResult')
+    } else {
+      console.log('2')
+    }
+  },
   methods: {
     importResult () {
       console.log(this.selected)
       // data in table 1
       let title = 'title'
       let author = 'author'
-      let source = 'source'
       let info = 'info'
       let date = 'date'
-      var tableDict1 = { 'title': this.selected[title], 'author': this.selected[author], 'source': this.selected[source], 'info': this.selected[info], 'date': this.selected[date] }
+      var tableDict1 = { 'title': this.selected[title], 'author': this.selected[author], 'info': this.selected[info], 'date': this.selected[date] }
       this.tableData = Array(1).fill(tableDict1)
 
       // data in table 2
       let abstract = 'abstract'
-      var tableDict2 = { 'abstract': this.selected[abstract] }
+      let source = 'source'
+      var tableDict2 = { 'abstract': this.selected[abstract], 'source': this.selected[source] }
       this.detailData = Array(1).fill(tableDict2)
 
       // data in table 3
@@ -167,6 +177,15 @@ export default {
       let downed = 'downed'
       var tableDict3 = { 'kws': this.selected[kws], 'fund': this.selected[fund], 'cited': this.selected[cited], 'downed': this.selected[downed] }
       this.otherData = Array(1).fill(tableDict3)
+    },
+    collect () {
+      this.$router.push({
+        name: 'collection',
+        params: {
+          collect: JSON.stringify(this.tableData)
+        }
+      })
+      alert('收藏成功!')
     },
     showDropmenu: function (event) {
       console.log('showDropmenu')
@@ -199,7 +218,12 @@ export default {
       this.selectedItems.push({ name: name })
     },
     submit () {
-      this.$router.push('/simplesearch')
+      this.$router.push({
+        name: 'simplesearch',
+        params: {
+          storage: this.rawResult // 传输页面数据
+        }
+      })
     }
   }
 }

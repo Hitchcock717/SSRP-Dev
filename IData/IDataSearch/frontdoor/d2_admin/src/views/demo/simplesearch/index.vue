@@ -48,11 +48,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { GetRawResult } from '@/api/demo/rawResult2Service'
 export default {
   data () {
     return {
-      result: JSON.parse(this.$route.query.result),
+      storage: this.$route.params.storage, // 获取详情页面传递来的页面数据
+      result: JSON.parse(this.$route.params.result),
       isFixed: '',
       currentPage: 1,
       currentRow: '',
@@ -62,15 +63,28 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapState('expand/rawResult', {
-      rawResult: state => state.rawResult
-    })
+  mounted () {
+    if (localStorage.getItem('rawResult')) {
+      console.log('1')
+    } else { // key被清除, 无法获取
+      this.tableData = this.storage
+      console.log(this.tableData)
+    }
   },
   methods: {
     importResult () {
-      console.log(JSON.stringify(this.rawResult))
-      this.tableData = this.rawResult
+      alert('正在导入...')
+      GetRawResult({})
+        .then(res => {
+          this.rawResult = res
+          alert('数据导入成功!')
+
+          this.tableData = this.rawResult
+          // console.log(this.tableData)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     onScroll () {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
@@ -96,28 +110,23 @@ export default {
     handleCurrentChange (val) {
       this.currentPage = val
     },
-    beforeRouteLeave (to, from, next) {
-      if (to.name === 'detail1') {
-        let condition = JSON.stringify(this.rawResult)
-        localStorage.setItem('condition', condition)
-      } else {
-        localStorage.removeItem('condition')
-      }
-      next()
-    },
     setCurrent (row) {
       this.$refs.simpleTable.setCurrentRow(row)
       var res = this.currentRow
 
+      // 点击详情，保存页面数据
+      const parsed = JSON.stringify(this.tableData)
+      localStorage.setItem('rawResult', parsed)
+
       let pkid = 'id'
-      for (var i = 0, len = this.rawResult.length; i < len; i++) {
-        for (var key in this.rawResult[i]) {
-          if (key === pkid && this.rawResult[i][key] === res[pkid]) {
-            var selected = this.rawResult[i]
+      for (var i = 0, len = this.tableData.length; i < len; i++) {
+        for (var key in this.tableData[i]) {
+          if (key === pkid && this.tableData[i][key] === res[pkid]) {
+            var selected = this.tableData[i]
             this.$router.push({
-              name: 'detail1',
-              params: {
-                selected: selected
+              path: '/detail1',
+              query: {
+                selected: JSON.stringify(selected)
               }
             })
             console.log(selected)
@@ -128,23 +137,18 @@ export default {
     handleChange (val) {
       this.currentRow = val
     },
-    submit () {
+    submit () { // 进入子库
       this.$router.push({
         name: 'subrepo',
         params: {
-          rawResult: this.rawResult
+          rawResult: this.tableData
         }
       })
       console.log(this.rawResult)
     }
   },
   created () {
-    let condition = localStorage.getItem('condition')
-    if (condition !== null) {
-      this.rawResult = JSON.parse(condition)
-    }
     window.addEventListener('scroll', this.onScroll)
-    this.$store.dispatch('expand/rawResult/getrawResult')
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

@@ -52,8 +52,8 @@ export default {
     },
     submit () {
       this.$router.push({
-        path: '/simplesearch',
-        query: {
+        name: 'simplesearch',
+        params: {
           result: JSON.stringify(this.result)
         }
       })
