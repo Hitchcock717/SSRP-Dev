@@ -12,10 +12,11 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
 from django.core.cache import caches
-from .models import Message, Extractor, Recommend, Simplesearch, Detailsearch, Temp, MessageSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer
+from .models import Message, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, MessageSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer
 
 
 @api_view(('GET',))
@@ -182,7 +183,7 @@ def recommend(request):
         'request': request,
     }
 
-    base_router = 'http://127.0.0.1:8000/api/extract/'
+    base_router = 'http://127.0.0.1:8000/api/recommend/'
 
     recommends = []
     recommends_group = []
@@ -430,6 +431,8 @@ def startspider(request):
 
             title = each_word_doc['title']
             author = each_word_doc['author']
+            if re.search(';', author):
+                author = re.sub(';', '', author)
             source = each_word_doc['source']
             info = each_word_doc['info']
             date = each_word_doc['date']
@@ -496,12 +499,12 @@ def rawresult(request):
             # updates = Simplesearch.objects.all()[:50]  # for test
 
             rawresults = []
-            # 自增序号刷新
-            uid = 1
+            # 自增序号刷新【前端改】
+            # uid = 1
             for update in updates:
                 update_dict = model_to_dict(update)
-                update_dict['id'] = str(uid)
-                uid += 1
+                # update_dict['id'] = str(uid)
+                # uid += 1
 
                 rawresults.append(update_dict)
 
@@ -521,12 +524,12 @@ def rawresult(request):
             # updates = Simplesearch.objects.all()[:20]  # for test
 
             rawresults = []
-            # 自增序号刷新
-            uid = 1
+            # 自增序号刷新【前端改】
+            # uid = 1
             for update in updates:
                 update_dict = model_to_dict(update)
-                update_dict['id'] = str(uid)
-                uid += 1
+                # update_dict['id'] = str(uid)
+                # uid += 1
 
                 rawresults.append(update_dict)
 
@@ -535,6 +538,25 @@ def rawresult(request):
                 return Response(rawresults)
             else:
                 return Response('No suitable data!')
+
+
+@api_view(('POST',))
+def selectedrawresult(request):
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        target_dict = ast.literal_eval(raw_dict_key)
+        target_id = int(target_dict['target'].strip('"'))
+
+        # 按对应id查找
+        target_data = Simplesearch.objects.filter(id=target_id)
+        for data in target_data:
+            clean_data = model_to_dict(data)
+
+            return Response(clean_data)
+
+    if request.method == 'GET':
+        return Response('No method!')
 
 
 @api_view(('POST', 'GET',))
@@ -710,6 +732,535 @@ def filteresult(request):
                 return Response('No suitable data!')
 
 
+@api_view(('POST','GET',))
+def getcollection(request):
+    if request.method == 'POST':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/collection/'
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        collection_dict = ast.literal_eval(raw_dict_key)
+        print(collection_dict)
+
+        # 收藏词表
+        collection = collection_dict['collection'].strip('"')
+
+        collections = []
+
+        if Collection.objects.filter(folder=collection):
+            data = Collection.objects.filter(folder=collection)
+
+            raw_d_dict = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                print(d_dict)
+                raw_d_dict.append(d_dict)
+
+            set_only = []
+            set_only.append(raw_d_dict[0])
+
+            # drop reqeated
+            for item in raw_d_dict:
+                k = 0
+                for iitem in set_only:
+                    if item['title'] != iitem['title'] and item['author'] != iitem['author']:
+                        k += 1
+                    else:
+                        break
+
+                    if k == len(set_only):
+                        set_only.append(item)
+
+            for only in set_only:
+                print(only)
+                pkid = only['id']
+                collection_data = CollectionSerializer(data=only, context=serializer_context)
+                if collection_data.is_valid():
+                    ordered_li = collection_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    collections.append(ordered_li)
+            print(collections)
+
+            return Response(collections)
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def addcollection(request):
+    if request.method == 'POST':
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        collection_dict = ast.literal_eval(raw_dict_key)
+        print(collection_dict)
+
+        # 接口数据
+        raw_collected_data = collection_dict['collect']
+        flag = collection_dict['flag'].strip('"')
+        folder = collection_dict['folder'].strip('"')
+
+        drop_quotation_data = re.sub('^"|"$', '', raw_collected_data)
+        collected_data = ast.literal_eval(drop_quotation_data.strip(']['))
+
+        # 收藏论文字段
+        title = collected_data['title']
+        author = collected_data['author']
+        info = collected_data['info']
+        date = collected_data['date']
+
+        if not Collection.objects.filter(title=title, author=author, info=info, date=date, flag=flag, folder=folder):
+            collect = Collection(title=title, author=author, info=info, date=date, flag=flag, folder=folder)
+            collect.save()
+            return Response('success')
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('DELETE','GET',))
+def deletecollection(request):
+    if request.method == 'DELETE':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        collection_dict = ast.literal_eval(raw_dict_key)
+
+        delete_id = collection_dict['delid']
+        print(delete_id)
+
+        if not delete_id:
+            return Response('failed')
+        else:
+            get_object_or_404(Collection, pk=int(delete_id)).delete()
+        return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def getcorpus(request):
+    if request.method == 'POST':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/corpus/'
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        corpus_dict = ast.literal_eval(raw_dict_key)
+        print(corpus_dict)
+
+        # 收藏词表
+        corpus = corpus_dict['corpus'].strip('"')
+
+        corpuss = []
+
+        if Corpus.objects.filter(repository=corpus):
+            data = Corpus.objects.filter(repository=corpus)
+
+            raw_d_dict = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                raw_d_dict.append(d_dict)
+
+            set_only = []
+            set_only.append(raw_d_dict[0])
+
+            # drop reqeated
+            for item in raw_d_dict:
+                k = 0
+                for iitem in set_only:
+                    if item['kws'] != iitem['kws']:
+                        k += 1
+                    else:
+                        break
+
+                    if k == len(set_only):
+                        set_only.append(item)
+
+            for only in set_only:
+                pkid = only['id']
+                corpus_data = CorpusSerializer(data=only, context=serializer_context)
+                if corpus_data.is_valid():
+                    ordered_li = corpus_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    corpuss.append(ordered_li)
+            print(corpuss)
+
+            return Response(corpuss)
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+# 添加词汇方式1. 详情页点击收藏
+@api_view(('POST','GET',))
+def appendcorpus(request):
+    if request.method == 'POST':
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        corpus_dict = ast.literal_eval(raw_dict_key)
+        print(corpus_dict)
+
+        # 接口数据
+        raw_corpus_data = corpus_dict['corpus']
+        repo = corpus_dict['repository'].strip('"')
+
+        print(raw_corpus_data)
+        print(repo)
+
+        if not Corpus.objects.filter(kws=raw_corpus_data, repository=repo):
+            corp = Corpus(kws=raw_corpus_data, repository=repo)
+            corp.save()
+            return Response('success')
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+# 添加词汇方式2. 词表库内直接添加
+@api_view(('POST','GET',))
+def addcorpus(request):
+    if request.method == 'POST':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/corpus/'
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        corpus_dict = ast.literal_eval(raw_dict_key)
+        print(corpus_dict)
+
+        # 词汇名称
+        kws = corpus_dict['kws']
+        print(kws)
+
+        corpus = corpus_dict['corpus'].strip('"')
+        print(corpus)
+
+        corpuss = []
+        # 重复值判断
+        if Corpus.objects.filter(kws=kws):
+            return Response('failed')
+        else:
+            corp = Corpus(kws=kws, repository=corpus)
+            corp.save()
+
+            data = Corpus.objects.filter(kws=kws, repository=corpus)
+            print(data)
+            for d in data:
+                raw_dict = model_to_dict(d)
+
+                pkid = raw_dict['id']
+                corpus_data = CorpusSerializer(data=raw_dict, context=serializer_context)
+                if corpus_data.is_valid():
+                    ordered_li = corpus_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    corpuss.append(ordered_li)
+                    print(ordered_li)
+
+        return Response(corpuss[0])
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('DELETE','GET',))
+def deletecorpus(request):
+    if request.method == 'DELETE':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        corpus_dict = ast.literal_eval(raw_dict_key)
+
+        delete_id = corpus_dict['delid']
+        print(delete_id)
+
+        if not delete_id:
+            return Response('failed')
+        else:
+            get_object_or_404(Corpus, pk=int(delete_id)).delete()
+        return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('GET',))
+def getfolder(request):
+    if request.method == 'GET':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/folder/'
+
+        data = Folder.objects.all()
+
+        folders = []
+        if data:
+            raw_d_dict = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                raw_d_dict.append(d_dict)
+
+            set_only = []
+            set_only.append(raw_d_dict[0])
+
+            # drop reqeated
+            for item in raw_d_dict:
+                k = 0
+                for iitem in set_only:
+                    if item['folder'] != iitem['folder']:
+                        k += 1
+                    else:
+                        break
+
+                    if k == len(set_only):
+                        set_only.append(item)
+
+            for only in set_only:
+                pkid = only['id']
+                folder_data = FolderSerializer(data=only, context=serializer_context)
+                if folder_data.is_valid():
+                    ordered_li = folder_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    folders.append(ordered_li)
+            print(folders)
+
+            return Response(folders)
+
+        else:
+            return Response('failed')
+
+
+@api_view(('POST','GET',))
+def addfolder(request):
+    if request.method == 'POST':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/folder/'
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        folder_dict = ast.literal_eval(raw_dict_key)
+        print(folder_dict)
+
+        # 收藏夹名称
+        fold_name = folder_dict['foldername']
+        print(fold_name)
+
+        folders = []
+
+        if not Folder.objects.filter(folder=fold_name):  # 未找到重复值, 先存再取
+            folder = Folder(folder=fold_name)
+            folder.save()
+
+            data = Folder.objects.filter(folder=fold_name)
+
+            for d in data:
+                raw_dict = model_to_dict(d)
+
+                pkid = raw_dict['id']
+                corpus_data = FolderSerializer(data=raw_dict, context=serializer_context)
+                if corpus_data.is_valid():
+                    ordered_li = corpus_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    folders.append(ordered_li)
+            print(folders)
+
+            return Response(folders[0])
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('DELETE','GET',))
+def deletefolder(request):
+    if request.method == 'DELETE':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        folder_dict = ast.literal_eval(raw_dict_key)
+
+        delete_id = folder_dict['delid']
+        print(delete_id)
+
+        if not delete_id:
+            return Response('failed')
+        else:
+            get_object_or_404(Folder, pk=int(delete_id)).delete()
+        return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('GET',))
+def getrepository(request):
+    if request.method == 'GET':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/repository/'
+
+        data = Repository.objects.all()
+
+        repositorys = []
+
+        if data:
+            raw_d_dict = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                raw_d_dict.append(d_dict)
+
+            set_only = []
+            set_only.append(raw_d_dict[0])
+
+            # drop reqeated
+            for item in raw_d_dict:
+                k = 0
+                for iitem in set_only:
+                    if item['repository'] != iitem['repository']:
+                        k += 1
+                    else:
+                        break
+
+                    if k == len(set_only):
+                        set_only.append(item)
+
+            for only in set_only:
+                pkid = only['id']
+                repository_data = RepositorySerializer(data=only, context=serializer_context)
+                if repository_data.is_valid():
+                    ordered_li = repository_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    repositorys.append(ordered_li)
+            print(repositorys)
+
+            return Response(repositorys)
+
+        else:
+            return Response('failed')
+
+
+@api_view(('POST','GET',))
+def addrepository(request):
+    if request.method == 'POST':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/repository/'
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        repository_dict = ast.literal_eval(raw_dict_key)
+        print(repository_dict)
+
+        # 词表库名称
+        repo_name = repository_dict['reponame']
+        print(repo_name)
+
+        repos = []
+
+        if not Repository.objects.filter(repository=repo_name):
+            repository = Repository(repository=repo_name)
+            repository.save()
+
+            data = Repository.objects.filter(repository=repo_name)
+
+            for d in data:
+                raw_dict = model_to_dict(d)
+
+                pkid = raw_dict['id']
+                corpus_data = RepositorySerializer(data=raw_dict, context=serializer_context)
+                if corpus_data.is_valid():
+                    ordered_li = corpus_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    repos.append(ordered_li)
+            print(repos)
+
+            return Response(repos[0])
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('DELETE','GET',))
+def deleterepository(request):
+    if request.method == 'DELETE':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        repository_dict = ast.literal_eval(raw_dict_key)
+
+        delete_id = repository_dict['delid']
+        print(delete_id)
+
+        if not delete_id:
+            return Response('failed')
+        else:
+            get_object_or_404(Repository, pk=int(delete_id)).delete()
+        return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
 class MessageViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows messages to be viewed or edited.
@@ -742,6 +1293,25 @@ class TempViewset(viewsets.ModelViewSet):
     queryset = Temp.objects.all()
     serializer_class = TempSerializer
 
+
+class FolderViewset(viewsets.ModelViewSet):
+    queryset = Folder.objects.all()
+    serializer_class = FolderSerializer
+
+
+class CollectionViewset(viewsets.ModelViewSet):
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
+
+
+class RepositoryViewset(viewsets.ModelViewSet):
+    queryset = Repository.objects.all()
+    serializer_class = RepositorySerializer
+
+
+class CorpusViewset(viewsets.ModelViewSet):
+    queryset = Corpus.objects.all()
+    serializer_class = CorpusSerializer
 
 
 

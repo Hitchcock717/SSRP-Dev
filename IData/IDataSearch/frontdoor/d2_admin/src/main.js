@@ -16,6 +16,10 @@ import { frameInRoutes } from '@/router/routes'
 // 导入axios
 import Axios from 'axios'
 
+// 导入loading组件
+// import http from './utils/http'
+// Vue.prototype.axios = http
+
 import qs from 'qs'
 Vue.prototype.$qs = qs
 

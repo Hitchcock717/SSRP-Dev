@@ -19,7 +19,7 @@ from rest_framework import routers
 
 from django.conf.urls import url
 from backdoor import views
-from backdoor.views import MessageViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset
+from backdoor.views import MessageViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset
 
 router = routers.DefaultRouter()
 router.register('messages', MessageViewSet)
@@ -28,6 +28,10 @@ router.register('recommends', RecommedViewset)
 router.register('simplesearch', SimplesearchViewset)
 router.register('detailesearch', DetailsearchViewset)
 router.register('temp', TempViewset)
+router.register('folder', FolderViewset)
+router.register('collection', CollectionViewset)
+router.register('repository', RepositoryViewset)
+router.register('corpus', CorpusViewset)
 
 
 app_name = 'backdoor'
@@ -48,6 +52,34 @@ urlpatterns = [
     url('api/getexpression/', views.getexpression),
 
     url('api/filteresult/', views.filteresult),
+
+    url('api/selectedrawresult/', views.selectedrawresult),
+
+    url('api/getfolder/', views.getfolder),
+
+    url('api/addfolder/', views.addfolder),
+
+    url('api/deletefolder/', views.deletefolder),
+
+    url('api/getcollection/', views.getcollection),
+
+    url('api/addcollection/', views.addcollection),
+
+    url('api/deletecollection/', views.deletecollection),
+
+    url('api/getrepository/', views.getrepository),
+
+    url('api/addrepository/', views.addrepository),
+
+    url('api/deleterepository/', views.deleterepository),
+
+    url('api/getcorpus/', views.getcorpus),
+
+    url('api/addcorpus/', views.addcorpus),
+
+    url('api/appendcorpus/', views.appendcorpus),
+
+    url('api/deletecorpus/', views.deletecorpus),
 
     # http://localhost:8000/api/admin/
     path('api/admin/', admin.site.urls),

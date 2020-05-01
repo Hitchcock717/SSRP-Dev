@@ -1,155 +1,108 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
-      <el-container style="height: 800px; border: 1px solid #eee">
-        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-          <el-col :span="24">
-            <el-menu
-              default-active="2"
-              class="el-menu-vertical-demo">
-              <h4 class="d2-text-center">我的收藏夹</h4>
-              <el-submenu index="1">
-                <template slot="title">
-                  <i class="el-icon-location"></i>
-                  <span>电镜相关</span>
-                </template>
-                <el-menu-item-group>
-                  <template slot="title">分组一</template>
-                  <el-menu-item index="1-1">选项1</el-menu-item>
-                  <el-menu-item index="1-2">选项2</el-menu-item>
-                </el-menu-item-group>
-                <el-menu-item-group title="分组2">
-                  <el-menu-item index="1-3">选项3</el-menu-item>
-                </el-menu-item-group>
-                <el-submenu index="1-4">
-                  <template slot="title">选项4</template>
-                  <el-menu-item index="1-4-1">选项1</el-menu-item>
-                </el-submenu>
-              </el-submenu>
-              <el-menu-item index="2">
-                <i class="el-icon-menu"></i>
-                <span slot="title">氨基酸相关</span>
-              </el-menu-item>
-              <el-menu-item index="3">
-                <i class="el-icon-document"></i>
-                <span slot="title">中药相关</span>
-              </el-menu-item>
-              <el-menu-item index="4">
-                <i class="el-icon-setting"></i>
-                <span slot="title">机器人相关</span>
-              </el-menu-item>
-            </el-menu>
-          </el-col>
-        </el-aside>
-        <el-container>
-          <el-main>
-            <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-            style="width: 800px" empty-text="N/A" max-height="600">
-              <el-table-column label="编号" width="60px" prop="id" sortable></el-table-column>
-              <el-table-column label="标题" width="100px" align="center" prop="title"></el-table-column>
-              <el-table-column label="作者" prop="author"></el-table-column>
-              <el-table-column label="发表时间" prop="date" sortable></el-table-column>
-              <el-table-column fixed="right" label="操作" width="80">
-                <template slot-scope="scope">
-                  <el-button @click="viewRow(scope.$index, scope.row)" type="text" size="small">
-                  详情
-                  </el-button>
-                  <el-button size="small" type="text" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-sizes="[5, 10, 15]"
-              :page-size="1"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="tableData.length">
-            </el-pagination>
-          </el-main>
-        </el-container>
-      </el-container>
+      <el-button
+        @click="importResult"
+        type="primary"
+        class="importResult">导入</el-button>
+        <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+            style="width: 800px" empty-text="N/A" max-height="550">
+          <el-table-column label="编号" width="60px" align="center" type="index"></el-table-column>
+          <el-table-column label="标题" width="300px" align="center" prop="title"></el-table-column>
+          <el-table-column label="作者" width="150px" align="center" prop="author"></el-table-column>
+          <el-table-column label="单位/机构" width="100px" align="center" prop="info"></el-table-column>
+          <el-table-column label="发表时间" width="100px" prop="date" sortable></el-table-column>
+          <el-table-column fixed="right" label="操作" width="90px" align="center">
+            <template slot-scope="scope">
+              <el-button @click="viewRow(scope)" type="text" size="small">
+              详情
+              </el-button>
+              <el-button size="small" type="text" @click="deleteCollection(scope)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 15]"
+          :page-size="1"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="tableData.length">
+        </el-pagination>
     </d2-page-cover>
   </d2-container>
 </template>
 <style lang="scss" scoped>
-  .d2-page-cover {
-    @extend %full;
-    @extend %unable-select;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: center;
-  }
-  .el-header {
-    color: #333;
-    line-height: 60px;
-  }
-  .el-aside {
-    color: #333;
-  }
-  .abstract {
-    margin-top: 20px;
-  }
-  .other {
-    margin-top: 20px;
-  }
-  .note {
-    margin-top: 20px;
-  }
-  .write {
-    width: 190px;
-    height: 50px;
-  }
-  .success {
-    margin-top: 5px;
-    float: right;
-    margin-right: 5px;
-  }
-  .recom {
-    margin-top: 50px;
-  }
-  .return {
-    margin-top: 10px;
-    float: right;
+  .importResult {
+    margin-bottom: 15px;
   }
 </style>
 
 <script>
+// import { mapState, mapActions } from 'vuex'
+import { GetCollection } from '@/api/demo/collection/getcollectionService'
+import { DeleteCollection } from '@/api/demo/collection/deletecollectionService'
 export default {
   data () {
     return {
-      collect: this.$route.params.collect,
+      selectedCollection: this.$route.query.selectedCollection,
       currentPage: 1,
-      pagesize: 5,
+      pagesize: 10,
+      options: [],
       tableData: []
     }
   },
-  mounted () {
-    let title = 'title'
-    let author = 'author'
-    let info = 'info'
-    let date = 'date'
-
-    var tableDict = { title: this.collect[title], 'author': this.collect[author], 'info': this.collect[info], 'date': this.collect[date] }
-    this.tableData.push(tableDict)
-  },
   methods: {
-    handleDelete (index, row) {
-      this.tableData.splice(index, 1)
+    importResult () {
+      GetCollection({
+        collection: this.selectedCollection
+      })
+        .then(res => {
+          this.result = res
+          console.log(this.result)
+          if (this.result === 'failed') {
+            alert('该词表为空,请添加词汇!')
+          } else {
+            this.tableData = this.result
+          }
+        })
+    },
+    deleteCollection (scope) {
+      DeleteCollection({
+        delid: JSON.stringify(scope.row.pk)
+      })
+        .then(res => {
+          var feedback = res
+          if (feedback === 'success') {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          } else if (feedback === 'failed') {
+            this.$message({
+              type: 'info',
+              message: '删除失败!'
+            })
+          }
+        })
+
+      this.tableData.splice(scope.$index, 1)
+    },
+    viewRow (scope) {
+      let flag = 'flag'
+      this.$router.push({
+        path: '/detail1',
+        query: {
+          selected: scope.row[flag]
+        }
+      })
     },
     handleSizeChange (val) {
       this.pagesize = val
     },
     handleCurrentChange (val) {
       this.currentPage = val
-    },
-    viewRow (index, rows) {
-      this.$router.push('/detail1')
-    },
-    submit () {
-      this.$router.push('/simplesearch')
     }
   }
 }

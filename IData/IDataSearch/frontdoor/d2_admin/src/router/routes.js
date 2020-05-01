@@ -50,8 +50,8 @@ const frameIn = [
         component: _import('demo/paper')
       },
       {
-        path: 'corpus',
-        name: 'corpus',
+        path: 'corpusearch',
+        name: 'corpusearch',
         meta: {
           title: '词表搜索',
           auth: true
@@ -158,22 +158,40 @@ const frameIn = [
         component: _import('demo/personal1')
       },
       {
+        path: 'folder',
+        name: 'folder',
+        meta: {
+          title: '收藏夹',
+          auth: true
+        },
+        component: _import('demo/folder')
+      },
+      {
         path: 'collection',
         name: 'collection',
         meta: {
-          title: '收藏夹',
+          title: '收藏夹详情',
           auth: true
         },
         component: _import('demo/collection')
       },
       {
-        path: 'corpusrepo',
-        name: 'corpusrepo',
+        path: 'repository',
+        name: 'repository',
         meta: {
           title: '词表库',
           auth: true
         },
-        component: _import('demo/corpusrepo')
+        component: _import('demo/repository')
+      },
+      {
+        path: 'corpus',
+        name: 'corpus',
+        meta: {
+          title: '词表详情',
+          auth: true
+        },
+        component: _import('demo/corpus')
       },
       // 系统 前端日志
       {

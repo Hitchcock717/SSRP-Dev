@@ -87,6 +87,54 @@ class TempSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('url', 'record_id', 'record_db', 'pk')
 
 
+class Folder(models.Model):
+	folder = models.TextField()
+
+
+class FolderSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Folder
+		fields = ('url', 'folder', 'pk')
+
+
+class Collection(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=50)
+    info = models.TextField()
+    date = models.TextField()
+    folder = models.TextField(default="")
+    flag = models.TextField(default="")
+
+
+class CollectionSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Collection
+		fields = ('url', 'title', 'author', 'info', 'date', 'folder', 'flag', 'pk')
+
+
+class Repository(models.Model):
+	repository = models.TextField()
+
+
+class RepositorySerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Repository
+		fields = ('url', 'repository', 'pk')
+
+
+class Corpus(models.Model):
+	kws = models.TextField()
+	repository = models.TextField()
+
+
+class CorpusSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Corpus
+		fields = ('url', 'kws', 'repository', 'pk')
+
+
+
+
 '''
 # connect scrapy spiders
 

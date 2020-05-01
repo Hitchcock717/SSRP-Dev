@@ -2,12 +2,6 @@
   <d2-container class="page">
     <d2-page-cover>
       <el-form :model="simpleForm" ref="simpleForm" label-width="150px" class="demo-simpleForm" :class='{fixed:isFixed}'>
-        <el-form-item label="简单检索表达式" prop="expression">
-          <el-button @click="viewQuery" type="primary" class="viewQuery">查看检索表达式</el-button>
-        </el-form-item>
-        <el-form-item label="过滤后结果数(条)" prop="number">
-          <el-button @click="viewResult" type="primary" class="viewResult">查看搜索结果</el-button>
-        </el-form-item>
         <el-form-item label="子库" prop="subrepo">
           <el-button @click="submit" type="primary" class="nextpage">进入子库</el-button>
         </el-form-item>
@@ -17,23 +11,25 @@
             type="primary"
             class="importResult">导入</el-button>
         </el-form-item>
-       </el-form>
-       <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="500"
-        highlight-current-row @current-change="handleChange" ref="simpleTable">
-        <el-table-column label="编号" width="60px" prop="id"></el-table-column>
-        <el-table-column label="标题" width="250px" align="center" prop="title"></el-table-column>
-        <el-table-column label="作者" prop="author"></el-table-column>
-        <el-table-column label="发表时间" prop="date" sortable></el-table-column>
-        <el-table-column label="被引频次" width="80px" prop="cited" sortable></el-table-column>
-        <el-table-column label="下载频次" width="80px" prop="downed" sortable></el-table-column>
-        <el-table-column fixed="right" label="操作" width="80">
-          <template slot-scope="scope">
-            <el-button @click="setCurrent(scope.row)" type="text" size="small">
-            详情
-            </el-button>
-          </template>
-        </el-table-column>
-       </el-table>
+      </el-form>
+      <div v-if="tableData">
+         <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="550"
+          highlight-current-row @current-change="handleChange" ref="simpleTable">
+          <el-table-column label="编号" width="60px" type="index"></el-table-column>
+          <el-table-column label="标题" width="250px" align="center" prop="title"></el-table-column>
+          <el-table-column label="作者" prop="author"></el-table-column>
+          <el-table-column label="发表时间" prop="date" sortable></el-table-column>
+          <el-table-column label="被引频次" width="80px" prop="cited" sortable></el-table-column>
+          <el-table-column label="下载频次" width="80px" prop="downed" sortable></el-table-column>
+          <el-table-column fixed="right" label="操作" width="80">
+            <template slot-scope="scope">
+              <el-button @click="setCurrent(scope.row)" type="text" size="small">
+              详情
+              </el-button>
+            </template>
+          </el-table-column>
+         </el-table>
+      </div>
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -53,7 +49,7 @@ export default {
   data () {
     return {
       storage: this.$route.params.storage, // 获取详情页面传递来的页面数据
-      result: JSON.parse(this.$route.params.result),
+      height: '',
       isFixed: '',
       currentPage: 1,
       currentRow: '',
@@ -67,8 +63,12 @@ export default {
     if (localStorage.getItem('rawResult')) {
       console.log('1')
     } else { // key被清除, 无法获取
-      this.tableData = this.storage
-      console.log(this.tableData)
+      if (this.tableData === 'undefined') {
+        console.log('no import')
+      } else {
+        this.tableData = this.storage
+        console.log(this.tableData)
+      }
     }
   },
   methods: {
@@ -96,14 +96,6 @@ export default {
         this.isFixed = false
       }
     },
-    viewQuery () {
-      let queryBody = 'query'
-      alert('您的简单检索表达式为: query = keyword in [' + this.result[queryBody] + ']')
-    },
-    viewResult () {
-      let filterCount = 'filter_search_count'
-      alert('过滤后搜索结果为' + this.result[filterCount] + '条!')
-    },
     handleSizeChange (val) {
       this.pagesize = val
     },
@@ -115,21 +107,20 @@ export default {
       var res = this.currentRow
 
       // 点击详情，保存页面数据
-      const parsed = JSON.stringify(this.tableData)
-      localStorage.setItem('rawResult', parsed)
+      const parsedResult = JSON.stringify(this.tableData)
+      localStorage.setItem('rawResult', parsedResult)
 
       let pkid = 'id'
       for (var i = 0, len = this.tableData.length; i < len; i++) {
         for (var key in this.tableData[i]) {
           if (key === pkid && this.tableData[i][key] === res[pkid]) {
-            var selected = this.tableData[i]
+            var selected = this.tableData[i][key] // 数据库id作参数
             this.$router.push({
               path: '/detail1',
               query: {
                 selected: JSON.stringify(selected)
               }
             })
-            console.log(selected)
           }
         }
       }
@@ -159,7 +150,6 @@ export default {
 <style scoped>
   .demo-simpleForm {
     margin-right: 100px;
-    margin-top: 150px;
   }
   .demo-table-expand {
     font-size: 0;

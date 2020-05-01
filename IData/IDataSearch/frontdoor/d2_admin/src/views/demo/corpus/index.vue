@@ -1,69 +1,136 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
-      <el-upload
-        action="https://jsonplaceholder.typicode.com/posts/"
-        ref="upload"
-        drag
-        multiple
-        accept=".txt"
-        :file-list="fileList"
-        :limit="3"
-        :on-exceed="handleExceed"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        :before-remove="beforeRemove">
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传txt文件，且不超过10mb</div>
-      </el-upload>
-      <el-button size="default" @click="submit(fileList)" type="primary" class="button-save">保存</el-button>
+      <el-button
+        @click="addCorpus"
+        type="primary"
+        class="addCorpus">添加</el-button>
+      <el-button
+        @click="importResult"
+        type="primary"
+        class="importResult">导入</el-button>
+      <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+      style="width: 800px" empty-text="N/A" max-height="600">
+        <el-table-column label="编号" width="100px" type="index" align="center"></el-table-column>
+        <el-table-column label="词汇" align="center" prop="kws"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="100px" align="center">
+          <template slot-scope="scope">
+            <el-button size="small" type="text" @click="deleteCorpus(scope)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[5, 10, 15]"
+        :page-size="1"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tableData.length">
+      </el-pagination>
     </d2-page-cover>
   </d2-container>
 </template>
+<style lang="scss" scoped>
+  .importResult {
+    margin-bottom: 15px;
+  }
+  .addCorpus {
+    margin-bottom: 15px;
+    margin-right: 15px;
+  }
+</style>
 
 <script>
-import D2PageCover from './components/d2-page-cover'
+// import { mapState, mapActions } from 'vuex'
+import { GetCorpus } from '@/api/demo/corpus/getcorpusService'
+import { AddCorpus } from '@/api/demo/corpus/addcorpusService'
+import { DeleteCorpus } from '@/api/demo/corpus/deletecorpusService'
 export default {
-  components: {
-    D2PageCover
-  },
   data () {
     return {
-      fileList: [{
-        name: 'test1.txt',
-        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-      },
-      {
-        name: 'test2.txt',
-        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-      }]
+      selectedCorpus: this.$route.query.selectedCorpus,
+      currentPage: 1,
+      pagesize: 10,
+      options: [],
+      tableData: []
     }
   },
   methods: {
-    handleRemove (file, fileList) {
-      console.log(file, fileList)
+    importResult () {
+      GetCorpus({
+        corpus: this.selectedCorpus
+      })
+        .then(res => {
+          this.result = res
+          if (this.result === 'failed') {
+            alert('该词表为空,请添加词汇!')
+          } else {
+            this.tableData = this.result
+          }
+        })
     },
-    handlePreview (file) {
-      console.log(file)
+    addCorpus () {
+      this.$prompt('请输入词汇名称', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /[\u4e00-\u9fa5_a-zA-Z0-9_]{1,30}/,
+        inputErrorMessage: '词汇名称长度必须为1-30位'
+      }).then(({ value }) => {
+        AddCorpus({
+          kws: value,
+          corpus: this.selectedCorpus
+        })
+          .then(res => {
+            this.feedback = res
+            console.log(this.feedback)
+            if (this.feedback !== 'failed') {
+              this.$message({
+                type: 'success',
+                message: '添加词汇名称是: ' + value
+              })
+              this.tableData.push(this.feedback)
+            } else {
+              this.$message({
+                type: 'info',
+                message: '词汇已存在!'
+              })
+            }
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
     },
-    handleExceed (files, fileList) {
-      this.$message.warning('当前限制选择 3 个文件，本次选择文件数量过多！')
+    deleteCorpus (scope) {
+      DeleteCorpus({
+        delid: JSON.stringify(scope.row.pk)
+      })
+        .then(res => {
+          var feedback = res
+          if (feedback === 'success') {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          } else if (feedback === 'failed') {
+            this.$message({
+              type: 'info',
+              message: '删除失败!'
+            })
+          }
+        })
+
+      this.tableData.splice(scope.$index, 1)
     },
-    beforeRemove (file, fileList) {
-      return this.$confirm('确定移除此文件？')
+    handleSizeChange (val) {
+      this.pagesize = val
     },
-    submit (fileList) {
-      if (this.fileList.length > 0) {
-        this.$router.push('/complete')
-      }
+    handleCurrentChange (val) {
+      this.currentPage = val
     }
   }
 }
 </script>
-
-<style scoped>
-  .button-save {
-    float: right;
-  }
-</style>
