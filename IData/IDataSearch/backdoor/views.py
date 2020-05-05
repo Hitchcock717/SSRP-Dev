@@ -16,7 +16,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
 from django.core.cache import caches
-from .models import Message, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, MessageSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer
+from .models import Message, Uploadcorpus, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, MessageSerializer, UploadcorpusSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer
 
 
 @api_view(('GET',))
@@ -330,6 +330,267 @@ def recommend(request):
             return Response(['暂无推荐'])
 
 
+@api_view(('DELETE','GET',))
+def deletextract(request):
+    if request.method == 'DELETE':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        extract_dict = ast.literal_eval(raw_dict_key)
+
+        delete_id = extract_dict['delid']
+        print(delete_id)
+
+        if not delete_id:
+            return Response('failed')
+        else:
+            print('1')
+            get_object_or_404(Extractor, pk=int(delete_id)).delete()
+            return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('DELETE','GET',))
+def deleterecommend(request):
+    if request.method == 'DELETE':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        recommend_dict = ast.literal_eval(raw_dict_key)
+
+        delete_id = recommend_dict['delid']
+        print(delete_id)
+
+        if not delete_id:
+            return Response('failed')
+        else:
+            get_object_or_404(Recommend, pk=int(delete_id)).delete()
+            return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+# 承接前台upload组件action路径
+# 不作实际操作
+@api_view(('POST', 'GET',))
+def mockupload(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.FILES.keys(), request.FILES.values()))
+        corpus_name = raw_dict['file']
+        print(corpus_name)
+        return Response('Saved')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+# 处理前台解析后的词表数据
+@api_view(('POST', 'GET',))
+def parseupload(request):
+
+    if request.method == 'POST':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/extract/'
+
+        # 包含抽取词和推荐词的列表
+        total = []
+
+        extractors = []
+        extractors_group = []
+
+        recommends = []
+        recommends_group = []
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        upload_dict = ast.literal_eval(raw_dict_key)
+        print(upload_dict)
+
+        raw_upload_data = upload_dict['content']
+        upload_name = upload_dict['name']
+        print(upload_name)
+
+        up = Uploadcorpus(corpus_name=upload_name, corpus_kws=raw_upload_data)
+        up.save()
+
+        upload_data = raw_upload_data.split('\n')
+        print(upload_data)
+        ex = ExtractAndRecommend()
+        extract_data = upload_data
+        recommend_data = ex.recommend_upload_kws(upload_data)
+
+        # ********************************************************* #
+        # 有推荐数据
+        if recommend_data:
+
+            # ********************************************************* #
+            # 存储清洗抽取词/词表内词汇
+            for kws in extract_data:
+                extr = Extractor(originkws=kws)
+                extr.save()
+
+                # retrieve kws
+                data = Extractor.objects.filter(originkws=kws)
+
+                raw_d_dict = []
+                for d in data:
+                    d_dict = model_to_dict(d)
+                    raw_d_dict.append(d_dict)
+
+                set_only = []
+                set_only.append(raw_d_dict[0])
+
+                # drop reqeated
+                for item in raw_d_dict:
+                    k = 0
+                    for iitem in set_only:
+                        if item['originkws'] != iitem['originkws']:
+                            k += 1
+                        else:
+                            break
+
+                        if k == len(set_only):
+                            set_only.append(item)
+
+                for only in set_only:
+                    pkid = only['id']
+                    extractor = ExtractorSerializer(data=only, context=serializer_context)
+                    if extractor.is_valid():
+                        ordered_li = extractor.validated_data
+                        ordered_li['pk'] = pkid
+                        ordered_li['url'] = base_router + str(pkid) + '/'
+                        ordered_li = dict(ordered_li)
+                        extractors.append(ordered_li)
+
+                extractors.sort(key=lambda x: (x['pk']), reverse=False)
+                extractors_group.extend(extractors)
+                extractors.clear()
+
+            # ********************************************************* #
+            # 存储清洗推荐词
+            for rkws in recommend_data:
+                recom = Recommend(recommendkws=rkws)
+                recom.save()
+
+                # retrieve kws
+                data = Recommend.objects.filter(recommendkws=rkws)
+
+                raw_d_dict = []
+                for d in data:
+                    d_dict = model_to_dict(d)
+                    raw_d_dict.append(d_dict)
+
+                set_only = []
+                set_only.append(raw_d_dict[0])
+
+                # drop reqeated
+                for item in raw_d_dict:
+                    k = 0
+                    for iitem in set_only:
+                        if item['recommendkws'] != iitem['recommendkws']:
+                            k += 1
+                        else:
+                            break
+
+                        if k == len(set_only):
+                            set_only.append(item)
+
+                for only in set_only:
+                    pkid = only['id']
+                    recommend = RecommendSerializer(data=only, context=serializer_context)
+                    if recommend.is_valid():
+                        ordered_li = recommend.validated_data
+                        ordered_li['pk'] = pkid
+                        ordered_li['url'] = base_router + str(pkid) + '/'
+                        ordered_li = dict(ordered_li)
+                        recommends.append(ordered_li)
+
+                recommends.sort(key=lambda x: (x['pk']), reverse=False)
+                recommends_group.extend(recommends)
+                recommends.clear()
+
+            try:
+                if extractors_group and recommends_group:
+                    total.append(extractors_group)
+                    total.append(recommends_group)
+                    print(total)
+                    return Response(total)
+
+                else:
+                    return Response('failed')
+
+            except Exception as e:
+                return Response('failed')
+
+        # 无推荐词汇, 只返回抽取词即可(一般若无推荐词, 会随机推荐, 此处防止意外)
+        else:
+            print('The recommends are empty')
+            # ********************************************************* #
+            # 存储清洗抽取词/词表内词汇
+            for kws in extract_data:
+                extr = Extractor(originkws=kws)
+                extr.save()
+
+                # retrieve kws
+                data = Extractor.objects.filter(originkws=kws)
+
+                raw_d_dict = []
+                for d in data:
+                    d_dict = model_to_dict(d)
+                    raw_d_dict.append(d_dict)
+
+                set_only = []
+                set_only.append(raw_d_dict[0])
+
+                # drop reqeated
+                for item in raw_d_dict:
+                    k = 0
+                    for iitem in set_only:
+                        if item['originkws'] != iitem['originkws']:
+                            k += 1
+                        else:
+                            break
+
+                        if k == len(set_only):
+                            set_only.append(item)
+
+                for only in set_only:
+                    pkid = only['id']
+                    extractor = ExtractorSerializer(data=only, context=serializer_context)
+                    if extractor.is_valid():
+                        ordered_li = extractor.validated_data
+                        ordered_li['pk'] = pkid
+                        ordered_li['url'] = base_router + str(pkid) + '/'
+                        ordered_li = dict(ordered_li)
+                        extractors.append(ordered_li)
+
+                extractors.sort(key=lambda x: (x['pk']), reverse=False)
+                extractors_group.extend(extractors)
+                extractors.clear()
+
+            try:
+                if extractors_group:
+                    total.append(extractors_group)
+                    print(total)
+                    return Response(total)
+
+                else:
+                    return Response('failed')
+
+            except Exception as e:
+                return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
 @api_view(('POST', 'GET',))
 def startspider(request):
     if request.method == 'POST':
@@ -629,6 +890,8 @@ def getexpression(request):
 
                     title = each_word_doc['title']
                     author = each_word_doc['author']
+                    if re.search(';', author):
+                        author = re.sub(';', '', author)
                     source = each_word_doc['source']
                     info = each_word_doc['info']
                     date = each_word_doc['date']
@@ -691,12 +954,12 @@ def filteresult(request):
             updates = Detailsearch.objects.filter(id__gt=pre_id)
             # updates = Detailsearch.objects.all()[:5]  # for test
 
-            # 自增序号刷新
-            uid = 1
+            # 自增序号刷新【前端改】
+            # uid = 1
             for update in updates:
                 update_dict = model_to_dict(update)
-                update_dict['id'] = str(uid)
-                uid += 1
+                # update_dict['id'] = str(uid)
+                # uid += 1
 
                 filteresults.append(update_dict)
 
@@ -716,12 +979,12 @@ def filteresult(request):
             updates = Detailsearch.objects.all()
             # updates = Detailsearch.objects.all()[:5]  # for test
 
-            # 自增序号刷新
-            uid = 1
+            # 自增序号刷新 【前端改】
+            # uid = 1
             for update in updates:
                 update_dict = model_to_dict(update)
-                update_dict['id'] = str(uid)
-                uid += 1
+                # update_dict['id'] = str(uid)
+                # uid += 1
 
                 filteresults.append(update_dict)
 
@@ -730,6 +993,25 @@ def filteresult(request):
                 return Response(filteresults)
             else:
                 return Response('No suitable data!')
+
+
+@api_view(('POST',))
+def selectedfilterresult(request):
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        target_dict = ast.literal_eval(raw_dict_key)
+        target_id = int(target_dict['target'].strip('"'))
+
+        # 按对应id查找
+        target_data = Detailsearch.objects.filter(id=target_id)
+        for data in target_data:
+            clean_data = model_to_dict(data)
+
+            return Response(clean_data)
+
+    if request.method == 'GET':
+        return Response('No method!')
 
 
 @api_view(('POST','GET',))
@@ -848,7 +1130,7 @@ def deletecollection(request):
             return Response('failed')
         else:
             get_object_or_404(Collection, pk=int(delete_id)).delete()
-        return Response('success')
+            return Response('success')
 
     if request.method == 'GET':
         return Response('No method!')
@@ -933,11 +1215,13 @@ def appendcorpus(request):
         raw_corpus_data = corpus_dict['corpus']
         repo = corpus_dict['repository'].strip('"')
 
-        print(raw_corpus_data)
+        # 收藏词汇
+        kws = ast.literal_eval(raw_corpus_data.strip(']['))['name']
+        print(kws)
         print(repo)
 
-        if not Corpus.objects.filter(kws=raw_corpus_data, repository=repo):
-            corp = Corpus(kws=raw_corpus_data, repository=repo)
+        if not Corpus.objects.filter(kws=kws, repository=repo):
+            corp = Corpus(kws=kws, repository=repo)
             corp.save()
             return Response('success')
 
@@ -1014,7 +1298,7 @@ def deletecorpus(request):
             return Response('failed')
         else:
             get_object_or_404(Corpus, pk=int(delete_id)).delete()
-        return Response('success')
+            return Response('success')
 
     if request.method == 'GET':
         return Response('No method!')
@@ -1134,7 +1418,7 @@ def deletefolder(request):
             return Response('failed')
         else:
             get_object_or_404(Folder, pk=int(delete_id)).delete()
-        return Response('success')
+            return Response('success')
 
     if request.method == 'GET':
         return Response('No method!')
@@ -1255,7 +1539,7 @@ def deleterepository(request):
             return Response('failed')
         else:
             get_object_or_404(Repository, pk=int(delete_id)).delete()
-        return Response('success')
+            return Response('success')
 
     if request.method == 'GET':
         return Response('No method!')
@@ -1267,6 +1551,12 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+
+
+class UploadcorpusViewSet(viewsets.ModelViewSet):
+
+    queryset = Uploadcorpus.objects.all()
+    serializer_class = UploadcorpusSerializer
 
 
 class ExtractorViewset(viewsets.ModelViewSet):

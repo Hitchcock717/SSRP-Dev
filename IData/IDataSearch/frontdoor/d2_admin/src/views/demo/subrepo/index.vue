@@ -212,14 +212,17 @@ export default {
       return gettime
     },
     subrepo () {
-      this.$router.push('/corpusrepo')
+      this.$router.push('/repository')
     },
     submitForm () {
       var allData = this.tableData
       var pubDate = this.ruleForm.date
 
       if (JSON.stringify(allData) === '[{}]') {
-        alert('无法提交空表格!')
+        this.$message({
+          type: 'info',
+          message: '无法提交空表格!'
+        })
       } else {
         if (pubDate === undefined) {
           var dateEmptyDict = { 'startdate': 'null', 'endate': 'null' }
@@ -239,12 +242,15 @@ export default {
           .then(res => {
             this.result = res
             console.log(JSON.stringify(this.result))
-            alert('创建成功!')
+            this.$message({
+              type: 'success',
+              message: '创建成功!'
+            })
             this.$refs.ruleForm.validate((valid) => {
               if (valid) {
                 this.$router.push({
-                  name: 'detailsearch',
-                  params: {
+                  path: '/notice2',
+                  query: {
                     result: JSON.stringify(this.result)
                   }
                 })

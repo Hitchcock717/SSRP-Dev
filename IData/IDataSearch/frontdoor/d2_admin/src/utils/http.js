@@ -55,7 +55,7 @@ http.interceptors.request.use(
   },
   err => {
     // 判断当前请求是否设置了不显示Loading
-    if (config.headers.showLoading !== false) {
+    if (err.config.headers.showLoading !== false) {
       hideLoading()
     }
     Message.error('请求超时!')

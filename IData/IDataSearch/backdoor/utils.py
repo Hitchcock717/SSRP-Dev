@@ -52,10 +52,26 @@ class ExtractAndRecommend(object):
             except Exception as e:
                 print(e)
 
+    # 用于论文搜索推荐
     def recommend_kws(self, raw_dict):
         extr_kws = self.extract_kws(raw_dict)
         # recommed keywords
         for keyword in extr_kws:
+            retri = TermRecommendES(self.index, self.ip)
+            kws_li = retri.filter(keyword)
+            print(kws_li)
+            try:
+                if kws_li is not None:
+                    self.recom_kws.extend(kws_li)
+                    return self.recom_kws
+
+            except Exception as e:
+                return '暂无推荐'
+
+    # 用于词表搜索推荐
+    def recommend_upload_kws(self, upload_kws):
+        # recommed keywords
+        for keyword in upload_kws:
             retri = TermRecommendES(self.index, self.ip)
             kws_li = retri.filter(keyword)
             print(kws_li)

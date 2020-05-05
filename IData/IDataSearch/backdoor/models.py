@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.utils import timezone
+import pytz
 from django.db import models
 from rest_framework import serializers
 # Create your models here.
@@ -14,6 +15,21 @@ class MessageSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Message
 		fields = ('url', 'subject', 'body', 'pk')
+
+
+class Uploadcorpus(models.Model):
+	corpus_name = models.TextField(max_length=30)
+	corpus_kws = models.TextField(max_length=200)
+	create_timestamp = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ('-create_timestamp',)
+
+
+class UploadcorpusSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Uploadcorpus
+		fields = ('url', 'corpus_name', 'corpus_kws', 'pk')
 
 
 class Extractor(models.Model):

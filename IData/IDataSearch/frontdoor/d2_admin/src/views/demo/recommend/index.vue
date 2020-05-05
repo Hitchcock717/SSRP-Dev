@@ -75,6 +75,7 @@ export default {
               recommends: JSON.stringify(this.recommends)
             }
           })
+          console.log(JSON.stringify(this.extractors))
           alert('成功保存词汇!')
         }
       })

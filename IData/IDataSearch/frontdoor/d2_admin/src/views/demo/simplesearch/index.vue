@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { GetRawResult } from '@/api/demo/rawResult2Service'
+import { GetRawResult } from '@/api/demo/rawResultService'
 export default {
   data () {
     return {
@@ -55,8 +55,7 @@ export default {
       currentRow: '',
       pagesize: 50,
       tableData: [],
-      simpleForm: {
-      }
+      simpleForm: {}
     }
   },
   mounted () {
@@ -80,7 +79,6 @@ export default {
           alert('数据导入成功!')
 
           this.tableData = this.rawResult
-          // console.log(this.tableData)
         })
         .catch(err => {
           console.log(err)
@@ -121,6 +119,7 @@ export default {
                 selected: JSON.stringify(selected)
               }
             })
+            console.log(selected)
           }
         }
       }
@@ -129,13 +128,7 @@ export default {
       this.currentRow = val
     },
     submit () { // 进入子库
-      this.$router.push({
-        name: 'subrepo',
-        params: {
-          rawResult: this.tableData
-        }
-      })
-      console.log(this.rawResult)
+      this.$router.push('/subrepo')
     }
   },
   created () {

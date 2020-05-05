@@ -19,10 +19,11 @@ from rest_framework import routers
 
 from django.conf.urls import url
 from backdoor import views
-from backdoor.views import MessageViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset
+from backdoor.views import MessageViewSet, UploadcorpusViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset
 
 router = routers.DefaultRouter()
 router.register('messages', MessageViewSet)
+router.register('uploadcorpus', UploadcorpusViewSet)
 router.register('extractors', ExtractorViewset)
 router.register('recommends', RecommedViewset)
 router.register('simplesearch', SimplesearchViewset)
@@ -45,6 +46,14 @@ urlpatterns = [
 
     url('api/recommend/', views.recommend),
 
+    url('api/deletextract/', views.deletextract),
+
+    url('api/deleterecommend/', views.deleterecommend),
+
+    url('api/mockupload/', views.mockupload),
+
+    url('api/parseupload/', views.parseupload),
+
     url('api/startspider/', views.startspider),
 
     url('api/rawresult/', views.rawresult),
@@ -54,6 +63,8 @@ urlpatterns = [
     url('api/filteresult/', views.filteresult),
 
     url('api/selectedrawresult/', views.selectedrawresult),
+
+    url('api/selectedfilterresult/', views.selectedfilterresult),
 
     url('api/getfolder/', views.getfolder),
 

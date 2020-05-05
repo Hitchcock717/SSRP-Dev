@@ -12,7 +12,7 @@
             <el-button round size="mini" class="selectedItem" v-for="(item,index) in selectedItems" :key="index">{{item.name}}<i class="red fa fa-close (alias)"
             v-on:click="deleteSelectedItem($index)"></i></el-button>
             <input v-model="inputItem" placeholder="Enter确认" class="write" type="text" v-on:focus="showDropmenu" v-on:keyup.enter="addItem">
-            <el-button type="primary" class="success" @click="dialogFormVisible = true">收藏词汇</el-button>
+            <el-button type="primary" class="success" @click="corpusFormVisible = true">收藏词汇</el-button>
           </div>
           <div v-show="isShowDropmenu">
             <p class="recom">推荐词</p>
@@ -21,7 +21,7 @@
             </div>
           </div>
         </el-aside>
-        <el-dialog title="词表库地址" :visible.sync="dialogFormVisible">
+        <el-dialog title="词表库地址" :visible.sync="corpusFormVisible">
           <el-form :model="corpusform">
             <el-form-item label="您的词表库" :label-width="formLabelWidth">
               <el-select v-model="corpusform.repository">
@@ -30,7 +30,7 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button @click="corpusFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="addCorpus">确 定</el-button>
           </div>
         </el-dialog>
@@ -170,9 +170,12 @@ export default {
       collectform: {
         folder: ''
       },
+      corpusform: {
+        repository: ''
+      },
       formLabelWidth: '120px',
-      dialogTableVisible: false,
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      corpusFormVisible: false
     }
   },
   created () {
@@ -232,13 +235,19 @@ export default {
         .then(res => {
           var feedback = res
           if (feedback === 'success') {
-            alert('收藏成功!')
+            this.$message({
+              type: 'success',
+              message: '收藏成功!'
+            })
           } else if (feedback === 'failed') {
-            alert('论文已存在!')
+            this.$message({
+              type: 'info',
+              message: '论文已存在!'
+            })
           }
         })
     },
-    addCorpus (dialogFormVisible) {
+    addCorpus (corpusFormVisible) {
       AppendCorpus({
         corpus: JSON.stringify(this.selectedItems),
         repository: JSON.stringify(this.corpusform.repository)
@@ -246,9 +255,15 @@ export default {
         .then(res => {
           var feedback = res
           if (feedback === 'success') {
-            alert('收藏成功!')
+            this.$message({
+              type: 'success',
+              message: '收藏成功!'
+            })
           } else if (feedback === 'failed') {
-            alert('词汇已存在!')
+            this.$message({
+              type: 'info',
+              message: '词汇已存在!'
+            })
           }
         })
     },

@@ -2,12 +2,6 @@
   <d2-container class="page">
     <d2-page-cover>
       <el-form :model="detailForm" ref="detailForm" label-width="150px" class="demo-detailForm" :class='{fixed:isFixed}'>
-        <el-form-item label="简单检索表达式" prop="expression">
-          <el-button @click="viewQuery" type="primary" class="viewQuery">查看检索表达式</el-button>
-        </el-form-item>
-        <el-form-item label="过滤后结果数(条)" prop="number">
-          <el-button @click="viewResult" type="primary" class="viewResult">查看搜索结果</el-button>
-        </el-form-item>
         <el-form-item label="citespace分析" prop="subrepo">
           <el-button @click="submit" type="primary" class="citespace">进入</el-button>
         </el-form-item>
@@ -45,31 +39,42 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { GetFilterResult } from '@/api/demo/filterResultService'
 export default {
   data () {
     return {
-      result: JSON.parse(this.$route.params.result),
+      storage: this.$route.params.storage, // 获取详情页面传递来的页面数据
       isFixed: '',
       currentPage: 1,
       currentRow: '',
       pagesize: 50,
       tableData: [],
-      detailForm: {
+      detailForm: {}
+    }
+  },
+  mounted () {
+    if (localStorage.getItem('filterResult')) {
+    } else { // key被清除, 无法获取
+      if (this.tableData === 'undefined') {
+        console.log('no import')
+      } else {
+        this.tableData = this.storage
+        console.log(this.tableData)
       }
     }
   },
-  computed: {
-    ...mapState('expand/filterResult', {
-      filterResult: state => state.filterResult
-    })
-  },
   methods: {
     importResult () {
-      console.log(this.filterResult)
-      // let docResult = 'doc'
-      // this.tableData = this.result[docResult]
-      this.tableData = this.filterResult
+      alert('正在导入...')
+      GetFilterResult({})
+        .then(res => {
+          this.filterResult = res
+          alert('数据导入成功!')
+          this.tableData = this.filterResult
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     onScroll () {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
@@ -81,14 +86,6 @@ export default {
         this.isFixed = false
       }
     },
-    viewQuery () {
-      let queryBody = 'query'
-      alert('您的简单检索表达式为: ' + JSON.stringify(this.result[queryBody]))
-    },
-    viewResult () {
-      // let filterCount = 'filter_search_count'
-      alert('子库搜索结果为' + this.filterResult.length + '条!')
-    },
     handleSizeChange (val) {
       this.pagesize = val
     },
@@ -98,16 +95,23 @@ export default {
     setCurrent (row) {
       this.$refs.simpleTable.setCurrentRow(row)
       var res = this.currentRow
+      console.log(this.tableData)
+      console.log(this.tableData.length)
+
+      // 点击详情，保存页面数据
+      const parsedResult = JSON.stringify(this.tableData)
+      localStorage.setItem('filterResult', parsedResult)
 
       let pkid = 'id'
-      for (var i = 0, len = this.filterResult.length; i < len; i++) {
-        for (var key in this.filterResult[i]) {
-          if (key === pkid && this.filterResult[i][key] === res[pkid]) {
-            var selected = this.filterResult[i]
+      for (var i = 0, len = this.tableData.length; i < len; i++) {
+        for (var key in this.tableData[i]) {
+          if (key === pkid && this.tableData[i][key] === res[pkid]) {
+            var selected = this.tableData[i][key]
+            console.log(selected)
             this.$router.push({
-              name: 'detail2',
-              params: {
-                selected: selected
+              path: '/detail2',
+              query: {
+                selected: JSON.stringify(selected)
               }
             })
             console.log(selected)
@@ -126,7 +130,6 @@ export default {
   },
   created () {
     window.addEventListener('scroll', this.onScroll)
-    this.$store.dispatch('expand/filterResult/getfilterResult')
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

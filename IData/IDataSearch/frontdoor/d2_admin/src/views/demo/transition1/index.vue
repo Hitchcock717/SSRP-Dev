@@ -79,9 +79,19 @@ export default {
       this.$refs.searchForm.validate((valid) => {
         if (valid) {
           if (this.searchForm.method === '选项1') {
-            this.$router.push('/paper')
+            this.$router.push({
+              path: '/paper',
+              query: {
+                method: 'papersearch'
+              }
+            })
           } else if (this.searchForm.method === '选项2') {
-            this.$router.push('/corpus')
+            this.$router.push({
+              path: '/corpusearch',
+              query: {
+                method: 'corpusearch'
+              }
+            })
           }
         }
       })

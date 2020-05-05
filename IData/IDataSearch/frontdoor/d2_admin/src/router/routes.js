@@ -56,7 +56,7 @@ const frameIn = [
           title: '词表搜索',
           auth: true
         },
-        component: _import('demo/corpus')
+        component: _import('demo/corpusearch')
       },
       {
         path: 'recommend',
@@ -66,6 +66,15 @@ const frameIn = [
           auth: true
         },
         component: _import('demo/recommend')
+      },
+      {
+        path: 'recommend2',
+        name: 'recommend2',
+        meta: {
+          title: '推荐词汇',
+          auth: true
+        },
+        component: _import('demo/recommend2')
       },
       {
         path: 'complete',
@@ -129,6 +138,15 @@ const frameIn = [
           auth: true
         },
         component: _import('demo/subrepo')
+      },
+      {
+        path: 'notice2',
+        name: 'notice2',
+        meta: {
+          title: '等待检索结果',
+          auth: true
+        },
+        component: _import('demo/notice2')
       },
       {
         path: 'detailsearch',

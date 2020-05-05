@@ -1,8 +1,12 @@
-import api from '@/api/demo/index'
+import request from '@/plugin/axios'
 
-export default {
-  fetchrawResult () {
-    return api.get(`rawresult/`)
-      .then(response => response.data)
-  }
+export function GetRawResult (data) {
+  return request({
+    url: 'http://127.0.0.1:8000/api/rawresult/',
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data
+  })
 }
