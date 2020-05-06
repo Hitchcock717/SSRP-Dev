@@ -861,7 +861,7 @@ def getexpression(request):
                     expression_context['type'] = 'abstract'
 
                 # 1.1 有且仅有必填项 关键词+单字段
-                if not expression_context['relation']:
+                if not expression_context.get('relation'):
                     # 1.1.1 无正则
                     if expression_context['regex'] == '否':
                         expression_type = expression_context['type']

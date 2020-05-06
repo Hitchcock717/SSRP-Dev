@@ -3,10 +3,6 @@
     <d2-page-cover>
       <el-button type="primary" class="return" @click="submit">返回词表库</el-button>
       <el-button
-        @click="importResult"
-        type="primary"
-        class="importResult">导入</el-button>
-      <el-button
         @click="addCorpus"
         type="primary"
         class="addCorpus">添加</el-button>
@@ -37,9 +33,6 @@
     margin-bottom: 15px;
     margin-right: 10px;
   }
-  .importResult {
-    margin-bottom: 15px;
-  }
   .addCorpus {
     margin-bottom: 15px;
     float: right;
@@ -61,6 +54,22 @@ export default {
       tableData: []
     }
   },
+  created () {
+    GetCorpus({
+      corpus: this.selectedCorpus
+    })
+      .then(res => {
+        this.result = res
+        if (this.result === 'failed') {
+          this.$message({
+            type: 'info',
+            message: '该词表为空,请添加词汇!'
+          })
+        } else {
+          this.tableData = this.result
+        }
+      })
+  },
   mounted () {
     // 获取词表库, 清除key
     if (localStorage.getItem('repositorys')) {
@@ -72,22 +81,6 @@ export default {
     }
   },
   methods: {
-    importResult () {
-      GetCorpus({
-        corpus: this.selectedCorpus
-      })
-        .then(res => {
-          this.result = res
-          if (this.result === 'failed') {
-            this.$message({
-              type: 'info',
-              message: '该词表为空,请添加词汇!'
-            })
-          } else {
-            this.tableData = this.result
-          }
-        })
-    },
     addCorpus () {
       this.$prompt('请输入词汇名称', '提示', {
         confirmButtonText: '确定',

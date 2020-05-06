@@ -5,10 +5,6 @@
         @click="addRepository"
         type="primary"
         class="addRepository">添加</el-button>
-      <el-button
-        @click="importResult"
-        type="primary"
-        class="importResult">导入</el-button>
       <el-table :data="tableData" ref="repoTable"
       style="width: 800px" empty-text="N/A" max-height="600" highlight-current-row @current-change="handleChange">
         <el-table-column label="编号" width="100px" type="index" align="center">
@@ -43,6 +39,21 @@ export default {
       tableData: []
     }
   },
+  created () {
+    GetRepository({})
+      .then(res => {
+        this.result = res
+        if (this.result === 'failed') {
+          this.$message({
+            type: 'info',
+            message: '该词表库为空,请添加分组!'
+          })
+        } else {
+          localStorage.setItem('repositorys', this.result)
+          this.tableData = this.result
+        }
+      })
+  },
   mounted () {
     if (localStorage.getItem('repositorys')) {
       console.log('1')
@@ -56,21 +67,6 @@ export default {
     }
   },
   methods: {
-    importResult () {
-      GetRepository({})
-        .then(res => {
-          this.result = res
-          if (this.result === 'failed') {
-            this.$message({
-              type: 'info',
-              message: '该词表库为空,请添加分组!'
-            })
-          } else {
-            localStorage.setItem('repositorys', this.result)
-            this.tableData = this.result
-          }
-        })
-    },
     addRepository () {
       this.$prompt('请输入词表名称', '提示', {
         confirmButtonText: '确定',

@@ -2,10 +2,6 @@
   <d2-container class="page">
     <d2-page-cover>
       <el-button type="primary" class="return" @click="submit">返回收藏夹</el-button>
-      <el-button
-        @click="importResult"
-        type="primary"
-        class="importResult">导入</el-button>
         <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
             style="width: 800px" empty-text="N/A" max-height="550">
           <el-table-column label="编号" width="60px" align="center" type="index"></el-table-column>
@@ -34,8 +30,9 @@
     </d2-page-cover>
   </d2-container>
 </template>
+
 <style lang="scss" scoped>
-  .importResult {
+  .return {
     margin-bottom: 15px;
   }
 </style>
@@ -54,6 +51,23 @@ export default {
       tableData: []
     }
   },
+  created () {
+    GetCollection({
+      collection: this.selectedCollection
+    })
+      .then(res => {
+        this.result = res
+        console.log(this.result)
+        if (this.result === 'failed') {
+          this.$message({
+            type: 'info',
+            message: '该分组为空,请添加论文!'
+          })
+        } else {
+          this.tableData = this.result
+        }
+      })
+  },
   mounted () {
     // 获取收藏夹, 清除key
     if (localStorage.getItem('folders')) {
@@ -65,23 +79,6 @@ export default {
     }
   },
   methods: {
-    importResult () {
-      GetCollection({
-        collection: this.selectedCollection
-      })
-        .then(res => {
-          this.result = res
-          console.log(this.result)
-          if (this.result === 'failed') {
-            this.$message({
-              type: 'info',
-              message: '该分组为空,请添加论文!'
-            })
-          } else {
-            this.tableData = this.result
-          }
-        })
-    },
     deleteCollection (scope) {
       DeleteCollection({
         delid: JSON.stringify(scope.row.pk)

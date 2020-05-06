@@ -5,12 +5,6 @@
         <el-form-item label="子库" prop="subrepo">
           <el-button @click="submit" type="primary" class="nextpage">进入子库</el-button>
         </el-form-item>
-        <el-form-item label="导入结果" prop="import">
-          <el-button
-            @click="importResult"
-            type="primary"
-            class="importResult">导入</el-button>
-        </el-form-item>
       </el-form>
       <div v-if="tableData">
          <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="550"
@@ -71,24 +65,6 @@ export default {
     }
   },
   methods: {
-    importResult () {
-      this.$message({
-        type: 'success',
-        message: '正在启动...'
-      })
-      GetRawResult({})
-        .then(res => {
-          this.rawResult = res
-          this.$message({
-            type: 'success',
-            message: '导入成功!'
-          })
-          this.tableData = this.rawResult
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
     onScroll () {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
       var offsetTop = this.$refs.wordForm.offsetTop
@@ -138,6 +114,22 @@ export default {
   },
   created () {
     window.addEventListener('scroll', this.onScroll)
+    this.$message({
+      type: 'success',
+      message: '正在启动...'
+    })
+    GetRawResult({})
+      .then(res => {
+        this.rawResult = res
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.tableData = this.rawResult
+      })
+      .catch(err => {
+        console.log(err)
+      })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

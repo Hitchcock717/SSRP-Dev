@@ -67,7 +67,6 @@
               <el-table-column prop="downed" label="下载频次" width="80">
               </el-table-column>
             </el-table>
-            <el-button type="primary" class="import" @click="importResult">导入详情结果</el-button>
             <el-button type="primary" class="return" @click="submit">返回检索结果页</el-button>
           </el-main>
           <el-dialog title="收藏夹地址" :visible.sync="dialogFormVisible">
@@ -131,11 +130,6 @@
   .recom {
     margin-top: 50px;
   }
-  .import {
-    margin-top: 10px;
-    margin-left: 20px;
-    float: right;
-  }
   .return {
     margin-top: 10px;
     float: right;
@@ -195,6 +189,44 @@ export default {
         console.log(this.repositorys)
         const parsedRepository = JSON.stringify(this.repositorys)
         localStorage.setItem('repositorys', parsedRepository)
+      })
+
+    // 获取页面数据
+    GetSelectedFilterResult({
+      target: JSON.stringify(this.selected)
+    })
+      .then(res => {
+        this.result = res
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+
+        // data in table 1
+        let title = 'title'
+        let author = 'author'
+        let info = 'info'
+        let date = 'date'
+        var tableDict1 = { 'title': this.result[title], 'author': this.result[author], 'info': this.result[info], 'date': this.result[date] }
+        this.tableData = Array(1).fill(tableDict1)
+        console.log(this.result[author])
+
+        // data in table 2
+        let abstract = 'abstract'
+        let source = 'source'
+        var tableDict2 = { 'abstract': this.result[abstract], 'source': this.result[source] }
+        this.detailData = Array(1).fill(tableDict2)
+
+        // data in table 3
+        let kws = 'kws'
+        let fund = 'fund'
+        let cited = 'cited'
+        let downed = 'downed'
+        var tableDict3 = { 'kws': this.result[kws], 'fund': this.result[fund], 'cited': this.result[cited], 'downed': this.result[downed] }
+        this.otherData = Array(1).fill(tableDict3)
+      })
+      .catch(err => {
+        console.log(err)
       })
   },
   mounted () {
@@ -265,46 +297,6 @@ export default {
               message: '词汇已存在!'
             })
           }
-        })
-    },
-    importResult () {
-      console.log(this.collectform)
-      console.log(JSON.stringify(this.selected))
-      GetSelectedFilterResult({
-        target: JSON.stringify(this.selected)
-      })
-        .then(res => {
-          this.result = res
-          this.$message({
-            type: 'success',
-            message: '导入成功!'
-          })
-
-          // data in table 1
-          let title = 'title'
-          let author = 'author'
-          let info = 'info'
-          let date = 'date'
-          var tableDict1 = { 'title': this.result[title], 'author': this.result[author], 'info': this.result[info], 'date': this.result[date] }
-          this.tableData = Array(1).fill(tableDict1)
-          console.log(this.result[author])
-
-          // data in table 2
-          let abstract = 'abstract'
-          let source = 'source'
-          var tableDict2 = { 'abstract': this.result[abstract], 'source': this.result[source] }
-          this.detailData = Array(1).fill(tableDict2)
-
-          // data in table 3
-          let kws = 'kws'
-          let fund = 'fund'
-          let cited = 'cited'
-          let downed = 'downed'
-          var tableDict3 = { 'kws': this.result[kws], 'fund': this.result[fund], 'cited': this.result[cited], 'downed': this.result[downed] }
-          this.otherData = Array(1).fill(tableDict3)
-        })
-        .catch(err => {
-          console.log(err)
         })
     },
     showDropmenu: function (event) {
