@@ -59,7 +59,10 @@ export default {
       })
     },
     startSpider () {
-      alert('正在启动...')
+      this.$message({
+        type: 'success',
+        message: '正在启动...'
+      })
       StartSpider({
         spiders: ['idata'],
         extractors: this.$route.query.extractors,
@@ -68,7 +71,10 @@ export default {
         .then(res => {
           this.result = res
           console.log(this.result)
-          alert('成功启动爬虫')
+          this.$message({
+            type: 'success',
+            message: '成功启动爬虫!'
+          })
           this.$refs.searchForm.validate((valid) => {
             if (valid) {
               this.$router.push({

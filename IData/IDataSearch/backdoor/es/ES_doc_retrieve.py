@@ -7,6 +7,7 @@
 '''
 
 import json
+import re
 # from ES_ct import *
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
@@ -75,6 +76,7 @@ class DocRetireveES(object):
         :return:
         """
         parse_body = [item for item in res]
+        print(parse_body)
         count = len(parse_body)
         result = []
 
@@ -115,6 +117,7 @@ class DocRetireveES(object):
 
     # 简单搜索（同时包含单字段和多字段）
     def basic_search(self, search_field, kws):
+
         if type(search_field) == list:
             body = self.multi_query(search_field, kws)
             # res = self.es.search(self.index_name, body=body)
@@ -283,6 +286,7 @@ class DocRetireveES(object):
     # ES查询
     def advance_search(self, in_fields, in_kws, ex_fields, ex_kws, date_field, start, end, in_method):
         query = self.advance_query(in_fields, in_kws, ex_fields, ex_kws, date_field, start, end, in_method)
+        print(type(query))
         # res = self.es.search(self.index_name, body=query)
         res = helpers.scan(client=self.es,
                            query=query,
@@ -477,15 +481,12 @@ class DocRetireveES(object):
 
         if in_match != "":
             in_clause_body = in_clause % in_match
-            print(in_clause_body)
         if ex_match != "":
             ex_clause_body = ex_clause % ex_match
         if ex_clause_body != "":
             query = in_clause_body + "," + ex_clause_body + "}}"
-            print(query)
         else:
             query = in_clause_body + "}}"
-            print(query)
 
         body = json.loads(query)
         return body
@@ -581,16 +582,18 @@ class DocRetireveES(object):
     # 构建内部嵌套高级检索体
     def build_nested_advance_query(self, raw_expression_group):
         query_collection = []
-        each_nested_query_with_relation = []
         query_content = []
         for raw_expression_dict in raw_expression_group:
 
+            each_nested_query_with_relation = []  # 注意该列表应处于循环内
+            print(raw_expression_dict)
             in_field = raw_expression_dict['type'].split()
             query_content.append(in_field)
             in_kws = raw_expression_dict['info']
             regex_flag = raw_expression_dict['regex']
             next_relation = raw_expression_dict['nextrelation']
 
+            # 相邻关系 --- 4种
             global x
             if next_relation == '并且':
                 x = '1'
@@ -601,9 +604,10 @@ class DocRetireveES(object):
             else:
                 x = ''
 
+            # 无正则 --- 4种
             if regex_flag == '否':
-
-                if raw_expression_dict['relation'] and raw_expression_dict['otherinfo']:
+                # 不止必填项
+                if raw_expression_dict.get('relation') and raw_expression_dict.get('otherinfo'):
                     in_relation = raw_expression_dict['relation']
                     other_in_kws = raw_expression_dict['otherinfo']
                     if in_relation == '并含':
@@ -654,6 +658,7 @@ class DocRetireveES(object):
                         query_collection.append(each_nested_query_with_relation)
                         query_content.clear()
 
+                # 有且仅有必填项
                 else:
                     in_method = '2'  # default
                     ex_field = []
@@ -669,8 +674,10 @@ class DocRetireveES(object):
                     query_collection.append(each_nested_query_with_relation)
                     query_content.clear()
 
+            # 有正则 --- 4种
             else:
-                if raw_expression_dict['relation'] and raw_expression_dict['otherinfo']:
+                # 不止必填项
+                if raw_expression_dict.get('relation') and raw_expression_dict.get('otherinfo'):
                     in_relation = raw_expression_dict['relation']
                     other_in_kws = raw_expression_dict['otherinfo']
                     if in_relation == '并含':
@@ -683,8 +690,7 @@ class DocRetireveES(object):
                         query_content.append(ex_kws)
                         query_content.append(in_method)
                         each_nested_query = self.nested_advance_query_with_regexp(query_content[0], query_content[1],
-                                                                      query_content[2],
-                                                                      query_content[3], query_content[4])
+                                                                      query_content[2], query_content[3], query_content[4])
                         each_nested_query_with_relation.append(each_nested_query)
                         each_nested_query_with_relation.append(x)
                         query_collection.append(each_nested_query_with_relation)
@@ -700,8 +706,7 @@ class DocRetireveES(object):
                         query_content.append(ex_kws)
                         query_content.append(in_method)
                         each_nested_query = self.nested_advance_query_with_regexp(query_content[0], query_content[1],
-                                                                      query_content[2],
-                                                                      query_content[3], query_content[4])
+                                                                      query_content[2], query_content[3], query_content[4])
                         each_nested_query_with_relation.append(each_nested_query)
                         each_nested_query_with_relation.append(x)
                         query_collection.append(each_nested_query_with_relation)
@@ -717,13 +722,13 @@ class DocRetireveES(object):
                         query_content.append(ex_kws)
                         query_content.append(in_method)
                         each_nested_query = self.nested_advance_query_with_regexp(query_content[0], query_content[1],
-                                                                      query_content[2],
-                                                                      query_content[3], query_content[4])
+                                                                      query_content[2], query_content[3], query_content[4])
                         each_nested_query_with_relation.append(each_nested_query)
                         each_nested_query_with_relation.append(x)
                         query_collection.append(each_nested_query_with_relation)
                         query_content.clear()
 
+                # 有且仅有必填项
                 else:
                     in_method = '2'  # default
                     ex_field = []
@@ -740,21 +745,24 @@ class DocRetireveES(object):
                     query_collection.append(each_nested_query_with_relation)
                     query_content.clear()
 
-        print(query_collection)
         return query_collection
 
     # 构建外部嵌套高级检索体
     def wrapped_advance_query(self, raw_expression_group, date_field, start, end):
         query_groups = self.build_nested_advance_query(raw_expression_group)  # [[''],['']]
+        print(query_groups)
 
         range_clause = '"filter":[ { "range": { "%s" :{ "gte":"%s","lte":"%s" } } } ]'  # range查询用于日期过滤
 
         # 有且仅有两个检索体
         if len(query_groups) == 2:
             in_method = query_groups[0][1]
+            print(in_method)
             front_query = query_groups[0][0]
+            print(front_query)
             back_query = query_groups[1][0]
-            in_match = front_query + ',' + back_query
+            print(back_query)
+            in_match = str(front_query) + ',' + str(back_query)
 
             # *************构造检索规则************* #
 
@@ -766,15 +774,23 @@ class DocRetireveES(object):
                 in_clause = '"must":[ %s ]'
                 in_clause_body = in_clause % in_match
                 query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+
+                query_body = query_body.replace('\'', '\"')
                 print(query_body)
-                return query_body
+
+                body = json.loads(query_body)
+                return body
 
             if in_method == '2':
                 in_clause = '"should":[ %s ]'
                 in_clause_body = in_clause % in_match
                 query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+
+                query_body = query_body.replace('\'', '\"')
                 print(query_body)
-                return query_body
+
+                body = json.loads(query_body)
+                return body
 
             if in_method == '0':
                 in_clause = '"should":[ %s ]'
@@ -784,15 +800,22 @@ class DocRetireveES(object):
                 ex_match = back_query
                 ex_clause_body = ex_clause % ex_match
                 query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
+
+                query_body = query_body.replace('\'', '\"')
                 print(query_body)
-                return query_body
+
+                body = json.loads(query_body)
+                return body
 
         else:  # 大于两个检索体
-            top_two_query = query_groups[:1]
+            top_two_query = query_groups[:2]
+            print(top_two_query)
             in_method = top_two_query[0][1]
             front_query = top_two_query[0][0]
+            print(front_query)
             back_query = top_two_query[1][0]
-            in_match = front_query + ',' + back_query
+            print(back_query)
+            in_match = str(front_query) + ',' + str(back_query)
 
             # *************构造前两个检索规则************* #
 
@@ -821,6 +844,7 @@ class DocRetireveES(object):
                 query_body = query + in_clause_body + ',' + ex_clause_body + '}'
                 top_two_query_body.append(query_body)
 
+            print(top_two_query_body)
             base_query_body = top_two_query_body[0]
 
             # 有且仅有三个检索体
@@ -839,15 +863,23 @@ class DocRetireveES(object):
                     in_clause = '"must":[ %s ]'
                     in_clause_body = in_clause % in_match
                     query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+
+                    query_body = query_body.replace('\'', '\"')
                     print(query_body)
-                    return query_body
+
+                    body = json.loads(query_body)
+                    return body
 
                 if in_method == '2':
                     in_clause = '"should":[ %s ]'
                     in_clause_body = in_clause % in_match
                     query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+
+                    query_body = query_body.replace('\'', '\"')
                     print(query_body)
-                    return query_body
+
+                    body = json.loads(query_body)
+                    return body
 
                 if in_method == '0':
                     in_clause = '"should":[ %s ]'
@@ -857,8 +889,12 @@ class DocRetireveES(object):
                     ex_match = back_query
                     ex_clause_body = ex_clause % ex_match
                     query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
+
+                    query_body = query_body.replace('\'', '\"')
                     print(query_body)
-                    return query_body
+
+                    body = json.loads(query_body)
+                    return body
 
             else:
                 # 从第三个列表开始, 继续嵌套, 此时列表>=4
@@ -921,15 +957,23 @@ class DocRetireveES(object):
                             in_clause = '"must":[ %s ]'
                             in_clause_body = in_clause % in_match
                             query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+
+                            query_body = query_body.replace('\'', '\"')
                             print(query_body)
-                            return query_body
+
+                            body = json.loads(query_body)
+                            return body
 
                         if in_method == '2':
                             in_clause = '"should":[ %s ]'
                             in_clause_body = in_clause % in_match
                             query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
+
+                            query_body = query_body.replace('\'', '\"')
                             print(query_body)
-                            return query_body
+
+                            body = json.loads(query_body)
+                            return body
 
                         if in_method == '0':
                             in_clause = '"should":[ %s ]'
@@ -939,14 +983,19 @@ class DocRetireveES(object):
                             ex_match = back_query
                             ex_clause_body = ex_clause % ex_match
                             query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
+
+                            query_body = query_body.replace('\'', '\"')
                             print(query_body)
-                            return query_body
+
+                            body = json.loads(query_body)
+                            return body
 
     # ES查询
     def wrapped_advance_search(self, raw_expression_group, date_field, start, end):
         query = self.wrapped_advance_query(raw_expression_group, date_field, start, end)
         # res = self.es.search(self.index_name, body=query)
 
+        print(type(query))
         in_fields = []
         for raw_expression_dict in raw_expression_group:
             in_field = raw_expression_dict['type']
@@ -968,7 +1017,7 @@ if __name__ == "__main__":
     # ***************** 测试简单搜索[单字段] ***************** #
     basic_field = 'kws'
     basic_kws = '电镜'
-    doc.basic_search(basic_field, basic_kws)
+    # doc.basic_search(basic_field, basic_kws)
 
     # ***************** 测试简单搜索[多字段] ***************** #
     multi_fields = ['abstract', 'kws', 'title', 'info', 'fund', 'source']
@@ -992,7 +1041,7 @@ if __name__ == "__main__":
     start = "1900-01-01"
     end = "2020-01-01"
     in_method = "2"
-    # doc.advance_search(include_fields, include_kws, exclude_fields, exclude_kws, date, start, end, in_method)
+    doc.advance_search(include_fields, include_kws, exclude_fields, exclude_kws, date, start, end, in_method)
 
     # ***************** 测试高级搜索[正则] ***************** #
     #  -------------------------------------------------
@@ -1032,11 +1081,11 @@ if __name__ == "__main__":
     # doc.nested_advance_query(nested_inreg_fields, nested_inreg_kws, nested_exreg_fields, nested_exreg_kws, nested_inreg_method)
 
     # ***************** 测试构建内部嵌套高级搜索 ***************** #
-    raw_expression_group = [{"type":"来源","info":"驱蚊器·","regex":"是","nextrelation":"或含"},{"type":"来源","info":"确认","regex":"是","nextrelation":"不含"},{"type":"关键词","info":"人情味·","relation":"或含","regex":"否","nextrelation":"无"}]
+    raw_expression_group = [{"type":"来源","info":"驱蚊器·","regex":"是","nextrelation":"或者"},{"type":"来源","info":"确认","regex":"是","nextrelation":"不含"},{"type":"关键词","info":"人情味·","relation":"或含","regex":"否","nextrelation":"无"}]
     # doc.build_nested_advance_query(raw_expression_group)
 
     # ***************** 测试外部嵌套高级搜索 ***************** #
-    raw_expression_group1 = [{"type": "来源", "info": "驱蚊器·", "regex": "是", "nextrelation": "或含"},
+    raw_expression_group1 = [{"type": "来源", "info": "驱蚊器·", "regex": "是", "nextrelation": "或者"},
                              {"type": "来源", "info": "确认", "regex": "是", "nextrelation": "不含"},
                              {"type": "关键词", "info": "人情味·", "relation": "或含", "regex": "否", "nextrelation": "无"}]
     wrapped_date = "date"
@@ -1053,7 +1102,7 @@ if __name__ == "__main__":
     # | start, end: YYYY-MM-DD                          |
     # | in_method: "1"->must; other(default 2)->should  |
     #  -------------------------------------------------
-    raw_expression_group2 = [{"type":"来源","info":"驱蚊器·","regex":"是","nextrelation":"或含"},{"type":"来源","info":"确认","regex":"是","nextrelation":"不含"},{"type":"关键词","info":"人情味·","relation":"或含","regex":"否","nextrelation":"无"}]
+    raw_expression_group2 = [{"type":"来源","info":"驱蚊器·","regex":"是","nextrelation":"或者"},{"type":"来源","info":"确认","regex":"是","nextrelation":"不含"},{"type":"关键词","info":"人情味·","relation":"或含","regex":"否","nextrelation":"无"}]
     wrapped_date2 = "date"
     wrapped_start2 = "1900-01-01"
     wrapped_end2 = "2020-01-01"

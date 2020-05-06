@@ -275,7 +275,10 @@ export default {
       })
         .then(res => {
           this.result = res
-          alert('数据导入成功!')
+          this.$message({
+            type: 'success',
+            message: '导入成功!'
+          })
 
           // data in table 1
           let title = 'title'

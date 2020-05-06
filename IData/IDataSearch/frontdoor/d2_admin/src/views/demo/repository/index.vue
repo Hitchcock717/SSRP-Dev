@@ -39,7 +39,20 @@ import { DeleteRepository } from '@/api/demo/repository/deleterepositoryService'
 export default {
   data () {
     return {
+      storage: this.$route.params.storage, // 获取详情页面传递来的页面数据
       tableData: []
+    }
+  },
+  mounted () {
+    if (localStorage.getItem('repositorys')) {
+      console.log('1')
+    } else { // key被清除, 无法获取
+      if (this.tableData === 'undefined') {
+        console.log('no import')
+      } else {
+        this.tableData = this.storage
+        console.log(this.tableData)
+      }
     }
   },
   methods: {
@@ -48,8 +61,12 @@ export default {
         .then(res => {
           this.result = res
           if (this.result === 'failed') {
-            alert('该词表为空,请添加词汇!')
+            this.$message({
+              type: 'info',
+              message: '该词表库为空,请添加分组!'
+            })
           } else {
+            localStorage.setItem('repositorys', this.result)
             this.tableData = this.result
           }
         })

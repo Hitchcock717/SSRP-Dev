@@ -72,12 +72,17 @@ export default {
   },
   methods: {
     importResult () {
-      alert('正在导入...')
+      this.$message({
+        type: 'success',
+        message: '正在启动...'
+      })
       GetRawResult({})
         .then(res => {
           this.rawResult = res
-          alert('数据导入成功!')
-
+          this.$message({
+            type: 'success',
+            message: '导入成功!'
+          })
           this.tableData = this.rawResult
         })
         .catch(err => {

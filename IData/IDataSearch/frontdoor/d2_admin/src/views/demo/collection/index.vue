@@ -1,6 +1,7 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
+      <el-button type="primary" class="return" @click="submit">返回收藏夹</el-button>
       <el-button
         @click="importResult"
         type="primary"
@@ -53,6 +54,16 @@ export default {
       tableData: []
     }
   },
+  mounted () {
+    // 获取收藏夹, 清除key
+    if (localStorage.getItem('folders')) {
+      this.folders = JSON.parse(localStorage.getItem('folders'))
+      console.log(this.folders)
+      localStorage.removeItem('folders')
+    } else {
+      console.log('No folders')
+    }
+  },
   methods: {
     importResult () {
       GetCollection({
@@ -62,7 +73,10 @@ export default {
           this.result = res
           console.log(this.result)
           if (this.result === 'failed') {
-            alert('该词表为空,请添加词汇!')
+            this.$message({
+              type: 'info',
+              message: '该分组为空,请添加论文!'
+            })
           } else {
             this.tableData = this.result
           }
@@ -103,6 +117,14 @@ export default {
     },
     handleCurrentChange (val) {
       this.currentPage = val
+    },
+    submit () {
+      this.$router.push({
+        name: 'folder',
+        params: {
+          storage: this.folders // 传输页面数据
+        }
+      })
     }
   }
 }

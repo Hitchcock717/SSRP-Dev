@@ -164,7 +164,10 @@ export default {
       console.log(rawData)
 
       if (this.tableData.length === 0) {
-        alert('请添加检索表达式!')
+        this.$message({
+          type: 'info',
+          message: '请添加检索表达式!'
+        })
       }
 
       if (this.tableData.length !== 0) {
@@ -174,9 +177,15 @@ export default {
           let regexField = JSON.stringify(this.tableData[i][regex])
           let relationField = JSON.stringify(this.tableData[i][nextrelation])
           if (typeField === undefined || infoField === undefined || regexField === undefined || relationField === undefined) {
-            alert('必填项不能为空!')
+            this.$message({
+              type: 'info',
+              message: '必填项不能为空!'
+            })
           } else {
-            alert('保存表达式成功!')
+            this.$message({
+              type: 'success',
+              message: '保存表达式成功!'
+            })
           }
         }
       }

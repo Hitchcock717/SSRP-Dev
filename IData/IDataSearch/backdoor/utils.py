@@ -118,7 +118,15 @@ class GetDetailResult(object):
     def get_only_expression(self, single_field, single_kws):
         # 1.1.1 无正则匹配: 使用简单搜索
         doc = DocRetireveES(self.index, self.ip)
-        results = doc.basic_search(single_field, single_kws)
+        # 既然无日期要求，则时间设置成无限长
+        start_date = "1900-01-01"
+        end_date = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+        date = "date"
+        in_method = "2"
+        exclude_fields = [""]
+        exclude_kws = ""
+        results = doc.advance_search_with_regexp(single_field, single_kws, exclude_fields, exclude_kws, date, start_date,
+                                                 end_date, in_method)
         query = results[0]
         counts = results[1]
         docs = results[2]
@@ -172,26 +180,64 @@ class GetDetailResult(object):
 
     # (2).多个表达式 --- 2.1 只有必填项: 多关键词+单/多单字段+相邻关系
     # note: 注意include_fields与exclude_fields重复的情况
-    def get_multiple_expression(self, include_fields, include_kws, exclude_fields, exclude_kws, in_method):
-        # 2.1.1 无正则匹配: 使用高级搜索
+    def get_multiple_expression(self, raw_expression_group):
         doc = DocRetireveES(self.index, self.ip)
         # 既然无日期要求, 则时间设置成无限长
         start_date = "1900-01-01"
         end_date = time.strftime('%Y-%m-%d', time.localtime(time.time()))
         date = "date"
-        results = doc.advance_search(include_fields, include_kws, exclude_fields, exclude_kws, date, start_date,
-                                     end_date, in_method)
+        results = doc.wrapped_advance_search(raw_expression_group, date, start_date, end_date)
         query = results[0]
         counts = results[1]
         docs = results[2]
         return query, counts, docs
 
-    def get_multiple_expression_with_regexp(self, inreg_fields, in_reg, exreg_fields, ex_reg, in_method_reg):
-        # 2.2.2 正则匹配: 使用正则搜索
+    # ************** 有日期筛选 ************* #
+    # (1).有且仅有一个表达式 --- 1.1 只有必填项: 单关键词+单字段
+    def get_only_expression_with_date(self, single_field, single_kws, start_date, end_date):
+        # 1.1.1 无正则匹配: 使用简单搜索
         doc = DocRetireveES(self.index, self.ip)
-        # 既然无日期要求，则时间设置成无限长
-        start_reg = "1900-01-01"
-        end_reg = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+        date = "date"
+        in_method = "2"
+        exclude_fields = [""]
+        exclude_kws = ""
+        results = doc.advance_search_with_regexp(single_field, single_kws, exclude_fields, exclude_kws, date, start_date,
+                                                 end_date, in_method)
+        query = results[0]
+        counts = results[1]
+        docs = results[2]
+        return query, counts, docs
+
+    def get_only_expression_with_regexp_and_date(self, inreg_fields, in_reg, start_reg, end_reg):
+        # 1.1.2 正则匹配: 使用正则搜索
+        doc = DocRetireveES(self.index, self.ip)
+        date_reg = "date"
+        in_method_reg = "2"
+        exreg_fields = [""]
+        ex_reg = ""
+        results = doc.advance_search_with_regexp(inreg_fields, in_reg, exreg_fields, ex_reg, date_reg, start_reg, end_reg, in_method_reg)
+        query = results[0]
+        counts = results[1]
+        docs = results[2]
+        return query, counts, docs
+
+    # (1).有且仅有一个表达式 --- 1.2 不止必填项: 多关键词+单字段+关系
+    # '与或'关系通过in_method设置, '非'关系由exclude_fields,exclude_kws设置
+    # 单字段: 此时include_fields 与 exclude_fields 应设置成一致
+    def get_only_relation_expression_with_date(self, include_fields, include_kws, exclude_fields, exclude_kws, start_date, end_date, in_method):
+        # 1.2.1 无正则匹配: 使用高级搜索
+        doc = DocRetireveES(self.index, self.ip)
+        date = "date"
+        results = doc.advance_search(include_fields, include_kws, exclude_fields, exclude_kws, date, start_date, end_date, in_method)
+        query = results[0]
+        counts = results[1]
+        docs = results[2]
+        return query, counts, docs
+
+    # 单字段: 此时include_fields 与 exclude_fields 应设置成一致
+    def get_only_relation_expression_with_regexp_and_date(self, inreg_fields, in_reg, exreg_fields, ex_reg, start_reg, end_reg, in_method_reg):
+        # 1.2.2 正则匹配: 使用正则搜索
+        doc = DocRetireveES(self.index, self.ip)
         date_reg = "date"
         results = doc.advance_search_with_regexp(inreg_fields, in_reg, exreg_fields, ex_reg, date_reg, start_reg, end_reg, in_method_reg)
         query = results[0]
@@ -199,6 +245,13 @@ class GetDetailResult(object):
         docs = results[2]
         return query, counts, docs
 
-
-
-
+    # (2).多个表达式 --- 2.1 只有必填项: 多关键词+单/多单字段+相邻关系
+    # note: 注意include_fields与exclude_fields重复的情况
+    def get_multiple_expression_with_date(self, raw_expression_group, start_date, end_date):
+        doc = DocRetireveES(self.index, self.ip)
+        date = "date"
+        results = doc.wrapped_advance_search(raw_expression_group, date, start_date, end_date)
+        query = results[0]
+        counts = results[1]
+        docs = results[2]
+        return query, counts, docs

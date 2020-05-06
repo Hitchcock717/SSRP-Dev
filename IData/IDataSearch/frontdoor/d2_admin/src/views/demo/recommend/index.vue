@@ -76,7 +76,15 @@ export default {
             }
           })
           console.log(JSON.stringify(this.extractors))
-          alert('成功保存词汇!')
+          this.$message({
+            type: 'success',
+            message: '成功保存词汇!'
+          })
+        } else {
+          this.$message({
+            type: 'info',
+            message: '保存词汇失败, 请重试!'
+          })
         }
       })
     }

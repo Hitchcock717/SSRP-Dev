@@ -1,14 +1,15 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
-      <el-button
-        @click="addCorpus"
-        type="primary"
-        class="addCorpus">添加</el-button>
+      <el-button type="primary" class="return" @click="submit">返回词表库</el-button>
       <el-button
         @click="importResult"
         type="primary"
         class="importResult">导入</el-button>
+      <el-button
+        @click="addCorpus"
+        type="primary"
+        class="addCorpus">添加</el-button>
       <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
       style="width: 800px" empty-text="N/A" max-height="600">
         <el-table-column label="编号" width="100px" type="index" align="center"></el-table-column>
@@ -32,12 +33,16 @@
   </d2-container>
 </template>
 <style lang="scss" scoped>
+  .return {
+    margin-bottom: 15px;
+    margin-right: 10px;
+  }
   .importResult {
     margin-bottom: 15px;
   }
   .addCorpus {
     margin-bottom: 15px;
-    margin-right: 15px;
+    float: right;
   }
 </style>
 
@@ -56,6 +61,16 @@ export default {
       tableData: []
     }
   },
+  mounted () {
+    // 获取词表库, 清除key
+    if (localStorage.getItem('repositorys')) {
+      this.repositorys = JSON.parse(localStorage.getItem('repositorys'))
+      console.log(this.repositorys)
+      localStorage.removeItem('repositorys')
+    } else {
+      console.log('No repositorys')
+    }
+  },
   methods: {
     importResult () {
       GetCorpus({
@@ -64,7 +79,10 @@ export default {
         .then(res => {
           this.result = res
           if (this.result === 'failed') {
-            alert('该词表为空,请添加词汇!')
+            this.$message({
+              type: 'info',
+              message: '该词表为空,请添加词汇!'
+            })
           } else {
             this.tableData = this.result
           }
@@ -130,6 +148,14 @@ export default {
     },
     handleCurrentChange (val) {
       this.currentPage = val
+    },
+    submit () {
+      this.$router.push({
+        name: 'repository',
+        params: {
+          storage: this.repositorys // 传输页面数据
+        }
+      })
     }
   }
 }

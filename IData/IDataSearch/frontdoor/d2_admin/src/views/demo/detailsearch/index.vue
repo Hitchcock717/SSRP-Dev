@@ -11,7 +11,7 @@
        </el-form>
        <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="500"
         highlight-current-row @current-change="handleChange" ref="simpleTable">
-        <el-table-column label="编号" width="60px" prop="id"></el-table-column>
+        <el-table-column label="编号" width="60px" type="index"></el-table-column>
         <el-table-column label="标题" width="250px" align="center" prop="title"></el-table-column>
         <el-table-column label="作者" prop="author"></el-table-column>
         <el-table-column label="发表时间" prop="date" sortable></el-table-column>
@@ -65,11 +65,17 @@ export default {
   },
   methods: {
     importResult () {
-      alert('正在导入...')
+      this.$message({
+        type: 'success',
+        message: '正在启动...'
+      })
       GetFilterResult({})
         .then(res => {
           this.filterResult = res
-          alert('数据导入成功!')
+          this.$message({
+            type: 'success',
+            message: '导入成功!'
+          })
           this.tableData = this.filterResult
         })
         .catch(err => {
