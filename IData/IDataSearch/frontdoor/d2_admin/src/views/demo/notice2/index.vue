@@ -78,6 +78,11 @@ export default {
       }
     }
   },
+  created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/subrepo'
+    })
+  },
   methods: {
     viewQuery () {
       console.log(this.result)

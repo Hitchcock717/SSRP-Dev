@@ -140,6 +140,14 @@ export default {
       }
     }
   },
+  created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/recommend'
+    })
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/recommend2'
+    })
+  },
   methods: {
     handleRemove (file, fileList) {
       console.log(file, fileList)

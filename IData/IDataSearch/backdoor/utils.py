@@ -125,7 +125,7 @@ class GetDetailResult(object):
         in_method = "2"
         exclude_fields = [""]
         exclude_kws = ""
-        results = doc.advance_search_with_regexp(single_field, single_kws, exclude_fields, exclude_kws, date, start_date,
+        results = doc.advance_search(single_field, single_kws, exclude_fields, exclude_kws, date, start_date,
                                                  end_date, in_method)
         query = results[0]
         counts = results[1]

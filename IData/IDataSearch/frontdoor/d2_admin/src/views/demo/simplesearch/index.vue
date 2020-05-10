@@ -52,18 +52,6 @@ export default {
       simpleForm: {}
     }
   },
-  mounted () {
-    if (localStorage.getItem('rawResult')) {
-      console.log('1')
-    } else { // key被清除, 无法获取
-      if (this.tableData === 'undefined') {
-        console.log('no import')
-      } else {
-        this.tableData = this.storage
-        console.log(this.tableData)
-      }
-    }
-  },
   methods: {
     onScroll () {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
@@ -100,7 +88,6 @@ export default {
                 selected: JSON.stringify(selected)
               }
             })
-            console.log(selected)
           }
         }
       }
@@ -113,6 +100,9 @@ export default {
     }
   },
   created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/notice1'
+    })
     window.addEventListener('scroll', this.onScroll)
     this.$message({
       type: 'success',
@@ -125,7 +115,19 @@ export default {
           type: 'success',
           message: '导入成功!'
         })
-        this.tableData = this.rawResult
+        if (localStorage.getItem('rawResult')) {
+          console.log('1')
+        } else { // key被清除, 无法获取
+          if (this.tableData === 'undefined') {
+            console.log('no import')
+          } else {
+            if (this.storage) {
+              this.tableData = this.storage
+            } else {
+              this.tableData = this.rawResult
+            }
+          }
+        }
       })
       .catch(err => {
         console.log(err)
@@ -133,6 +135,7 @@ export default {
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)
+    localStorage.removeItem('rawResult')
   }
 }
 </script>

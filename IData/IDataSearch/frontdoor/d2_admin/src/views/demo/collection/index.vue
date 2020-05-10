@@ -52,6 +52,10 @@ export default {
     }
   },
   created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/folder'
+    })
+
     GetCollection({
       collection: this.selectedCollection
     })

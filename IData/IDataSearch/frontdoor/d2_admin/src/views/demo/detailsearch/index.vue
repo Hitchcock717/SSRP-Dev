@@ -49,17 +49,6 @@ export default {
       detailForm: {}
     }
   },
-  mounted () {
-    if (localStorage.getItem('filterResult')) {
-    } else { // key被清除, 无法获取
-      if (this.tableData === 'undefined') {
-        console.log('no import')
-      } else {
-        this.tableData = this.storage
-        console.log(this.tableData)
-      }
-    }
-  },
   methods: {
     onScroll () {
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
@@ -80,8 +69,6 @@ export default {
     setCurrent (row) {
       this.$refs.simpleTable.setCurrentRow(row)
       var res = this.currentRow
-      console.log(this.tableData)
-      console.log(this.tableData.length)
 
       // 点击详情，保存页面数据
       const parsedResult = JSON.stringify(this.tableData)
@@ -92,14 +79,12 @@ export default {
         for (var key in this.tableData[i]) {
           if (key === pkid && this.tableData[i][key] === res[pkid]) {
             var selected = this.tableData[i][key]
-            console.log(selected)
             this.$router.push({
               path: '/detail2',
               query: {
                 selected: JSON.stringify(selected)
               }
             })
-            console.log(selected)
           }
         }
       }
@@ -114,19 +99,41 @@ export default {
     }
   },
   created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/notice2'
+    })
+
     window.addEventListener('scroll', this.onScroll)
+
     this.$message({
       type: 'success',
       message: '正在启动...'
     })
+
     GetFilterResult({})
       .then(res => {
         this.filterResult = res
-        this.$message({
-          type: 'success',
-          message: '导入成功!'
-        })
-        this.tableData = this.filterResult
+
+        if (localStorage.getItem('filterResult')) {
+          console.log('1')
+        } else { // key被清除, 无法获取
+          if (this.tableData === 'undefined') {
+            this.$message({
+              type: 'info',
+              message: '导入失败, 请重试!'
+            })
+          } else {
+            if (this.storage) {
+              this.tableData = this.storage
+            } else {
+              this.tableData = this.filterResult
+              this.$message({
+                type: 'success',
+                message: '导入成功!'
+              })
+            }
+          }
+        }
       })
       .catch(err => {
         console.log(err)

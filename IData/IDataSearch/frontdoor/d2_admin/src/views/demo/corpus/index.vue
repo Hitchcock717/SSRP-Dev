@@ -55,6 +55,10 @@ export default {
     }
   },
   created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/repository'
+    })
+
     GetCorpus({
       corpus: this.selectedCorpus
     })

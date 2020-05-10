@@ -224,7 +224,7 @@ export default {
       this.$router.push('/repository')
     },
     submitForm () {
-      var allData = this.tableData
+      var allData = JSON.parse(JSON.stringify(this.tableData))
       var pubDate = this.ruleForm.date
 
       if (JSON.stringify(allData) === '[{}]') {

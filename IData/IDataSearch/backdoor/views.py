@@ -864,11 +864,12 @@ def getexpression(request):
                 if not expression_context.get('relation'):
                     # 1.1.1 无正则
                     if expression_context['regex'] == '否':
-                        expression_type = expression_context['type']
+                        expression_type = expression_context['type'].split()
                         expression_info = expression_context['info']
 
                         detail = GetDetailResult()
                         results = detail.get_only_expression(expression_type, expression_info)
+                        print(results)
 
                         sum_doc = results[2]
                         set_only = []
@@ -922,15 +923,14 @@ def getexpression(request):
                         data = {
                             'query': results[0],
                             'raw_count': results[1],
-                            'filter_search_count': filter_count,
-                            'doc': sum_doc
+                            'filter_search_count': filter_count
                         }
                         print(data)
                         return Response(data)
 
                     # 1.1.2 有正则
                     else:
-                        expression_type = expression_context['type']
+                        expression_type = expression_context['type'].split()
                         expression_info = expression_context['info']
 
                         detail = GetDetailResult()
@@ -989,8 +989,7 @@ def getexpression(request):
                         data = {
                             'query': results[0],
                             'raw_count': results[1],
-                            'filter_search_count': filter_count,
-                            'doc': sum_doc
+                            'filter_search_count': filter_count
                         }
                         print(data)
                         return Response(data)
@@ -999,7 +998,7 @@ def getexpression(request):
                 else:
                     # 1.2.1 无正则
                     if expression_context['regex'] == '否':
-                        expression_type = expression_context['type']
+                        expression_type = expression_context['type'].split()
                         expression_info = expression_context['info']
                         expression_relation = expression_context['relation']
                         expression_otherinfo = expression_context['otherinfo']
@@ -1067,8 +1066,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -1134,8 +1132,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -1201,15 +1198,14 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
 
                     # 1.2.2 有正则
                     else:
-                        expression_type = expression_context['type']
+                        expression_type = expression_context['type'].split()
                         expression_info = expression_context['info']
                         expression_relation = expression_context['relation']
                         expression_otherinfo = expression_context['otherinfo']
@@ -1278,8 +1274,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -1346,8 +1341,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -1414,8 +1408,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -1505,8 +1498,7 @@ def getexpression(request):
                 data = {
                     'query': results[0],
                     'raw_count': results[1],
-                    'filter_search_count': filter_count,
-                    'doc': sum_doc
+                    'filter_search_count': filter_count
                 }
                 print(data)
                 return Response(data)
@@ -1537,7 +1529,7 @@ def getexpression(request):
                 if not expression_context['relation']:
                     # 1.1.1 无正则
                     if expression_context['regex'] == '否':
-                        expression_type = expression_context['type']
+                        expression_type = expression_context['type'].split()
                         expression_info = expression_context['info']
 
                         detail = GetDetailResult()
@@ -1596,15 +1588,14 @@ def getexpression(request):
                         data = {
                             'query': results[0],
                             'raw_count': results[1],
-                            'filter_search_count': filter_count,
-                            'doc': sum_doc
+                            'filter_search_count': filter_count
                         }
                         print(data)
                         return Response(data)
 
                     # 1.1.2 有正则
                     else:
-                        expression_type = expression_context['type']
+                        expression_type = expression_context['type'].split()
                         expression_info = expression_context['info']
 
                         detail = GetDetailResult()
@@ -1663,8 +1654,7 @@ def getexpression(request):
                         data = {
                             'query': results[0],
                             'raw_count': results[1],
-                            'filter_search_count': filter_count,
-                            'doc': sum_doc
+                            'filter_search_count': filter_count
                         }
                         print(data)
                         return Response(data)
@@ -1673,7 +1663,7 @@ def getexpression(request):
                 else:
                     # 1.2.1 无正则
                     if expression_context['regex'] == '否':
-                        expression_type = expression_context['type']
+                        expression_type = expression_context['type'].split()
                         expression_info = expression_context['info']
                         expression_relation = expression_context['relation']
                         expression_otherinfo = expression_context['otherinfo']
@@ -1742,8 +1732,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -1810,8 +1799,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -1878,15 +1866,14 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
 
                     # 1.2.2 有正则
                     else:
-                        expression_type = expression_context['type']
+                        expression_type = expression_context['type'].split()
                         expression_info = expression_context['info']
                         expression_relation = expression_context['relation']
                         expression_otherinfo = expression_context['otherinfo']
@@ -1954,8 +1941,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -2021,8 +2007,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -2088,8 +2073,7 @@ def getexpression(request):
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
-                                'filter_search_count': filter_count,
-                                'doc': sum_doc
+                                'filter_search_count': filter_count
                             }
                             print(data)
                             return Response(data)
@@ -2177,8 +2161,7 @@ def getexpression(request):
                 data = {
                     'query': results[0],
                     'raw_count': results[1],
-                    'filter_search_count': filter_count,
-                    'doc': sum_doc
+                    'filter_search_count': filter_count
                 }
                 print(data)
                 return Response(data)
@@ -2224,7 +2207,11 @@ def filteresult(request):
 
             if filteresults is not None:
                 print(filteresults)
-                return Response(filteresults)
+                data = {
+                    'record_id': pre_id,
+                    'result': str(filteresults)
+                }
+                return Response(data)
             else:
                 return Response('No suitable data!')
 
@@ -2249,12 +2236,66 @@ def filteresult(request):
 
             if filteresults:
                 print(filteresults)
-                return Response(filteresults)
+                data = {
+                    'record_id': '0', # 首次检索
+                    'result': str(filteresults)
+                }
+                return Response(data)
             else:
                 return Response('No suitable data!')
 
 
-@api_view(('POST',))
+@api_view(('POST', 'GET',))
+def getrecordId(request):
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        id_dict = ast.literal_eval(raw_dict_key)
+        record_id = int(id_dict['record_id'].strip('"'))
+
+        # 按前台存储id查找
+        if record_id == '0':
+            results = []
+            updates = Detailsearch.objects.all()
+            for update in updates:
+                update_dict = model_to_dict(update)
+                results.append(update_dict)
+
+            if results:
+                print(results)
+                data = {
+                    'record_id': '0', # 首次检索
+                    'result': str(results)
+                }
+                return Response(data)
+            else:
+                return Response('No suitable data!')
+
+        else:
+            pre_id = record_id
+            results = []
+
+            updates = Detailsearch.objects.filter(id__gt=pre_id)
+            for update in updates:
+                update_dict = model_to_dict(update)
+
+                results.append(update_dict)
+
+            if results is not None:
+                print(results)
+                data = {
+                    'record_id': pre_id,
+                    'result': str(results)
+                }
+                return Response(data)
+            else:
+                return Response('No suitable data!')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST', 'GET',))
 def selectedfilterresult(request):
     if request.method == 'POST':
         raw_dict = dict(zip(request.POST.keys(), request.POST.values()))

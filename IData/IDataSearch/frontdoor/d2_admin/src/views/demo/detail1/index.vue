@@ -31,7 +31,7 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="corpusFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addCorpus">确 定</el-button>
+            <el-button type="primary" @click="addCorpus(corpusFormVisible)">确 定</el-button>
           </div>
         </el-dialog>
         <el-container>
@@ -79,7 +79,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
               <el-button @click="dialogFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="addCollection">确 定</el-button>
+              <el-button type="primary" @click="addCollection(dialogFormVisible)">确 定</el-button>
             </div>
         </el-dialog>
         </el-container>
@@ -277,6 +277,7 @@ export default {
               message: '论文已存在!'
             })
           }
+          this.dialogFormVisible = false
         })
     },
     addCorpus (corpusFormVisible) {
@@ -297,6 +298,7 @@ export default {
               message: '词汇已存在!'
             })
           }
+          this.corpusFormVisible = false
         })
     },
     showDropmenu: function (event) {

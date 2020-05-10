@@ -81,6 +81,11 @@ export default {
       }
     }
   },
+  created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/startsearch'
+    })
+  },
   methods: {
     viewKeyword () {
       let keyword = 'keywords'

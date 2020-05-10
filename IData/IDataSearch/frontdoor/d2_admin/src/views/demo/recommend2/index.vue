@@ -132,6 +132,9 @@ export default {
   },
   created () {
     window.addEventListener('scroll', this.onScroll)
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/corpusearch'
+    })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

@@ -58,15 +58,20 @@ export default {
         method: [
           { required: true, message: '请选择搜索方式', trigger: 'change' }
         ]
-      },
-      mounted () {
-        this.imgLoad()
-        window.addEventListener('resize', () => {
-          this.bannerHeight = this.$refs.bannerHeight[0].height
-          this.imgLoad()
-        }, false)
       }
     }
+  },
+  created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/page1'
+    })
+  },
+  mounted () {
+    this.imgLoad()
+    window.addEventListener('resize', () => {
+      this.bannerHeight = this.$refs.bannerHeight[0].height
+      this.imgLoad()
+    }, false)
   },
   methods: {
     imgLoad () {

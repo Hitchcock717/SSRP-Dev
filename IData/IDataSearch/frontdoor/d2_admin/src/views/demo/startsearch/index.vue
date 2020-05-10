@@ -44,6 +44,11 @@ export default {
       }
     }
   },
+  created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: '/complete'
+    })
+  },
   mounted () {
     this.imgLoad()
     window.addEventListener('resize', () => {

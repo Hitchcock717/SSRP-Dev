@@ -62,6 +62,8 @@ urlpatterns = [
 
     url('api/filteresult/', views.filteresult),
 
+    url('api/getrecordId/', views.getrecordId),
+
     url('api/selectedrawresult/', views.selectedrawresult),
 
     url('api/selectedfilterresult/', views.selectedfilterresult),
