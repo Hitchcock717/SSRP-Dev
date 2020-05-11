@@ -36,11 +36,11 @@
 </template>
 
 <script>
-import { GetFilterResult } from '@/api/demo/filterResultService'
+import { GetFilterResult, GetPreRecord } from '@/api/demo/filterResultService'
 export default {
   data () {
     return {
-      storage: this.$route.params.storage, // 获取详情页面传递来的页面数据
+      height: '',
       isFixed: '',
       currentPage: 1,
       currentRow: '',
@@ -70,10 +70,6 @@ export default {
       this.$refs.simpleTable.setCurrentRow(row)
       var res = this.currentRow
 
-      // 点击详情，保存页面数据
-      const parsedResult = JSON.stringify(this.tableData)
-      localStorage.setItem('filterResult', parsedResult)
-
       let pkid = 'id'
       for (var i = 0, len = this.tableData.length; i < len; i++) {
         for (var key in this.tableData[i]) {
@@ -98,6 +94,38 @@ export default {
       })
     }
   },
+  beforeRouteEnter (to, from, next) {
+    if (from.name === 'detail2') {
+      next(vm => {
+        let id = localStorage.getItem('record_id')
+        GetPreRecord({ record_id: id })
+          .then(res => {
+            localStorage.removeItem('record_id')
+            console.log('from detail')
+            console.log(res)
+            vm.filterResult = res.result
+            vm.tableData = vm.filterResult
+            localStorage.setItem('record_id', res.record_id)
+          }).catch(err => {
+            console.log(err)
+          })
+      })
+    } else {
+      next(vm => {
+        GetFilterResult({})
+          .then(res => {
+            console.log('others')
+            console.log(res)
+            vm.filterResult = res.result
+            vm.tableData = vm.filterResult
+            localStorage.setItem('record_id', res.record_id)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      })
+    }
+  },
   created () {
     this.$store.dispatch('d2admin/page/close', {
       tagName: '/notice2'
@@ -109,35 +137,6 @@ export default {
       type: 'success',
       message: '正在启动...'
     })
-
-    GetFilterResult({})
-      .then(res => {
-        this.filterResult = res
-
-        if (localStorage.getItem('filterResult')) {
-          console.log('1')
-        } else { // key被清除, 无法获取
-          if (this.tableData === 'undefined') {
-            this.$message({
-              type: 'info',
-              message: '导入失败, 请重试!'
-            })
-          } else {
-            if (this.storage) {
-              this.tableData = this.storage
-            } else {
-              this.tableData = this.filterResult
-              this.$message({
-                type: 'success',
-                message: '导入成功!'
-              })
-            }
-          }
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

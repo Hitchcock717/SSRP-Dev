@@ -38,11 +38,10 @@
 </template>
 
 <script>
-import { GetRawResult } from '@/api/demo/rawResultService'
+import { GetRawResult, GetPreRecord } from '@/api/demo/rawResultService'
 export default {
   data () {
     return {
-      storage: this.$route.params.storage, // 获取详情页面传递来的页面数据
       height: '',
       isFixed: '',
       currentPage: 1,
@@ -73,10 +72,6 @@ export default {
       this.$refs.simpleTable.setCurrentRow(row)
       var res = this.currentRow
 
-      // 点击详情，保存页面数据
-      const parsedResult = JSON.stringify(this.tableData)
-      localStorage.setItem('rawResult', parsedResult)
-
       let pkid = 'id'
       for (var i = 0, len = this.tableData.length; i < len; i++) {
         for (var key in this.tableData[i]) {
@@ -99,6 +94,39 @@ export default {
       this.$router.push('/subrepo')
     }
   },
+  beforeRouteEnter (to, from, next) {
+    if (from.name === 'detail1') {
+      next(vm => {
+        let id = localStorage.getItem('record_id')
+        GetPreRecord({ record_id: id })
+          .then(res => {
+            localStorage.removeItem('record_id')
+            console.log('from detail')
+            console.log(res)
+            vm.rawResult = res.result
+            vm.tableData = vm.rawResult
+            localStorage.setItem('record_id', res.record_id)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      })
+    } else {
+      next(vm => {
+        GetRawResult({})
+          .then(res => {
+            console.log('others')
+            console.log(res)
+            vm.rawResult = res.result
+            vm.tableData = vm.rawResult
+            localStorage.setItem('record_id', res.record_id)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      })
+    }
+  },
   created () {
     this.$store.dispatch('d2admin/page/close', {
       tagName: '/notice1'
@@ -108,34 +136,9 @@ export default {
       type: 'success',
       message: '正在启动...'
     })
-    GetRawResult({})
-      .then(res => {
-        this.rawResult = res
-        this.$message({
-          type: 'success',
-          message: '导入成功!'
-        })
-        if (localStorage.getItem('rawResult')) {
-          console.log('1')
-        } else { // key被清除, 无法获取
-          if (this.tableData === 'undefined') {
-            console.log('no import')
-          } else {
-            if (this.storage) {
-              this.tableData = this.storage
-            } else {
-              this.tableData = this.rawResult
-            }
-          }
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)
-    localStorage.removeItem('rawResult')
   }
 }
 </script>

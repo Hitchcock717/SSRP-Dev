@@ -230,15 +230,6 @@ export default {
       })
   },
   mounted () {
-    // 获取页面数据, 清除key
-    if (localStorage.getItem('filterResult')) {
-      this.filterResult = JSON.parse(localStorage.getItem('filterResult'))
-      console.log(this.filterResult)
-      localStorage.removeItem('filterResult')
-    } else {
-      console.log('No filterResult')
-    }
-
     // 获取收藏夹, 清除key
     if (localStorage.getItem('folders')) {
       this.folders = JSON.parse(localStorage.getItem('folders'))
@@ -333,10 +324,7 @@ export default {
     },
     submit () {
       this.$router.push({
-        name: 'detailsearch',
-        params: {
-          storage: this.filterResult // 传输页面数据
-        }
+        path: '/detailsearch'
       })
     }
   }

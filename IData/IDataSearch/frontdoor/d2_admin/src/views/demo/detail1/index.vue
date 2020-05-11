@@ -230,15 +230,6 @@ export default {
       })
   },
   mounted () {
-    // 获取页面数据, 清除key
-    if (localStorage.getItem('rawResult')) {
-      this.rawResult = JSON.parse(localStorage.getItem('rawResult'))
-      console.log(this.rawResult)
-      localStorage.removeItem('rawResult')
-    } else {
-      console.log('No rawResult')
-    }
-
     // 获取收藏夹, 清除key
     if (localStorage.getItem('folders')) {
       this.folders = JSON.parse(localStorage.getItem('folders'))
@@ -333,10 +324,7 @@ export default {
     },
     submit () {
       this.$router.push({
-        name: 'simplesearch',
-        params: {
-          storage: this.rawResult // 传输页面数据
-        }
+        path: '/simplesearch'
       })
     }
   }

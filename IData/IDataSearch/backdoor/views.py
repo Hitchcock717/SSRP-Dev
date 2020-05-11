@@ -771,7 +771,11 @@ def rawresult(request):
 
             if rawresults is not None:
                 print(rawresults)
-                return Response(rawresults)
+                data = {
+                    'record_id': pre_id,
+                    'result': rawresults
+                }
+                return Response(data)
             else:
                 return Response('No suitable data!')
 
@@ -796,12 +800,66 @@ def rawresult(request):
 
             if rawresults is not None:
                 print(rawresults)
-                return Response(rawresults)
+                data = {
+                    'record_id': '0',
+                    'result': rawresults
+                }
+                return Response(data)
             else:
                 return Response('No suitable data!')
 
 
-@api_view(('POST',))
+@api_view(('POST', 'GET',))
+def getrecordrawId(request):
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        id_dict = ast.literal_eval(raw_dict_key)
+        record_id = int(id_dict['record_id'].strip('"'))
+
+        # 按前台存储id查找
+        if record_id == '0':
+            results = []
+            updates = Simplesearch.objects.all()
+            for update in updates:
+                update_dict = model_to_dict(update)
+                results.append(update_dict)
+
+            if results:
+                print(results)
+                data = {
+                    'record_id': '0',  # 首次检索
+                    'result': results
+                }
+                return Response(data)
+            else:
+                return Response('No suitable data!')
+
+        else:
+            pre_id = record_id
+            results = []
+
+            updates = Simplesearch.objects.filter(id__gt=pre_id)
+            for update in updates:
+                update_dict = model_to_dict(update)
+
+                results.append(update_dict)
+
+            if results is not None:
+                print(results)
+                data = {
+                    'record_id': pre_id,
+                    'result': results
+                }
+                return Response(data)
+            else:
+                return Response('No suitable data!')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST', 'GET',))
 def selectedrawresult(request):
     if request.method == 'POST':
         raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
@@ -2209,7 +2267,7 @@ def filteresult(request):
                 print(filteresults)
                 data = {
                     'record_id': pre_id,
-                    'result': str(filteresults)
+                    'result': filteresults
                 }
                 return Response(data)
             else:
@@ -2238,7 +2296,7 @@ def filteresult(request):
                 print(filteresults)
                 data = {
                     'record_id': '0', # 首次检索
-                    'result': str(filteresults)
+                    'result': filteresults
                 }
                 return Response(data)
             else:
@@ -2264,8 +2322,8 @@ def getrecordId(request):
             if results:
                 print(results)
                 data = {
-                    'record_id': '0', # 首次检索
-                    'result': str(results)
+                    'record_id': '0',  # 首次检索
+                    'result': results
                 }
                 return Response(data)
             else:
@@ -2285,7 +2343,7 @@ def getrecordId(request):
                 print(results)
                 data = {
                     'record_id': pre_id,
-                    'result': str(results)
+                    'result': results
                 }
                 return Response(data)
             else:

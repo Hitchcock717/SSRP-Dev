@@ -58,6 +58,8 @@ urlpatterns = [
 
     url('api/rawresult/', views.rawresult),
 
+    url('api/getrecordrawId/', views.getrecordrawId),
+
     url('api/getexpression/', views.getexpression),
 
     url('api/filteresult/', views.filteresult),
