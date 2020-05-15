@@ -85,9 +85,10 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'iData.pipelines.ElasticsearchPipline': 300,
+    # 'iData.pipelines.ElasticsearchPipline': 300,
     # 'iData.pipelines.MongoDBPipeline': 300,
     # 'iData.pipelines.CsvPipeline': 300,
+    'iData.pipelines.IdataPipeline': 300,
     'scrapy_redis.pipelines.RedisPipeline': 400,
 }
 

@@ -12,13 +12,18 @@
 # class IdataItem(DjangoItem):
     # django_model = Idata
 
-import scrapy
+
+
+
 from .spiders.es_models import IdataSpider
 from elasticsearch_dsl.connections import connections
 es = connections.create_connection(hosts=['127.0.0.1'])
- 
+
+
 # 将建立的字段进行分词处理
 # *args 元组 **args字典
+
+
 def conduct_suggest(index, *args):
     """
     :param index: 操作的数据库
@@ -52,8 +57,11 @@ def conduct_suggest(index, *args):
     # suggest是没有重复数据的
     # [{'input':['土豆','豆','逆','袭'],'weight':10},{'words':['天蚕'],'weight':8}]
     return suggest
- 
- 
+
+
+import scrapy
+
+
 class IdataItem(scrapy.Item):
     d_url = scrapy.Field()
     title = scrapy.Field()
@@ -67,7 +75,8 @@ class IdataItem(scrapy.Item):
     download = scrapy.Field()
     abstract = scrapy.Field()
     fund = scrapy.Field()
- 
+
+    """
     # 将数据保存到es搜索服务器中
     def save_es(self):
         idata = IdataSpider()
@@ -88,5 +97,6 @@ class IdataItem(scrapy.Item):
         # 将某些字段进行分词处理, 将处理后的数据保存到suggest中
         idata.suggest = conduct_suggest('idata_doc', (idata.kws,10), (idata.title,8))
         idata.save()
+    """
 
 

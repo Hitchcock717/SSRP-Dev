@@ -14,12 +14,15 @@ from scrapy import Item
 
 import copy
 
+
+'''
 # 将爬虫爬取的数据存储搜索服务器中
 class ElasticsearchPipline(object):
  
     def process_item(self, item, spider):
         item.save_es()
         return item
+'''
 
 '''
 # 将数据写入ES
@@ -74,13 +77,13 @@ class CsvPipeline(object):
 
 '''
 
-'''
+
 class IdataPipeline(object):
     def open_spider(item, spider):
-        item.con = sqlite3.connect("ida2.sqlite")  # 链接数据库
+        item.con = sqlite3.connect("ida3.sqlite")  # 链接数据库
         item.cu = item.con.cursor()
 
-    def process_item(item, item, spider):
+    def process_item(item, spider):
         print(spider.name, 'pipelines')
         insert_sql = "insert or replace into ida2 (title, author, info, source, date, kws, fund, abstract, download, cited, downed) " \
                      "values('{}', '{}', '{}', '{}', '{}', '{}','{}', '{}', '{}', '{}', '{}')".format(
@@ -103,4 +106,4 @@ class IdataPipeline(object):
 
     def spider_close(item, spider):
         item.con.close()
-'''
+
