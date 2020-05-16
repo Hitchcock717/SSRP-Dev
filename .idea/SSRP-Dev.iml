@@ -12,6 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/migrations" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/IData/iData" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/IData/iData/spiders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

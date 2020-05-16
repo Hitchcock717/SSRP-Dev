@@ -101,10 +101,11 @@ class CnkispaceSpider(object):
                     # for item in item_divs:
                     for item in item_divs[:1]:  # for test
                         field = []
+                        # ****************** 十个公共字段: abstract、info、fund、author、kws、download、title、cited、downed、source **************** #
                         item_p1 = item.find('p', {'class': 'tit clearfix'})
-                        title = item_p1.find('a', {'class': 'left'})['title']
+                        title = item_p1.find('a', {'class': 'left'})['title'].replace('\r', '').replace('\n', '')
                         download = item_p1.find('a', {'class': 'left'})['href']
-                        # print(download)
+
                         results = self.get_transfer_page(download)
 
                         abstract = results[0]
@@ -113,34 +114,52 @@ class CnkispaceSpider(object):
 
                         item_p2 = item.find('p', {'class': 'source'})
                         spans = item_p2.findAll('span')
-                        author = spans[0]['title']
-                        date = spans[2].get_text()
-                        source = spans[3].get_text()
+                        author = spans[0]['title'].replace(';', ' ')
+                        raw_source = spans[-1].get_text()
+                        source = '知网' + raw_source
 
                         item_p3 = item.find('div', {'class': 'info'})
                         left_p = item_p3.find('p', {'class': 'info_left left'})
                         if len(left_p.findAll('a')) > 0:
-                            kws = left_p.find('a')['data-key'].replace(r'/', ',')
+                            kws = left_p.find('a')['data-key'].replace(r'/', ';')
                         else:
                             kws = 'N/A'
                         right_p = item_p3.find('p', {'class': 'info_right right'})
                         downed = right_p.find('span', {'class': 'time1'}).get_text().replace('下载', '').strip('（）')
                         cited = right_p.find('span', {'class': 'time2'}).get_text().replace('被引', '').strip('（）')
 
-                        field.append(title)
-                        field.append(author)
-                        field.append(source)
-                        field.append(info)
-                        field.append(date)
-                        field.append(kws)
-                        field.append(cited)
-                        field.append(downed)
-                        field.append(abstract)
-                        field.append(fund)
-                        field.append(download)
-                        csv_data.append(field)
+                        if source == '知网期刊':   # 一个私有字段: date
+                            date = spans[2].get_text()
 
-                # print(len(csv_data))
+                            field.append(title)
+                            field.append(author)
+                            field.append(source)
+                            field.append(info)
+                            field.append(date)
+                            field.append(kws)
+                            field.append(cited)
+                            field.append(downed)
+                            field.append(abstract)
+                            field.append(fund)
+                            field.append(download)
+                            csv_data.append(field)
+
+                        elif source == '知网硕士论文' or source == '知网博士论文':  # 一个私有字段: date
+                            date = spans[3].get_text()
+
+                            field.append(title)
+                            field.append(author)
+                            field.append(source)
+                            field.append(info)
+                            field.append(date)
+                            field.append(kws)
+                            field.append(cited)
+                            field.append(downed)
+                            field.append(abstract)
+                            field.append(fund)
+                            field.append(download)
+                            csv_data.append(field)
+
                 socket.setdefaulttimeout(10)  # 设置10秒后连接超时
                 success = True
                 return csv_data
@@ -172,7 +191,7 @@ class CnkispaceSpider(object):
 
                 if soup.find('div', {'style': 'text-align:left;word-break:break-all'}):
                     abstract = soup.find('div', {'style': 'text-align:left;word-break:break-all'}).get_text().replace(
-                        '【摘要】：', '').strip('\n')
+                        '【摘要】：', '').replace('\r', '').replace('\n', '').strip().replace(',', '，')
                     container.append(abstract)
                 else:
                     abstract = 'N/A'
@@ -209,7 +228,7 @@ class CnkispaceSpider(object):
                             container.append(info)
 
                         if other_as[1].get_text():
-                            fund = other_as[1].get_text()
+                            fund = other_as[1].get_text().replace(',', '，')
                             container.append(fund)
                         else:
                             fund = 'N/A'
@@ -252,7 +271,7 @@ class CnkispaceSpider(object):
             columns = ['title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'abstract', 'fund', 'download']
             dataframe = pd.DataFrame(csv_data, columns=columns)
             print(dataframe)
-            dataframe.to_csv(self.csvname, sep=',', encoding='utf-8')
+            dataframe.to_csv(self.csvname, sep=',', index=False, encoding='utf-8')
             print('data saved')
 
         except Exception as e:

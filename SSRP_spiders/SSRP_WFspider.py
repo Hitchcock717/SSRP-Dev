@@ -136,7 +136,7 @@ class WFdataspider(object):
                         repo['download'] = download
 
                         # 摘要
-                        abstract = res.find('div', {'class': 'summary'}).get_text().strip('"').strip()
+                        abstract = res.find('div', {'class': 'summary'}).get_text().replace('\r', '').replace('\n', '').strip('"').strip().replace(',', '，')
                         # print(abstract)
                         repo['abstract'] = abstract
 
@@ -198,7 +198,7 @@ class WFdataspider(object):
                                 for au in author_as:
                                     author_piece = au.get_text()
                                     authors.append(author_piece)
-                                author = ','.join(authors)
+                                author = ';'.join(authors)
                                 # print(author)
                                 repo['author'] = author
                             else:
@@ -328,7 +328,7 @@ class WFdataspider(object):
                             if len(info_li.findAll('a')) > 1:
                                 raw_kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').replace('\n', ',')
                                 raw_kws1 = re.sub('^,,|,$', '', raw_kws)
-                                kws = raw_kws1.replace(',,', ',')
+                                kws = raw_kws1.replace(',,', ';')
                                 # print(kws)
                                 container.append(kws)
                             else:
@@ -336,19 +336,20 @@ class WFdataspider(object):
                                 # print(kws)
                                 container.append(kws)
 
-                        if re.search('作者单位：', info_li.get_text()):
-                            info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip(
-                            '"').strip()
-                            # print(info)
+                        if re.search('作者单位：', info_li.find('div', {'class': 'info_left'}).get_text()):
+                            info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip(
+                            '"').strip().replace(',', '，')
+                            print(info)
                             container.append(info)
 
-                        if re.search('基金项目：', info_li.get_text()):
+                        if re.search('基金', info_li.find('div', {'class': 'info_left'}).get_text()):
                             if len(info_li.findAll('a')) > 1:
-                                fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('"\n', ',').strip()
-                                # print(fund)
+                                raw_fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', ';').strip().replace(',', '，')
+                                fund = re.sub('^;|;$', '', raw_fund)
+                                print(fund)
                                 container.append(fund)
                             else:
-                                fund = info_li.find('div', {'class': 'info_right author'}).get_text().strip()
+                                fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
                                 # print(fund)
                                 container.append(fund)
 
@@ -364,7 +365,7 @@ class WFdataspider(object):
                             if len(info_li.findAll('a')) > 1:
                                 raw_author = info_li.find('div', {'class': 'info_right'}).get_text().replace('\n', ',').strip()
                                 raw_author1 = re.sub('^,|,,,,,,$', '', raw_author)
-                                author = raw_author1.replace(',,,,,,', ',')
+                                author = raw_author1.replace(',,,,,,', ';').replace(';', ' ')
                                 # print(author)
                                 container.append(author)
                             else:
@@ -373,7 +374,7 @@ class WFdataspider(object):
                                 container.append(author)
 
                         if re.search('专利代理机构：', info_li.get_text()):
-                            fund = info_li.find('div', {'class': 'info_right author'}).get_text()
+                            fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
                             # print(fund)
                             container.append(fund)
                         else:
@@ -385,7 +386,7 @@ class WFdataspider(object):
                         if re.search('关键词：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
-                                '"\n', ',').strip('"').strip()
+                                '"\n', ';').strip('"').strip()
                                 # print(kws)
                                 container.append(kws)
                             else:
@@ -396,7 +397,7 @@ class WFdataspider(object):
                         if re.search('作者：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 author = info_li.find('div', {'class': 'info_right'}).get_text().replace(
-                                '"\n', ',').strip('"').strip()
+                                '"\n', ';').strip('"').strip().replace(';', ' ')
                                 # print(author)
                                 container.append(author)
                             else:
@@ -406,12 +407,11 @@ class WFdataspider(object):
 
                         if re.search('学位授予单位：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
-                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
-                                '"\n', ',').strip('"').strip()
+                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', ';').strip('"').strip()
                                 # print(info)
                                 container.append(info)
                             else:
-                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
+                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip('"').strip()
                                 # print(info)
                                 container.append(info)
 
@@ -428,7 +428,7 @@ class WFdataspider(object):
                         if re.search('关键词：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
-                                '"\n', ',').strip('"').strip()
+                                '"\n', ';').strip('"').strip()
                                 # print(kws)
                                 container.append(kws)
                             else:
@@ -439,7 +439,7 @@ class WFdataspider(object):
                         if re.search('作者：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 author = info_li.find('div', {'class': 'info_right'}).get_text().replace(
-                                '"\n', ',').strip('"').strip()
+                                '"\n', ';').strip('"').strip().replace(';', ' ')
                                 # print(author)
                                 container.append(author)
                             else:
@@ -448,7 +448,7 @@ class WFdataspider(object):
                                 container.append(author)
 
                         if re.search('作者单位：', info_li.get_text()):
-                            info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip(
+                            info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip(
                             '"').strip()
                             # print(info)
                             container.append(info)
@@ -466,7 +466,7 @@ class WFdataspider(object):
                         if re.search('关键词：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
-                                '"\n', ',').strip('"').strip()
+                                '"\n', ';').strip('"').strip()
                                 # print(kws)
                                 container.append(kws)
                             else:
@@ -477,7 +477,7 @@ class WFdataspider(object):
                         if re.search('作者：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 author = info_li.find('div', {'class': 'info_right'}).get_text().replace(
-                                '"\n', ',').strip('"').strip()
+                                '"\n', ';').strip('"').strip().replace(';', ' ')
                                 # print(author)
                                 container.append(author)
                             else:
@@ -486,7 +486,7 @@ class WFdataspider(object):
                                 container.append(author)
 
                         if re.search('作者单位：', info_li.get_text()):
-                            info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip(
+                            info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip(
                             '"').strip()
                             # print(info)
                             container.append(info)
@@ -497,7 +497,7 @@ class WFdataspider(object):
                             container.append(date)
 
                         if re.search('计划名称：', info_li.get_text()):
-                            fund = info_li.find('div', {'class': 'info_right author'}).get_text().strip()
+                            fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
                             # print(fund)
                             container.append(fund)
 
@@ -507,7 +507,7 @@ class WFdataspider(object):
                             if len(info_li.findAll('a')) > 1:
                                 kws = info_li.find('div',
                                                    {'class': 'info_right info_right_newline'}).get_text().replace(
-                                    '"\n', ',').strip('"').strip()
+                                    '"\n', ';').strip('"').strip()
                                 # print(kws)
                                 container.append(kws)
                             else:
@@ -521,12 +521,11 @@ class WFdataspider(object):
 
                         if re.search('完成单位：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
-                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
-                                    '"\n', ',').strip('"').strip()
+                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', ';').strip('"').strip()
                                 # print(info)
                                 container.append(info)
                             else:
-                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
+                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip('"').strip()
                                 # print(info)
                                 container.append(info)
 

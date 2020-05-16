@@ -95,9 +95,9 @@ class Insert2ES(object):
 
 
 if __name__ == "__main__":
-    index = 'cnki_doc'
+    index = 'spider_data'  # new index
     ip = '127.0.0.1'
-    json_file = '/Users/felix_zhao/Desktop/doc_json.txt'
+    json_file = '/Users/felix_zhao/Desktop/SSRP_spiders/spider_data/cnki_doc_json.txt'
     insert = Insert2ES(index, ip)
     insert.create_index()
     insert.build_data(json_file)

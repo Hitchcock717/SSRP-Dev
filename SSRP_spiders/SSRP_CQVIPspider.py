@@ -174,19 +174,21 @@ class CqvipSpider(object):
 
                     article_div = soup.find('div', {'class': 'article-detail'})
                     abstract_div = article_div.find('div', {'class': 'abstract'})
-                    abstract = abstract_div.find('span', {'class': 'abstract'}).get_text().strip('\n').strip('\'')
+                    abstract = abstract_div.find('span', {'class': 'abstract'}).get_text().replace('\r', '').replace('\n', '').strip('\'').replace(',', '，')
                     print(abstract)
                     repo['abstract'] = abstract
 
                     author_div = article_div.find('div', {'class': 'author'})
-                    raw_author = author_div.findAll('span')[1].get_text().replace('\n', ',')
-                    author = re.sub('^,|,$', '', raw_author)
+                    raw_author = author_div.findAll('span')[1].get_text().replace('\n', ';')
+                    raw_author1 = re.sub('^;|;$', '', raw_author)
+                    author = raw_author1.replace(';', ' ')
                     print(author)
                     repo['author'] = author
 
                     if article_div.find('div', {'class': 'organ'}):
                         info_div = article_div.find('div', {'class': 'organ'})
-                        info = info_div.findAll('span')[1].get_text().strip('\n')
+                        raw_info = info_div.findAll('span')[1].get_text().replace('\r', '').replace('\n', ';')
+                        info = re.sub('^;|;$', '', raw_info)
                         print(info)
                         repo['info'] = info
                     else:
@@ -215,13 +217,13 @@ class CqvipSpider(object):
                         if len(fund_div.findAll('span')) > 2:
                             fund_span = fund_div.findAll('span')[1:]
                             for span in fund_span:
-                                fund_piece = span.get_text()
+                                fund_piece = span.get_text().replace('\r', '').replace('\n', '').strip()
                                 funds.append(fund_piece)
-                            fund = ','.join(funds)
+                            fund = ';'.join(funds)
                             print(fund)
                             repo['fund'] = fund
                         else:
-                            fund = fund_div.findAll('span')[1].get_text()
+                            fund = fund_div.findAll('span')[1].get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
                             repo['fund'] = fund
                     else:
                         fund = 'N/A'
@@ -235,7 +237,7 @@ class CqvipSpider(object):
                             for span in kws_span:
                                 kws_piece = span.get_text()
                                 kwss.append(kws_piece)
-                            kws = ','.join(kwss)
+                            kws = ';'.join(kwss)
                             repo['kws'] = kws
                         else:
                             kws = kws_div.findAll('span')[1].get_text()

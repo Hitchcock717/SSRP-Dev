@@ -30,7 +30,7 @@ class BuildMappings(object):
                         'type': 'keyword', "index": "true"
                     },
                     "date": {
-                        'type': 'date', "index": "true"
+                        'type': 'text', "index": "true"  # 解决日期格式不统一
                     },
                     "kws": {
                         'type': 'keyword', "index": "true"
