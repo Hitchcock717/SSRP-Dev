@@ -6,11 +6,11 @@
     TODO:ik、pinyin分词器和stconvert繁简转换包版本已更新至7.6.1
 '''
 
+import os
 import codecs
 from elasticsearch.helpers import bulk
 from ES_connect import *
 from ES_build_mappings import *
-# from CorpusFind import CorpusFind
 
 
 class Insert2ES(object):
@@ -40,8 +40,21 @@ class Insert2ES(object):
         else:
             print("index({}) already exists.".format(self.conn.index_name))
 
-    def insert_data(self, json_file):
-        fin = codecs.open(json_file, 'r', encoding='utf-8')
+    def get_folder(self, folder_path):
+
+        files = os.listdir(folder_path)
+        res = []
+        for file in files:
+            if not os.path.isdir(file):
+                fin = codecs.open(folder_path + '/' + file, 'r', encoding='utf-8')  # 若在mac环境下, 需提前删除文件夹下的.DS_Store文件
+                                                                                    # ls -a
+                                                                                    # rm.DS_Store
+                data = self.insert_data(fin)
+                res.append(data)
+        print(res)
+
+    def insert_data(self, fin):
+        # fin = codecs.open(json_file, 'r', encoding='utf-8')
         data = []
         for f in fin.readlines():
             data.append(f)
@@ -97,10 +110,12 @@ class Insert2ES(object):
 if __name__ == "__main__":
     index = 'spider_data'  # new index
     ip = '127.0.0.1'
-    json_file = '/Users/felix_zhao/Desktop/SSRP_spiders/spider_data/cnki_doc_json.txt'
+    json_file = '/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data/cnki_doc_json.txt'
+    folder_path = '/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data'
     insert = Insert2ES(index, ip)
-    insert.create_index()
-    insert.build_data(json_file)
+    insert.get_folder(folder_path)
+    # insert.create_index()
+    # insert.build_data(json_file)
 
 
 

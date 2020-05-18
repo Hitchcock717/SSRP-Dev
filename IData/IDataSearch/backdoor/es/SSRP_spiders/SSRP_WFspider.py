@@ -67,10 +67,9 @@ class WFdataspider(object):
                         break
                 else:
                     bsoj = BeautifulSoup(result.text, features='lxml')
-                    # print(bsoj)
                     total_count = bsoj.find('input', {'id': 'resultAnalysisParamFindResults'})['value']
                     page_count = math.ceil(int(total_count)/self.pagesize)
-                    # print(page_count)
+                    print('总页数为%s' % page_count)
                     return page_count
             except OSError as e:  # remember to enable proxy connection
                 attempts += 1
@@ -80,42 +79,43 @@ class WFdataspider(object):
                     break
 
     def get_list_page(self):
-
         page_count = self.get_init_page()
+        repository = []
+        breakpoint = 1
+        attempts = 0
+        success = False
+        while attempts < 50 and not success:
+            try:
+                while breakpoint <= 10:
+                    repos = []
+                    print('正在爬取第%s页...' % breakpoint)
+                    data = {
+                        'beetlansyId': 'aysnsearch',
+                        'searchType': 'all',
+                        'pageSize': '20',
+                        'page': str(breakpoint),
+                        'searchWord': self.keyword,
+                        'order': 'correlation',
+                        'showType': 'detail',
+                        'isCheck': 'check',
+                        'isHit': '',
+                        'isHitUnit': '',
+                        'firstAuthor': 'false',
+                        'corePerio': 'false',
+                        'alreadyBuyResource': 'false',
+                        'rangeParame': '',
+                        'navSearchType': 'all'
+                    }
 
-        repos = []
+                    query_string = parse.urlencode(data)
+                    list_url = self.base_url + query_string
 
-        # for page in range(page_count):
-        for page in range(1, 2):  # for test
-            data = {
-                   'beetlansyId': 'aysnsearch',
-                   'searchType': 'all',
-                   'pageSize': '20',
-                   'page': page,
-                   'searchWord': self.keyword,
-                   'order': 'correlation',
-                   'showType': 'detail',
-                   'isCheck': 'check',
-                   'isHit': '',
-                   'isHitUnit': '',
-                   'firstAuthor': 'false',
-                   'corePerio': 'false',
-                   'alreadyBuyResource': 'false',
-                   'rangeParame': '',
-                   'navSearchType': 'all'
-                }
-
-            query_string = parse.urlencode(data)
-            list_url = self.base_url + query_string
-
-            attempts = 0
-            success = False
-            while attempts < 50 and not success:
-                try:
+                    '''
                     abuyun = AbuyunProxy()
                     proxy_handler = abuyun.urllib_proxy_settings()[1]
                     opener = urllib.request.build_opener(proxy_handler)
                     urllib.request.install_opener(opener)
+                    '''
 
                     request = urllib.request.Request(list_url, headers=self.headers)
                     print('status of list page is %s' % request)
@@ -123,21 +123,28 @@ class WFdataspider(object):
                     soup = BeautifulSoup(html, 'lxml')
 
                     results = soup.findAll('div', {'class': 'ResultList'})
-                    # for res in results:
-                    for res in results[:1]:  # for test
+
+                    for res in results:
                         repo = {}
                         # ****************** 五个公共字段: download、abstract、cited、downed、source **************** #
                         result_div = res.find('div', {'class': 'ResultCont'})
                         title_div = result_div.find('div', {'class': 'title'})
-                        suffix = title_div.findAll('a')[0]['href']
-                        # 下载链接
-                        download = self.main_url + suffix
-                        # print(download)
-                        repo['download'] = download
+                        if title_div.findAll('a')[0]['href'] == 'javascript:void(0)':  # 带目录的论文
+                            suffix = title_div.findAll('a')[1]['href']
+                            # 下载链接
+                            download = self.main_url + suffix
+                            print(download)
+                            repo['download'] = download
+                        else:
+                            suffix = title_div.findAll('a')[0]['href']
+                            # 下载链接
+                            download = self.main_url + suffix
+                            print(download)
+                            repo['download'] = download
 
                         # 摘要
                         abstract = res.find('div', {'class': 'summary'}).get_text().replace('\r', '').replace('\n', '').strip('"').strip().replace(',', '，')
-                        # print(abstract)
+                        print(abstract)
                         repo['abstract'] = abstract
 
                         # 被引数和下载数
@@ -146,23 +153,23 @@ class WFdataspider(object):
                         ul_as = ul_div.findAll('a')
                         if len(ul_as) == 2:
                             cited = ul_as[0].find('span').get_text()
-                            # print(cited)
+                            print(cited)
                             repo['cited'] = cited
 
                             downed = ul_as[1].find('span').get_text()
-                            # print(downed)
+                            print(downed)
                             repo['downed'] = downed
 
                         elif len(ul_as) == 1:
                             if re.search('被引', ul_as[0].get_text()):
                                 cited = ul_as[0].find('span').get_text()
-                                # print(cited)
+                                print(cited)
                                 repo['cited'] = cited
                                 repo['downed'] = 'N/A'
 
                             elif re.search('下载', ul_as[0].get_text()):
                                 downed = ul_as[0].find('span').get_text()
-                                # print(downed)
+                                print(downed)
                                 repo['cited'] = 'N/A'
                                 repo['downed'] = downed
 
@@ -172,16 +179,12 @@ class WFdataspider(object):
                             repo['cited'] = cited
                             repo['downed'] = downed
 
-                        # 出版来源字段 后续统一添加
-                        # origin = soup.find('div', {'class': 'Source'}).get_text().strip('》《')
-                        # print(origin)
-
                         # 来源
                         more_info = result_div.find('div', {'class': 'ResultMoreinfo'})
                         author_div = more_info.find('div', {'class': 'author'})
                         raw_source = author_div.find('span', {'class': 'resultResouceType'}).get_text().strip().strip('][')
                         source = '万方' + raw_source
-                        # print(source)
+                        print(source)
                         repo['source'] = source
 
                         # ****************** private space **************** #
@@ -192,26 +195,31 @@ class WFdataspider(object):
                             repo['info'] = container[2]
                             repo['fund'] = container[3]
 
-                            author_as = author_div.findAll('a')
-                            if len(author_as) > 1:
-                                authors = []
-                                for au in author_as:
-                                    author_piece = au.get_text()
-                                    authors.append(author_piece)
-                                author = ';'.join(authors)
-                                # print(author)
-                                repo['author'] = author
+                            if author_div.find('a'):
+                                author_as = author_div.findAll('a')
+                                if len(author_as) > 1:
+                                    authors = []
+                                    for au in author_as:
+                                        author_piece = au.get_text()
+                                        authors.append(author_piece)
+                                    author = ' '.join(authors)
+                                    print(author)
+                                    repo['author'] = author
+                                else:
+                                    author = author_as[0].get_text().replace(';', ' ')
+                                    print(author)
+                                    repo['author'] = author
                             else:
-                                author = author_as[0].get_text()
-                                # print(author)
-                                repo['author'] = author
+                                repo['author'] = 'N/A'
 
-                            date_div = soup.find('div', {'class': 'Volume'}).get_text().strip()
-                            # print(date_div)
-                            date = re.search('^.*年', date_div).group()
-                            # print(date)
-                            repo['date'] = date
-                            repos.append(repo)
+                            if soup.find('div', {'class': 'Volume'}):
+                                date_div = soup.find('div', {'class': 'Volume'}).get_text().strip()
+                                date = re.search('^.*年', date_div).group()
+                                print(date)
+                                repo['date'] = date
+                                repos.append(repo)
+                            else:
+                                repo['date'] = 'N/A'
 
                         elif source == '万方专利':  # 六个私有字段: title、kws、author、fund、info、date
                             container = self.get_detail_page(download, source)
@@ -221,14 +229,24 @@ class WFdataspider(object):
                             repo['fund'] = container[3]
 
                             source_div = more_info.find('div', {'class': 'Source'})
-                            source_spans = source_div.findAll('span')
-                            info = source_spans[0].find('a').get_text()
-                            # print(info)
-                            repo['info'] = info
-                            date = source_spans[1].get_text()
-                            # print(date)
-                            repo['date'] = date
-                            repos.append(repo)
+                            if source_div.find('span'):
+                                source_spans = source_div.findAll('span')
+                                if source_spans[0].find('a'):
+                                    info = source_spans[0].find('a').get_text()
+                                    print(info)
+                                    repo['info'] = info
+                                else:
+                                    repo['info'] = 'N/A'
+                                if source_spans[1]:
+                                    date = source_spans[1].get_text()
+                                    print(date)
+                                    repo['date'] = date
+                                else:
+                                    repo['date'] = 'N/A'
+                                repos.append(repo)
+                            else:
+                                repo['info'] = 'N/A'
+                                repo['date'] = 'N/A'
 
                         elif source == '万方硕士论文' or source == '万方博士论文':  # 六个私有字段: title、kws、author、info、date、fund
                             container = self.get_detail_page(download, source)
@@ -279,34 +297,41 @@ class WFdataspider(object):
                             repo['fund'] = 'N/A'
                             repos.append(repo)
 
-                    socket.setdefaulttimeout(10)  # 设置10秒后连接超时
-                    success = True
-                    print(repos)
-                    return repos
+                    repository.extend(repos)
+                    print('第%s页爬取结束!' % breakpoint)
+                    breakpoint += 1
+                    if breakpoint > page_count:
+                        print('已爬取结束, 共%s页' % (breakpoint-1))
+                    else:
+                        print('新断点记录为第%s页' % breakpoint)
 
-                except OSError as e:  # remember to enable proxy connection
-                    attempts += 1
-                    print('list page callback: %s' % e)
-                    print('第' + str(attempts) + '次重试！！')
-                    if attempts == 50:
-                        break
+                socket.setdefaulttimeout(10)  # 设置10秒后连接超时
+                success = True
+                print(repository)
+                return repository
 
-                except AttributeError as e:
-                    print(e)
+            except OSError as e:  # remember to enable proxy connection
+                attempts += 1
+                print('list page callback: %s' % e)
+                print('第' + str(attempts) + '次重试！！')
+                if attempts == 50:
+                    break
+
+            except AttributeError as e:
+                print(e)
 
     def get_detail_page(self, url, source):
-    # def get_detail_page(self):
-        # url = 'http://www.wanfangdata.com.cn/details/detail.do?_type=patent&id=CN201910980511.7'
-        # source = '万方专利'
 
         attempts = 0
         success = False
         while attempts < 50 and not success:
             try:
+                '''
                 abuyun = AbuyunProxy()
                 proxy_handler = abuyun.urllib_proxy_settings()[1]
                 opener = urllib.request.build_opener(proxy_handler)
                 urllib.request.install_opener(opener)
+                '''
 
                 request = urllib.request.Request(url, headers=self.headers)
                 print('status of detail page is %s' % request)
@@ -317,6 +342,7 @@ class WFdataspider(object):
 
                 raw_title = soup.find('div', {'class': 'title'}).get_text().strip()
                 title = re.sub('文摘阅读|下载|第三方链接|被引', '', raw_title).replace('\n', '').replace('\r', '').replace('\t', '')
+                print(title)
                 container.append(title)
 
                 info_ul = soup.find('ul', {'class': 'info'})
@@ -325,21 +351,31 @@ class WFdataspider(object):
                 if source == '万方期刊论文':
                     for info_li in info_lis:
                         if re.search('关键词：', info_li.get_text()):
-                            if len(info_li.findAll('a')) > 1:
-                                raw_kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').replace('\n', ',')
-                                raw_kws1 = re.sub('^,,|,$', '', raw_kws)
-                                kws = raw_kws1.replace(',,', ';')
-                                # print(kws)
-                                container.append(kws)
+                            if info_li.find('a'):
+                                if len(info_li.findAll('a')) > 1:
+                                    raw_kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').replace('\n', ',')
+                                    raw_kws1 = re.sub('^,,|,$', '', raw_kws)
+                                    kws = raw_kws1.replace(',,', ';')
+                                    print(kws)
+                                    container.append(kws)
+                                else:
+                                    kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
+                                    print(kws)
+                                    container.append(kws)
                             else:
-                                kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
-                                # print(kws)
+                                kws = 'N/A'
                                 container.append(kws)
+                        else:
+                            kws = 'N/A'
+                            container.append(kws)
 
                         if re.search('作者单位：', info_li.find('div', {'class': 'info_left'}).get_text()):
                             info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip(
                             '"').strip().replace(',', '，')
                             print(info)
+                            container.append(info)
+                        else:
+                            info = 'N/A'
                             container.append(info)
 
                         if re.search('基金', info_li.find('div', {'class': 'info_left'}).get_text()):
@@ -350,8 +386,11 @@ class WFdataspider(object):
                                 container.append(fund)
                             else:
                                 fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
-                                # print(fund)
+                                print(fund)
                                 container.append(fund)
+                        else:
+                            fund = 'N/A'
+                            container.append(fund)
 
                     socket.setdefaulttimeout(10)  # 设置10秒后连接超时
                     success = True
@@ -362,21 +401,32 @@ class WFdataspider(object):
                     container.append(kws)
                     for info_li in info_lis:
                         if re.search('发明/设计人：', info_li.get_text()):
-                            if len(info_li.findAll('a')) > 1:
-                                raw_author = info_li.find('div', {'class': 'info_right'}).get_text().replace('\n', ',').strip()
-                                raw_author1 = re.sub('^,|,,,,,,$', '', raw_author)
-                                author = raw_author1.replace(',,,,,,', ';').replace(';', ' ')
-                                # print(author)
-                                container.append(author)
+                            if info_li.find('div', {'class': 'info_right'}):
+                                if len(info_li.findAll('a')) > 1:
+                                    raw_author = info_li.find('div', {'class': 'info_right'}).get_text().replace('\n', ',').strip()
+                                    raw_author1 = re.sub('^,|,,,,,,$', '', raw_author)
+                                    author = raw_author1.replace(',,,,,,', ';').replace(';', ' ')
+                                    print(author)
+                                    container.append(author)
+                                else:
+                                    author = info_li.find('div', {'class': 'info_right'}).get_text().strip()
+                                    print(author)
+                                    container.append(author)
                             else:
-                                author = info_li.find('div', {'class': 'info_right'}).get_text().strip()
-                                # print(author)
+                                author = 'N/A'
                                 container.append(author)
+                        else:
+                            author = 'N/A'
+                            container.append(author)
 
                         if re.search('专利代理机构：', info_li.get_text()):
-                            fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
-                            # print(fund)
-                            container.append(fund)
+                            if info_li.find('div', {'class': 'info_right author'}):
+                                fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
+                                print(fund)
+                                container.append(fund)
+                            else:
+                                fund = 'N/A'
+                                container.append(fund)
                         else:
                             fund = 'N/A'
                             container.append(fund)
@@ -386,38 +436,54 @@ class WFdataspider(object):
                         if re.search('关键词：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
-                                '"\n', ';').strip('"').strip()
-                                # print(kws)
+                                '\n', ';').strip('"').strip()
+                                print(kws)
                                 container.append(kws)
                             else:
                                 kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
-                                # print(kws)
+                                print(kws)
                                 container.append(kws)
+                        else:
+                            kws = 'N/A'
+                            container.append(kws)
 
                         if re.search('作者：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 author = info_li.find('div', {'class': 'info_right'}).get_text().replace(
-                                '"\n', ';').strip('"').strip().replace(';', ' ')
-                                # print(author)
+                                '\n', ';').strip('"').strip().replace(';', ' ')
+                                print(author)
                                 container.append(author)
                             else:
                                 author = info_li.find('div', {'class': 'info_right'}).get_text().strip('"').strip()
-                                # print(author)
+                                print(author)
                                 container.append(author)
+                        else:
+                            author = 'N/A'
+                            container.append(author)
 
                         if re.search('学位授予单位：', info_li.get_text()):
                             if len(info_li.findAll('a')) > 1:
                                 info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', ';').strip('"').strip()
-                                # print(info)
+                                print(info)
                                 container.append(info)
                             else:
                                 info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip('"').strip()
-                                # print(info)
+                                print(info)
                                 container.append(info)
+                        else:
+                            info = 'N/A'
+                            container.append(info)
 
                         if re.search('学位年度：', info_li.get_text()):
-                            date = info_li.find('div', {'class': 'info_right author'}).get_text()
-                            # print(date)
+                            if info_li.find('div', {'class': 'info_right author'}):
+                                date = info_li.find('div', {'class': 'info_right author'}).get_text()
+                                print(date)
+                                container.append(date)
+                            else:
+                                date = 'N/A'
+                                container.append(date)
+                        else:
+                            date = 'N/A'
                             container.append(date)
 
                         fund = 'N/A'
@@ -426,36 +492,64 @@ class WFdataspider(object):
                 elif source == '万方会议论文':
                     for info_li in info_lis:
                         if re.search('关键词：', info_li.get_text()):
-                            if len(info_li.findAll('a')) > 1:
-                                kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
-                                '"\n', ';').strip('"').strip()
-                                # print(kws)
-                                container.append(kws)
+                            if info_li.find('div', {'class': 'info_right info_right_newline'}):
+                                if len(info_li.findAll('a')) > 1:
+                                    kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
+                                    '\n', ';').strip('"').strip()
+                                    print(kws)
+                                    container.append(kws)
+                                else:
+                                    kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
+                                    print(kws)
+                                    container.append(kws)
                             else:
-                                kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
-                                # print(kws)
+                                kws = 'N/A'
                                 container.append(kws)
+                        else:
+                            kws = 'N/A'
+                            container.append(kws)
 
                         if re.search('作者：', info_li.get_text()):
-                            if len(info_li.findAll('a')) > 1:
-                                author = info_li.find('div', {'class': 'info_right'}).get_text().replace(
-                                '"\n', ';').strip('"').strip().replace(';', ' ')
-                                # print(author)
-                                container.append(author)
+                            if info_li.find('div', {'class': 'info_right'}).get_text():
+                                if len(info_li.findAll('a')) > 1:
+                                    author = info_li.find('div', {'class': 'info_right'}).get_text().replace(
+                                    '\n', ';').strip('"').strip().replace(';', ' ')
+                                    print(author)
+                                    container.append(author)
+                                else:
+                                    author = info_li.find('div', {'class': 'info_right'}).get_text().strip('"').strip()
+                                    print(author)
+                                    container.append(author)
                             else:
-                                author = info_li.find('div', {'class': 'info_right'}).get_text().strip('"').strip()
-                                # print(author)
+                                author = 'N/A'
                                 container.append(author)
+                        else:
+                            author = 'N/A'
+                            container.append(author)
 
                         if re.search('作者单位：', info_li.get_text()):
-                            info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip(
-                            '"').strip()
-                            # print(info)
+                            if info_li.find('div', {'class': 'info_right info_right_newline'}):
+                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip(
+                                '"').strip()
+                                print(info)
+                                container.append(info)
+                            else:
+                                info = 'N/A'
+                                container.append(info)
+                        else:
+                            info = 'N/A'
                             container.append(info)
 
                         if re.search('会议时间：', info_li.get_text()):
-                            date = info_li.find('div', {'class': 'info_right'}).get_text().strip()
-                            # print(date)
+                            if info_li.find('div', {'class': 'info_right'}):
+                                date = info_li.find('div', {'class': 'info_right'}).get_text().strip()
+                                print(date)
+                                container.append(date)
+                            else:
+                                date = 'N/A'
+                                container.append(date)
+                        else:
+                            date = 'N/A'
                             container.append(date)
 
                         fund = 'N/A'
@@ -464,74 +558,130 @@ class WFdataspider(object):
                 elif source == '万方科技报告':
                     for info_li in info_lis:
                         if re.search('关键词：', info_li.get_text()):
-                            if len(info_li.findAll('a')) > 1:
-                                kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
-                                '"\n', ';').strip('"').strip()
-                                # print(kws)
-                                container.append(kws)
+                            if info_li.find('div', {'class': 'info_right info_right_newline'}):
+                                if len(info_li.findAll('a')) > 1:
+                                    kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace(
+                                    '\n', ';').strip('"').strip()
+                                    print(kws)
+                                    container.append(kws)
+                                else:
+                                    kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
+                                    print(kws)
+                                    container.append(kws)
                             else:
-                                kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip('"').strip()
-                                # print(kws)
+                                kws = 'N/A'
                                 container.append(kws)
+                        else:
+                            kws = 'N/A'
+                            container.append(kws)
 
                         if re.search('作者：', info_li.get_text()):
-                            if len(info_li.findAll('a')) > 1:
-                                author = info_li.find('div', {'class': 'info_right'}).get_text().replace(
-                                '"\n', ';').strip('"').strip().replace(';', ' ')
-                                # print(author)
-                                container.append(author)
+                            if info_li.find('div', {'class': 'info_right'}):
+                                if len(info_li.findAll('a')) > 1:
+                                    author = info_li.find('div', {'class': 'info_right'}).get_text().replace(
+                                    '\n', ';').strip('"').strip().replace(';', ' ')
+                                    print(author)
+                                    container.append(author)
+                                else:
+                                    author = info_li.find('div', {'class': 'info_right'}).get_text().strip('"').strip()
+                                    print(author)
+                                    container.append(author)
                             else:
-                                author = info_li.find('div', {'class': 'info_right'}).get_text().strip('"').strip()
-                                # print(author)
+                                author = 'N/A'
                                 container.append(author)
+                        else:
+                            author = 'N/A'
+                            container.append(author)
 
                         if re.search('作者单位：', info_li.get_text()):
-                            info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip(
-                            '"').strip()
-                            # print(info)
+                            if info_li.find('div', {'class': 'info_right info_right_newline'}):
+                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip(
+                                '"').strip()
+                                print(info)
+                                container.append(info)
+                            else:
+                                info = 'N/A'
+                                container.append(info)
+                        else:
+                            info = 'N/A'
                             container.append(info)
 
                         if re.search('立项批准年：', info_li.get_text()):
-                            date = info_li.find('div', {'class': 'info_right'}).get_text().strip()
-                            # print(date)
+                            if info_li.find('div', {'class': 'info_right'}):
+                                date = info_li.find('div', {'class': 'info_right'}).get_text().strip()
+                                print(date)
+                                container.append(date)
+                            else:
+                                date = 'N/A'
+                                container.append(date)
+                        else:
+                            date = 'N/A'
                             container.append(date)
 
                         if re.search('计划名称：', info_li.get_text()):
-                            fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
-                            # print(fund)
+                            if info_li.find('div', {'class': 'info_right author'}):
+                                fund = info_li.find('div', {'class': 'info_right author'}).get_text().replace('\r', '').replace('\n', '').strip().replace(',', '，')
+                                print(fund)
+                                container.append(fund)
+                            else:
+                                fund = 'N/A'
+                                container.append(fund)
+                        else:
+                            fund = 'N/A'
                             container.append(fund)
 
                 elif source == '万方成果':
                     for info_li in info_lis:
                         if re.search('关键词：', info_li.get_text()):
-                            if len(info_li.findAll('a')) > 1:
-                                kws = info_li.find('div',
-                                                   {'class': 'info_right info_right_newline'}).get_text().replace(
-                                    '"\n', ';').strip('"').strip()
-                                # print(kws)
-                                container.append(kws)
+                            if info_li.find('a'):
+                                if len(info_li.findAll('a')) > 1:
+                                    kws = info_li.find('div',
+                                                       {'class': 'info_right info_right_newline'}).get_text().replace(
+                                        '\n', ';').strip('"').strip()
+                                    print(kws)
+                                    container.append(kws)
+                                else:
+                                    kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip(
+                                        '"').strip()
+                                    print(kws)
+                                    container.append(kws)
                             else:
-                                kws = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().strip(
-                                    '"').strip()
-                                # print(kws)
+                                kws = 'N/A'
                                 container.append(kws)
+                        else:
+                            kws = 'N/A'
+                            container.append(kws)
 
                         author = 'N/A'
                         container.append(author)
 
                         if re.search('完成单位：', info_li.get_text()):
-                            if len(info_li.findAll('a')) > 1:
-                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', ';').strip('"').strip()
-                                # print(info)
-                                container.append(info)
+                            if info_li.find('a'):
+                                if len(info_li.findAll('a')) > 1:
+                                    info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', ';').strip('"').strip()
+                                    print(info)
+                                    container.append(info)
+                                else:
+                                    info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip('"').strip()
+                                    print(info)
+                                    container.append(info)
                             else:
-                                info = info_li.find('div', {'class': 'info_right info_right_newline'}).get_text().replace('\r', '').replace('\n', '').strip('"').strip()
-                                # print(info)
+                                info = 'N/A'
                                 container.append(info)
+                        else:
+                            info = 'N/A'
+                            container.append(info)
 
                         if re.search('公布年份：', info_li.get_text()):
-                            date = info_li.find('div', {'class': 'info_right author'}).get_text().strip()
-                            # print(date)
+                            if info_li.find('div', {'class': 'info_right author'}):
+                                date = info_li.find('div', {'class': 'info_right author'}).get_text().strip()
+                                print(date)
+                                container.append(date)
+                            else:
+                                date = 'N/A'
+                                container.append(date)
+                        else:
+                            date = 'N/A'
                             container.append(date)
 
                         fund = 'N/A'

@@ -12,10 +12,6 @@ from settings import CommonSettings
 from threading import Thread
 import time
 
-import codecs
-import pandas as pd
-
-
 class SpiderThreadings(object):
 
     def cnki_task(self):

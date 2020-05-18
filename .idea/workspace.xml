@@ -24,11 +24,8 @@
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/modules/expand/modules/folder.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/modules/expand/modules/repository.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/utils/http.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/SSRP-Dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SSRP-Dev.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_build_mappings.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_build_mappings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/components/index.js" afterDir="false" />
@@ -48,15 +45,20 @@
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/.idea/CNKICrawler-master.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/.idea/misc.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SSRP_spiders/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SSRP_spiders/ES_doc_convert.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/SSRP_CNKIspider.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/SSRP_CQVIPspider.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/SSRP_WFspider.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/main.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/settings.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/spider_data/cnki_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SSRP_spiders/spider_data/cnki_doc_json.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/spider_data/cqvip_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SSRP_spiders/spider_data/cqvip_doc_json.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SSRP_spiders/spider_data/wanfang_data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SSRP_spiders/spider_data/wf_doc_json.txt" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -68,35 +70,36 @@
     <session id="1143672604">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="7" />
+          <entry key="project.closed" value="8" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.33" value="1" />
-          <entry key="project.opened" value="8" />
+          <entry key="project.open.time.9" value="1" />
+          <entry key="project.opened" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="js" value="265" />
-          <entry key="py" value="182" />
-          <entry key="txt" value="3" />
+          <entry key="py" value="188" />
+          <entry key="txt" value="4" />
           <entry key="vue" value="215" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="JavaScript" value="265" />
-          <entry key="PLAIN_TEXT" value="218" />
-          <entry key="Python" value="182" />
+          <entry key="PLAIN_TEXT" value="219" />
+          <entry key="Python" value="188" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="js" value="4616" />
-          <entry key="py" value="36790" />
+          <entry key="py" value="40287" />
           <entry key="vue" value="37231" />
         </counts>
       </usages-collector>
@@ -104,21 +107,88 @@
         <counts>
           <entry key="JavaScript" value="4616" />
           <entry key="PLAIN_TEXT" value="37231" />
-          <entry key="Python" value="36790" />
+          <entry key="Python" value="40287" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1440">
-              <caret line="96" column="26" lean-forward="true" selection-start-line="96" selection-start-column="26" selection-end-line="96" selection-end-column="26" />
+            <state relative-caret-position="-613">
+              <caret line="50" column="97" selection-start-line="50" selection-start-column="97" selection-end-line="50" selection-end-column="97" />
               <folding>
-                <element signature="e#235#248#0" expanded="true" />
+                <element signature="e#235#244#0" expanded="true" />
+                <marker date="1589614562605" expanded="true" signature="1327:1862" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/ES_doc_convert.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="18" column="59" selection-start-line="18" selection-start-column="59" selection-end-line="18" selection-end-column="59" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="12" column="11" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
+              <folding>
+                <element signature="e#54#97#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="19" column="38" lean-forward="true" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
+              <folding>
+                <element signature="e#55#64#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CNKIspider.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="179">
+              <caret line="158" column="45" lean-forward="true" selection-start-line="158" selection-start-column="45" selection-end-line="158" selection-end-column="45" />
+              <folding>
+                <element signature="e#303#312#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CQVIPspider.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="92" column="46" selection-start-line="92" selection-start-column="46" selection-end-line="92" selection-end-column="46" />
+              <folding>
+                <element signature="e#282#291#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_WFspider.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="219">
+              <caret line="442" column="51" selection-start-line="442" selection-start-column="51" selection-end-line="442" selection-end-column="51" />
             </state>
           </provider>
         </entry>
@@ -126,7 +196,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_build_mappings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
+            <state relative-caret-position="336">
               <caret line="32" column="68" selection-start-line="32" selection-start-column="68" selection-end-line="32" selection-end-column="68" />
             </state>
           </provider>
@@ -143,23 +213,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Repository</find>
-      <find>repository</find>
-      <find>@/api/demo/getcollectionService</find>
-      <find>corpus</find>
-      <find>Corpus</find>
-      <find>this.result.f</find>
-      <find>console</find>
-      <find>;</find>
-      <find>config</find>
-      <find>localStorage</find>
-      <find>console.log</find>
-      <find>dialogForm</find>
-      <find>this.folders</find>
-      <find>length</find>
-      <find>name</find>
-      <find>setItem</find>
-      <find>cancelForm</find>
       <find>formLabelWidth</find>
       <find>rawR</find>
       <find>selectedR</find>
@@ -173,6 +226,23 @@
       <find>http</find>
       <find>localStorage.</find>
       <find>height</find>
+      <find>title</find>
+      <find>simple-list</find>
+      <find>title =</find>
+      <find>origin</find>
+      <find>findAll</find>
+      <find>page</find>
+      <find>download</find>
+      <find>detailpoint</find>
+      <find>author</find>
+      <find>第2次</find>
+      <find>soup</find>
+      <find>author =</find>
+      <find>title =</find>
+      <find>get_text</find>
+      <find>Abu</find>
+      <find>正在爬取第</find>
+      <find>正在爬取第9</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;</replace>
@@ -201,9 +271,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/menu/header.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/repository/addrepositoryService.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/folder/deletefolderService.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/repository/deleterepositoryService.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/folder/getfolderService.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/repository/getrepositoryService.js" />
@@ -248,16 +315,19 @@
         <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detailsearch/index.vue" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/simplesearch/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/settings.py" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/main.py" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_build_mappings.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/main.py" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CNKIspider.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/settings.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CQVIPspider.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_WFspider.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="94" />
-    <option name="y" value="54" />
+    <option name="x" value="88" />
+    <option name="y" value="17" />
     <option name="width" value="1233" />
     <option name="height" value="900" />
   </component>
@@ -335,6 +405,25 @@
               <item name="SSRP-Dev" type="462c0819:PsiDirectoryNode" />
               <item name="IData" type="462c0819:PsiDirectoryNode" />
               <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
+              <item name="backdoor" type="462c0819:PsiDirectoryNode" />
+              <item name="es" type="462c0819:PsiDirectoryNode" />
+              <item name="SSRP_spiders" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SSRP-Dev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SSRP-Dev" type="462c0819:PsiDirectoryNode" />
+              <item name="IData" type="462c0819:PsiDirectoryNode" />
+              <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
+              <item name="backdoor" type="462c0819:PsiDirectoryNode" />
+              <item name="es" type="462c0819:PsiDirectoryNode" />
+              <item name="SSRP_spiders" type="462c0819:PsiDirectoryNode" />
+              <item name="spider_data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SSRP-Dev" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SSRP-Dev" type="462c0819:PsiDirectoryNode" />
+              <item name="IData" type="462c0819:PsiDirectoryNode" />
+              <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
               <item name="frontdoor" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -367,28 +456,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.ES_insert_data">
-    <configuration name="ES_doc_retrieve" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SSRP-Dev" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_doc_retrieve.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.SSRP_WFspider">
     <configuration name="ES_insert_data" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SSRP-Dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -410,7 +478,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="corpus_find_doc" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="SSRP_CNKIspider" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SSRP-Dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -418,11 +486,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../SSRP-Simple-Scholar-Radar-Platform/cnki_term" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../SSRP-Simple-Scholar-Radar-Platform/cnki_term/corpus_find_doc.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CNKIspider.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -431,7 +499,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="es_models" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="SSRP_CQVIPspider" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SSRP-Dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -439,11 +507,32 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/iData/spiders" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/iData/spiders/es_models.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CQVIPspider.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="SSRP_WFspider" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SSRP-Dev" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_WFspider.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -474,19 +563,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.es_models" />
-      <item itemvalue="Python.ES_doc_retrieve" />
-      <item itemvalue="Python.corpus_find_doc" />
       <item itemvalue="Python.ES_insert_data" />
       <item itemvalue="Python.main" />
+      <item itemvalue="Python.SSRP_CQVIPspider" />
+      <item itemvalue="Python.SSRP_CNKIspider" />
+      <item itemvalue="Python.SSRP_WFspider" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.SSRP_WFspider" />
+        <item itemvalue="Python.SSRP_CQVIPspider" />
+        <item itemvalue="Python.SSRP_CNKIspider" />
         <item itemvalue="Python.ES_insert_data" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.ES_doc_retrieve" />
-        <item itemvalue="Python.corpus_find_doc" />
-        <item itemvalue="Python.es_models" />
       </list>
     </recent_temporary>
   </component>
@@ -504,15 +593,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="94" y="54" width="1233" height="900" extended-state="0" />
-    <editor active="true" />
+    <frame x="88" y="17" width="1233" height="900" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1790429" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.1790429" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32920793" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.33415842" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.27846536" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39975247" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -605,34 +693,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/deletextractorService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="31" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/deleterecommendService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="51" selection-start-line="4" selection-start-column="51" selection-end-line="4" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/corpus/deletecorpusService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/corpus/getcorpusService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/paper/index.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="327">
@@ -910,23 +970,78 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data/doc_json.txt" />
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/settings.py" />
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/main.py" />
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CNKIspider.py" />
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data/cnki_doc_json.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_build_mappings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
+        <state relative-caret-position="336">
           <caret line="32" column="68" selection-start-line="32" selection-start-column="68" selection-end-line="32" selection-end-column="68" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1440">
-          <caret line="96" column="26" lean-forward="true" selection-start-line="96" selection-start-column="26" selection-end-line="96" selection-end-column="26" />
+        <state relative-caret-position="-613">
+          <caret line="50" column="97" selection-start-line="50" selection-start-column="97" selection-end-line="50" selection-end-column="97" />
           <folding>
-            <element signature="e#235#248#0" expanded="true" />
+            <element signature="e#235#244#0" expanded="true" />
+            <marker date="1589614562605" expanded="true" signature="1327:1862" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/ES_doc_convert.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="18" column="59" selection-start-line="18" selection-start-column="59" selection-end-line="18" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="11" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
+          <folding>
+            <element signature="e#54#97#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CNKIspider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="158" column="45" lean-forward="true" selection-start-line="158" selection-start-column="45" selection-end-line="158" selection-end-column="45" />
+          <folding>
+            <element signature="e#303#312#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="38" lean-forward="true" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
+          <folding>
+            <element signature="e#55#64#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_CQVIPspider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="92" column="46" selection-start-line="92" selection-start-column="46" selection-end-line="92" selection-end-column="46" />
+          <folding>
+            <element signature="e#282#291#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_WFspider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="442" column="51" selection-start-line="442" selection-start-column="51" selection-end-line="442" selection-end-column="51" />
         </state>
       </provider>
     </entry>

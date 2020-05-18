@@ -16,8 +16,8 @@ class AbuyunProxy(object):
         proxyPort = "9020"
 
         # 代理隧道验证信息
-        proxyUser = "H33P04Y3603PJ40D"
-        proxyPass = "C2D92548E2137A1E"
+        proxyUser = "HSX0Z57864C177MD"
+        proxyPass = "DA051F1C3895DFF1"
         
         proxyMeta = "http://%(user)s:%(pass)s@%(host)s:%(port)s" % {
             "host": proxyHost,
@@ -66,7 +66,7 @@ class CommonSettings(object):
 
     def set_common_output(self):
 
-        os.chdir('/Users/felix_zhao/Desktop/SSRP_spiders/spider_data')
+        os.chdir('/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data')
 
         cnki_csv = 'cnki_data.csv'
 

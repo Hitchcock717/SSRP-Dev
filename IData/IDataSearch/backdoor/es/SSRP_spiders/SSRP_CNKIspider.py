@@ -2,7 +2,7 @@
 '''
     SSRP演示平台之CNKI知网空间爬虫 --- www.cnki.com.cn
 
-    测试链接 ---- 列表页: http://search.cnki.com.cn/Search/ListResult?searchType=MultiyTermsSearch&Content=%E6%B0%A8%E5%9F%BA%E9%85%B8&Order=1&page=100
+    测试链接 ---- 列表页: http://search.cnki.com.cn/Search/ListResult?searchType=MultiyTermsSearch&Content=%E6%B0%A8%E5%9F%BA%E9%85%B8&Order=1&page=12
             ---- 详情页: http://www.cnki.com.cn/Article/CJFDTOTAL-HXGY200402006.htm
 '''
 
@@ -15,6 +15,8 @@ from requests_html import HTMLSession
 from urllib import parse
 from bs4 import BeautifulSoup
 import urllib.request
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 from settings import *
 
 
@@ -51,7 +53,7 @@ class CnkispaceSpider(object):
                 urllib.request.install_opener(opener)
 
                 request = urllib.request.Request(init_url, headers=self.headers)
-                print('status of init page is %s' % request)
+                # print('status of init page is %s' % request)
                 html = urllib.request.urlopen(request, timeout=10).read()
                 soup = BeautifulSoup(html, 'lxml')
                 total_count = soup.find('input', {'id': 'hidTotalCount'})['value']
@@ -69,19 +71,22 @@ class CnkispaceSpider(object):
 
     def get_detail_page(self):
         page_count = self.get_init_page()
+        print('总页数为%s页' % page_count)
         csv_data = []
 
+        breakpoint = 1  # 断点
         attempts = 0
         success = False
         while attempts < 50 and not success:
             try:
-                # for i in range(page_count):
-                for i in range(1, 2):  # for test
+                while breakpoint <= page_count:
+                # for i in range(1, 2):  # for test
+                    print('正在爬取第%s页...' % breakpoint)
                     data = {
                         'searchType': 'MultiyTermsSearch',
                         'Content': self.keyword,
                         'Order': '1',
-                        'page': str(i)
+                        'page': str(breakpoint)
                     }
 
                     query_string = parse.urlencode(data)
@@ -93,18 +98,17 @@ class CnkispaceSpider(object):
                     urllib.request.install_opener(opener)
 
                     request = urllib.request.Request(detail_url, headers=self.headers)
-                    print('status of detail page is %s' % request)
+                    # print('status of detail page is %s' % request)
                     html = urllib.request.urlopen(request, timeout=10).read()
                     soup = BeautifulSoup(html, 'lxml')
 
                     item_divs = soup.findAll('div', {'class': 'list-item'})
-                    # for item in item_divs:
-                    for item in item_divs[:1]:  # for test
+                    for item in item_divs:
                         field = []
                         # ****************** 十个公共字段: abstract、info、fund、author、kws、download、title、cited、downed、source **************** #
                         item_p1 = item.find('p', {'class': 'tit clearfix'})
                         title = item_p1.find('a', {'class': 'left'})['title'].replace('\r', '').replace('\n', '')
-                        download = item_p1.find('a', {'class': 'left'})['href']
+                        download = item_p1.find('a', {'class': 'left'})['href'].replace('\r', '').replace('\n', '')
 
                         results = self.get_transfer_page(download)
 
@@ -160,6 +164,13 @@ class CnkispaceSpider(object):
                             field.append(download)
                             csv_data.append(field)
 
+                    print('第%s页爬取结束!' % breakpoint)
+                    breakpoint += 1
+                    if breakpoint > page_count:
+                        print('已爬取结束, 共%s页' % (breakpoint-1))
+                    else:
+                        print('新断点记录为第%s页' % breakpoint)
+
                 socket.setdefaulttimeout(10)  # 设置10秒后连接超时
                 success = True
                 return csv_data
@@ -172,6 +183,7 @@ class CnkispaceSpider(object):
                     break
 
     def get_transfer_page(self, url):
+
         attempts = 0
         success = False
         while attempts < 50 and not success:
@@ -182,7 +194,7 @@ class CnkispaceSpider(object):
                 urllib.request.install_opener(opener)
 
                 request = urllib.request.Request(url, headers=self.headers)
-                print('status of transfer page is %s' % request)
+                # print('status of transfer page is %s' % request)
                 html = urllib.request.urlopen(request, timeout=10).read()
 
                 soup = BeautifulSoup(html, 'lxml')
@@ -241,6 +253,12 @@ class CnkispaceSpider(object):
                     fund = 'N/A'
                     container.append(fund)
 
+                else:  # 如报纸, 跳转至Cnki学问
+                    info = 'N/A'
+                    fund = 'N/A'
+                    container.append(info)
+                    container.append(fund)
+
                 socket.setdefaulttimeout(10)  # 设置10秒后连接超时
                 success = True
                 return container
@@ -271,7 +289,7 @@ class CnkispaceSpider(object):
             columns = ['title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'abstract', 'fund', 'download']
             dataframe = pd.DataFrame(csv_data, columns=columns)
             print(dataframe)
-            dataframe.to_csv(self.csvname, sep=',', index=False, encoding='utf-8')
+            dataframe.to_csv(self.csvname, sep=',', mode='w+', index=False, encoding='utf-8')
             print('data saved')
 
         except Exception as e:
