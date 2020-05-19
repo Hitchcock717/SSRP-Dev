@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="66c3ff13-8e3b-49eb-94e5-f06239202ad7" name="Default Changelist" comment="" />
+    <list default="true" id="66c3ff13-8e3b-49eb-94e5-f06239202ad7" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../iData/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../iData/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,65 +106,76 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="-2055154685">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="2" />
+          <entry key="project.open.time.1" value="1" />
+          <entry key="project.open.time.4" value="1" />
+          <entry key="project.open.time.7" value="1" />
+          <entry key="project.opened" value="3" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="py" value="2734" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Python" value="2734" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="py" value="4" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Python" value="4" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/SSRP_CNKIspider.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1710">
-              <caret line="114" column="33" selection-start-line="114" selection-start-column="33" selection-end-line="114" selection-end-column="33" />
+            <state relative-caret-position="144">
+              <caret line="88" column="24" selection-start-line="88" selection-start-column="24" selection-end-line="88" selection-end-column="24" />
               <folding>
-                <element signature="e#304#313#0" expanded="true" />
-                <marker date="1589597194009" expanded="true" signature="535:536" ph="..." />
-                <marker date="1589597194009" expanded="true" signature="1009:2396" ph="..." />
+                <element signature="e#303#312#0" expanded="true" />
+                <marker date="1589856904712" expanded="true" signature="1231:1240" ph="..." />
+                <marker date="1589856904712" expanded="true" signature="1231:1536" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ES_doc_convert.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="17" column="22" lean-forward="true" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
-            </state>
-          </provider>
+        <entry file="file://$PROJECT_DIR$/user_agent.py">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SSRP_CQVIPspider.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="11" lean-forward="true" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
-              <folding>
-                <marker date="1589602852509" expanded="true" signature="529:530" ph="..." />
-              </folding>
+            <state relative-caret-position="-620">
+              <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SSRP_WFspider.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="130">
-              <caret line="409" column="81" selection-start-line="409" selection-start-column="81" selection-end-line="409" selection-end-column="81" />
-              <folding>
-                <element signature="e#374#383#0" expanded="true" />
-                <marker date="1589603354141" expanded="true" signature="608:609" ph="..." />
-                <marker date="1589603354141" expanded="true" signature="636:637" ph="..." />
-                <marker date="1589603354141" expanded="true" signature="1061:1067" ph="..." />
-                <marker date="1589603354141" expanded="true" signature="1195:1201" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
+            <state relative-caret-position="789">
+              <caret line="63" column="24" selection-start-line="63" selection-start-column="24" selection-end-line="63" selection-end-column="24" />
+              <folding>
+                <element signature="e#55#64#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -168,8 +183,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="705">
-              <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
+            <state relative-caret-position="600">
+              <caret line="47" column="28" selection-start-line="47" selection-start-column="28" selection-end-line="47" selection-end-column="28" />
               <folding>
                 <element signature="e#54#97#0" expanded="true" />
               </folding>
@@ -188,17 +203,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>氨基酸</find>
-      <find>下一页</find>
-      <find>simple-list</find>
-      <find>detail page</find>
-      <find>detail page is parsed as</find>
-      <find>detail.socket.error</find>
-      <find>第3次</find>
-      <find>detail page is p</find>
-      <find>14</find>
-      <find>group</find>
-      <find>downed</find>
       <find>kws</find>
       <find># print</find>
       <find>print(</find>
@@ -218,14 +222,27 @@
       <find>info</find>
       <find>replace</find>
       <find>date =</find>
+      <find>第14次重试</find>
+      <find>第31次</find>
+      <find>第31次重试</find>
+      <find>crawling</find>
+      <find>50</find>
+      <find>time.sleep</find>
+      <find>正在爬取第1</find>
+      <find>目标词</find>
+      <find>正在爬取第30</find>
+      <find>abuyun</find>
+      <find>正在爬取第52</find>
     </findStrings>
     <replaceStrings>
       <replace>print</replace>
       <replace># prin</replace>
+      <replace>100000</replace>
+      <replace># time.sleep</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../../.." />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -234,19 +251,19 @@
         <option value="$PROJECT_DIR$/spider_main.py" />
         <option value="$PROJECT_DIR$/SSRP_proxy_settings.py" />
         <option value="$PROJECT_DIR$/SSRP_spider_threadings.py" />
-        <option value="$PROJECT_DIR$/settings.py" />
         <option value="$PROJECT_DIR$/ES_doc_convert.py" />
-        <option value="$PROJECT_DIR$/SSRP_CNKIspider.py" />
         <option value="$PROJECT_DIR$/SSRP_CQVIPspider.py" />
         <option value="$PROJECT_DIR$/SSRP_WFspider.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/settings.py" />
+        <option value="$PROJECT_DIR$/SSRP_CNKIspider.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="166" />
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="72" />
     <option name="y" value="23" />
-    <option name="width" value="1094" />
+    <option name="width" value="1337" />
     <option name="height" value="877" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -301,7 +318,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.SSRP_CNKIspider">
     <configuration name="ES_doc_convert" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="CNKICrawler-master" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -416,10 +433,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.SSRP_CNKIspider" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.SSRP_WFspider" />
         <item itemvalue="Python.SSRP_CQVIPspider" />
-        <item itemvalue="Python.SSRP_CNKIspider" />
         <item itemvalue="Python.ES_doc_convert" />
       </list>
     </recent_temporary>
@@ -438,15 +455,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="166" y="23" width="1094" height="877" extended-state="0" />
+    <frame x="72" y="23" width="1337" height="877" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.0" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1724924" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.31592357" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32866243" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -487,7 +504,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/SSRP_CNKIspider.py</url>
-          <line>33</line>
+          <line>36</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -557,63 +574,62 @@
     <entry file="file://$PROJECT_DIR$/spider_main.py" />
     <entry file="file://$PROJECT_DIR$/SSRP_spider_threadings.py" />
     <entry file="file://$PROJECT_DIR$/SSRP_proxy_settings.py" />
-    <entry file="file://$PROJECT_DIR$/SSRP_CNKIspider.py">
+    <entry file="file://$PROJECT_DIR$/SSRP_WFspider.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1710">
-          <caret line="114" column="33" selection-start-line="114" selection-start-column="33" selection-end-line="114" selection-end-column="33" />
+        <state relative-caret-position="6135">
+          <caret line="409" column="60" selection-start-line="409" selection-start-column="60" selection-end-line="409" selection-end-column="60" />
           <folding>
-            <element signature="e#304#313#0" expanded="true" />
-            <marker date="1589597194009" expanded="true" signature="535:536" ph="..." />
-            <marker date="1589597194009" expanded="true" signature="1009:2396" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="705">
-          <caret line="47" column="32" selection-start-line="47" selection-start-column="32" selection-end-line="47" selection-end-column="32" />
-          <folding>
-            <element signature="e#54#97#0" expanded="true" />
+            <element signature="e#374#383#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ES_doc_convert.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="17" column="22" lean-forward="true" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+        <state relative-caret-position="210">
+          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="47" column="28" selection-start-line="47" selection-start-column="28" selection-end-line="47" selection-end-column="28" />
+          <folding>
+            <element signature="e#54#97#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/user_agent.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="789">
+          <caret line="63" column="24" selection-start-line="63" selection-start-column="24" selection-end-line="63" selection-end-column="24" />
+          <folding>
+            <element signature="e#55#64#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SSRP_CQVIPspider.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="11" lean-forward="true" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
-          <folding>
-            <marker date="1589602852509" expanded="true" signature="529:530" ph="..." />
-          </folding>
+        <state relative-caret-position="-620">
+          <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SSRP_WFspider.py">
+    <entry file="file://$PROJECT_DIR$/SSRP_CNKIspider.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="409" column="81" selection-start-line="409" selection-start-column="81" selection-end-line="409" selection-end-column="81" />
+        <state relative-caret-position="144">
+          <caret line="88" column="24" selection-start-line="88" selection-start-column="24" selection-end-line="88" selection-end-column="24" />
           <folding>
-            <element signature="e#374#383#0" expanded="true" />
-            <marker date="1589603354141" expanded="true" signature="608:609" ph="..." />
-            <marker date="1589603354141" expanded="true" signature="636:637" ph="..." />
-            <marker date="1589603354141" expanded="true" signature="1061:1067" ph="..." />
-            <marker date="1589603354141" expanded="true" signature="1195:1201" ph="..." />
+            <element signature="e#303#312#0" expanded="true" />
+            <marker date="1589856904712" expanded="true" signature="1231:1240" ph="..." />
+            <marker date="1589856904712" expanded="true" signature="1231:1536" ph="..." />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
         </state>
       </provider>
     </entry>

@@ -6,6 +6,8 @@
 import os
 from urllib import request
 import urllib.request
+from user_agent import *
+import random
 
 
 class AbuyunProxy(object):
@@ -47,14 +49,21 @@ class CommonSettings(object):
 
     def set_common_headers(self):
 
+        # headers = {
+        #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+        # }
+
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+            'User-Agent': random.choice(USER_AGENT)
         }
+
         return headers
 
     def set_common_keyword(self):
 
-        keywords = 'L-异亮氨酸'
+        keywords = '丙氨酸'
+
+        # keywords = ['丙氨酸', '精氨酸', '天冬酰胺', '天冬氨酸', '半胱氨酸', '谷氨酸', '谷氨酰胺', '甘氨酸', '组氨酸', '羟（基）脯氨酸', '异亮氨酸']
 
         return keywords
 
