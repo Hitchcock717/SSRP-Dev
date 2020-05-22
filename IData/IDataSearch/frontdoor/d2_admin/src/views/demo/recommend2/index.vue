@@ -35,6 +35,7 @@
 <script>
 import { DeleteExtractor } from '@/api/demo/deletextractorService'
 import { DeleteRecommend } from '@/api/demo/deleterecommendService'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -53,6 +54,11 @@ export default {
       this.extractData = this.results[0]
       this.recommendData = this.results[1]
     }
+  },
+  computed: {
+    ...mapState('d2admin/page', [
+      'current'
+    ])
   },
   methods: {
     deleteExtractor (scope) {
@@ -133,7 +139,7 @@ export default {
   created () {
     window.addEventListener('scroll', this.onScroll)
     this.$store.dispatch('d2admin/page/close', {
-      tagName: '/corpusearch'
+      tagName: this.current
     })
   },
   destroyed () {

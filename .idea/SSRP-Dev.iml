@@ -12,7 +12,12 @@
       <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/migrations" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/IData/iData" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/IData/iData/spiders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/SSRP_spiders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/data" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/prediction_api" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/prediction_api/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/prediction_api/model" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/prediction_api/src/utils" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

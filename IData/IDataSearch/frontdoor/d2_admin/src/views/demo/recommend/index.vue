@@ -46,7 +46,10 @@ export default {
     }),
     ...mapState('expand/recommends', {
       recommends: state => state.recommends
-    })
+    }),
+    ...mapState('d2admin/page', [
+      'current'
+    ])
   },
   methods: {
     ...mapActions('expand/extractors', [
@@ -93,6 +96,9 @@ export default {
     window.addEventListener('scroll', this.onScroll)
     this.$store.dispatch('expand/extractors/getExtractors')
     this.$store.dispatch('expand/recommends/getRecommends')
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: this.current
+    })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

@@ -37,6 +37,7 @@
 
 <script>
 import { GetFilterResult, GetPreRecord } from '@/api/demo/filterResultService'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -48,6 +49,11 @@ export default {
       tableData: [],
       detailForm: {}
     }
+  },
+  computed: {
+    ...mapState('d2admin/page', [
+      'current'
+    ])
   },
   methods: {
     onScroll () {
@@ -90,7 +96,7 @@ export default {
     },
     submit () {
       this.$router.push({
-        path: '/citespace'
+        path: '/analysis'
       })
     }
   },
@@ -128,7 +134,7 @@ export default {
   },
   created () {
     this.$store.dispatch('d2admin/page/close', {
-      tagName: '/notice2'
+      tagName: this.current
     })
 
     window.addEventListener('scroll', this.onScroll)

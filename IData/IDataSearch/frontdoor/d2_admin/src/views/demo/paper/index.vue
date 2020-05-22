@@ -12,7 +12,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label='请输入论文信息' prop="text">
-          <el-input placeholder="输入关键词请用逗号分隔" v-model="textForm.body" class="input-with-select">
+          <el-input placeholder="输入关键词(中文逗号分隔)" v-model="textForm.body" class="input-with-select">
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </el-form-item>
@@ -54,10 +54,18 @@ export default {
       }
     }
   },
+  created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: this.current
+    })
+  },
   computed: {
     ...mapState('expand/messages', {
       messages: state => state.messages
-    })
+    }),
+    ...mapState('d2admin/page', [
+      'current'
+    ])
   },
   methods: {
     ...mapActions('expand/messages', [

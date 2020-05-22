@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -140,12 +141,14 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState('d2admin/page', [
+      'current'
+    ])
+  },
   created () {
     this.$store.dispatch('d2admin/page/close', {
-      tagName: '/recommend'
-    })
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: '/recommend2'
+      tagName: this.current
     })
   },
   methods: {

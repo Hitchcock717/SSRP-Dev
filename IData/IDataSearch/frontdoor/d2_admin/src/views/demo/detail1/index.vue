@@ -142,6 +142,7 @@ import { AddCollection } from '@/api/demo/collection/addcollectionService'
 import { AppendCorpus } from '@/api/demo/corpus/appendcorpusService'
 import { GetFolder } from '@/api/demo/folder/getfolderService'
 import { GetRepository } from '@/api/demo/repository/getrepositoryService'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -173,6 +174,9 @@ export default {
     }
   },
   created () {
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: this.current
+    })
     // 获取收藏夹
     GetFolder({})
       .then(res => {
@@ -228,6 +232,11 @@ export default {
       .catch(err => {
         console.log(err)
       })
+  },
+  computed: {
+    ...mapState('d2admin/page', [
+      'current'
+    ])
   },
   mounted () {
     // 获取收藏夹, 清除key

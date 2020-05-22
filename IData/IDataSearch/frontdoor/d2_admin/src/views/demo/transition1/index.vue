@@ -2,7 +2,7 @@
   <d2-container class="page">
     <d2-page-cover>
       <div class="block">
-        <el-carousel height="200px'" type="card" :interval="4000">
+        <el-carousel height="200px" type="card" :interval="4000">
           <el-carousel-item v-for="item in imgList" :key="item.id">
             <el-row>
               <el-col :span="24" class="banner_img">
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -61,9 +62,14 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState('d2admin/page', [
+      'current'
+    ])
+  },
   created () {
     this.$store.dispatch('d2admin/page/close', {
-      tagName: '/page1'
+      tagName: this.current
     })
   },
   mounted () {

@@ -39,6 +39,7 @@
 
 <script>
 import { GetRawResult, GetPreRecord } from '@/api/demo/rawResultService'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -50,6 +51,11 @@ export default {
       tableData: [],
       simpleForm: {}
     }
+  },
+  computed: {
+    ...mapState('d2admin/page', [
+      'current'
+    ])
   },
   methods: {
     onScroll () {
@@ -129,7 +135,7 @@ export default {
   },
   created () {
     this.$store.dispatch('d2admin/page/close', {
-      tagName: '/notice1'
+      tagName: this.current
     })
     window.addEventListener('scroll', this.onScroll)
     this.$message({

@@ -111,6 +111,7 @@
 
 <script>
 import { GetExpression } from '@/api/demo/expressionService'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -146,6 +147,11 @@ export default {
         desc: ''
       }
     }
+  },
+  computed: {
+    ...mapState('d2admin/page', [
+      'current'
+    ])
   },
   methods: {
     addRule () {
@@ -277,6 +283,9 @@ export default {
   },
   created () {
     window.addEventListener('scroll', this.onScroll)
+    this.$store.dispatch('d2admin/page/close', {
+      tagName: this.current
+    })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

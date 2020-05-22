@@ -158,6 +158,51 @@ const frameIn = [
         component: _import('demo/detailsearch')
       },
       {
+        path: 'analysis',
+        name: 'analysis',
+        meta: {
+          title: '分析方式',
+          auth: true
+        },
+        component: _import('demo/analysis')
+      },
+      {
+        path: 'titlePrediction',
+        name: 'titlePrediction',
+        meta: {
+          title: '标题分类预测',
+          auth: true
+        },
+        component: _import('demo/titlePrediction')
+      },
+      {
+        path: 'authorPrediction',
+        name: 'authorPrediction',
+        meta: {
+          title: '作者特征预测',
+          auth: true
+        },
+        component: _import('demo/authorPrediction')
+      },
+      {
+        path: 'otherPrediction',
+        name: 'otherPrediction',
+        meta: {
+          title: '学者推荐&著作预测',
+          auth: true
+        },
+        component: _import('demo/otherPrediction')
+      },
+      {
+        path: 'Advanceanalysis',
+        name: 'Advanceanalysis',
+        meta: {
+          title: '高级分析平台',
+          auth: true
+        },
+        component: _import('demo/analysis')
+      },
+      {
         path: 'personal',
         name: 'personal',
         meta: {

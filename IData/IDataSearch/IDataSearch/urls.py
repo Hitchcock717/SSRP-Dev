@@ -96,6 +96,20 @@ urlpatterns = [
 
     url('api/deletecorpus/', views.deletecorpus),
 
+    url('api/titleprediction/', views.titleprediction),
+
+    url('api/aititleprediction/', views.aititleprediction),
+
+    url('api/genderprediction/', views.genderprediction),
+
+    url('api/identityprediction/', views.identityprediction),
+
+    url('api/hoppingprediction/', views.hoppingprediction),
+
+    url('api/scholarrecommend/', views.scholarrecommend),
+
+    url('api/paperprediction/', views.paperprediction),
+
     # http://localhost:8000/api/admin/
     path('api/admin/', admin.site.urls),
 ]

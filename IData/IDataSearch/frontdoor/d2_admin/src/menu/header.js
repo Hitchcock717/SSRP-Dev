@@ -23,7 +23,7 @@ export default [
     title: '步骤三: 分析',
     icon: 'folder-o',
     children: [
-      { path: '/citespace', title: 'Citespace平台', icon: 'tag' }
+      { path: '/analysis', title: '分析方式', icon: 'tag' }
     ]
   },
   {

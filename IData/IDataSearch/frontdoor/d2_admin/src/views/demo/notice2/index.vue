@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -80,8 +81,13 @@ export default {
   },
   created () {
     this.$store.dispatch('d2admin/page/close', {
-      tagName: '/subrepo'
+      tagName: this.current
     })
+  },
+  computed: {
+    ...mapState('d2admin/page', [
+      'current'
+    ])
   },
   methods: {
     viewQuery () {

@@ -1,5 +1,6 @@
 import re
 import ast
+import requests
 import json
 import pickle
 import subprocess
@@ -2898,6 +2899,343 @@ def deleterepository(request):
         else:
             get_object_or_404(Repository, pk=int(delete_id)).delete()
             return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def titleprediction(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        title_dict = ast.literal_eval(raw_dict_key)
+        print(title_dict)
+
+        title = title_dict['titles'].split()
+        print(title)
+
+        data = {
+            'titles': title
+        }
+        api = 'https://innovaapi.aminer.cn/tools/v1/predict/nsfc?'
+
+        try:
+            response = requests.post(url=api, data=json.dumps(data), timeout=10)
+            res = ast.literal_eval(response.text)['data']
+            print(res)
+            levels = res.keys()
+            print(levels)
+            tableData = []
+            for k in range(1, (len(levels)+1)):
+                for v in list(res.values())[k-1]:
+                    v['group'] = 'level' + str(k)
+                    v.pop('code')
+                    tableData.append(v)
+            print(tableData)
+
+            return Response(tableData)
+        except Exception as e:
+            print(e)
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def aititleprediction(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        title_dict = ast.literal_eval(raw_dict_key)
+        print(title_dict)
+
+        words = title_dict['words']
+        if len(words) > 1:
+            words = words.split('，')
+        else:
+            words = words.split()
+        print(words)
+
+        data = {
+            'words': words
+        }
+        api = 'https://innovaapi.aminer.cn/tools/v1/predict/nsfc/ai?'
+
+        try:
+            response = requests.post(url=api, data=json.dumps(data), timeout=10)
+            res = ast.literal_eval(response.text)['data']
+            res.pop('tree')
+            print(res)
+            levels = list(res.keys())
+            print(levels)
+            tableData = []
+            for k in range(1, (len(levels)+1)):
+                for v in list(res.values())[k-1]:
+                    v.pop('name')
+                    v['name'] = v.pop('name_zh')
+                    v['group'] = 'level' + str(k)
+                    tableData.append(v)
+            print(tableData)
+
+            return Response(tableData)
+        except Exception as e:
+            print(e)
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def genderprediction(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        gender_dict = ast.literal_eval(raw_dict_key)
+        print(gender_dict)
+
+        name = gender_dict['name']
+        org = gender_dict['org']
+        image_url = gender_dict['image_url']
+        print(name)
+        print(org)
+
+        # api请求内容发生变化
+        # api = 'https://innovaapi.aminer.cn/tools/v1/predict/gender?name=' + name + '&org=' + org + '&image_url=' + image_url
+        # print(api)
+        # try:
+            # response = requests.get(url=api, timeout=50)
+            # res = ast.literal_eval(response.text)['data']
+            # print(response.text)
+        try:
+            # 选择导入脚本执行预测
+            from .prediction_api.src.gender import Gender
+            g = Gender()
+            res = g.predict(name=name, org=org, image_url=image_url)
+            print(res)
+            data = {}
+            if res['male'] > res['female']:
+                data['result'] = '男'
+            elif res['male'] < res['female']:
+                data['result'] = '女'
+            else:
+                data['result'] = '性别不明'
+
+            res.pop('male')
+            res.pop('female')
+
+            values = list(res.values())
+
+            genders = []
+            datas = []
+            for v in values:
+                if v['male'] > v['female']:
+                    genders.append('男')
+                elif v['male'] < v['female']:
+                    genders.append('女')
+                else:
+                    genders.append('男女都可能')
+            print(genders)
+
+            data['name'] = genders[0]
+            data['search'] = genders[1]
+            data['face'] = genders[2]
+
+            print(data)
+            datas.append(data)
+            return Response(datas)
+
+        except Exception as e:
+            print(e)
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def identityprediction(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        identity_dict = ast.literal_eval(raw_dict_key)
+        print(identity_dict)
+
+        pc = identity_dict['pc']
+        cn = identity_dict['cn']
+        hi = identity_dict['hi']
+        gi = identity_dict['gi']
+        year_range = identity_dict['year_range']
+        print(pc)
+        print(cn)
+        print(hi)
+        print(gi)
+        print(year_range)
+
+        api = 'https://innovaapi.aminer.cn/tools/v1/predict/identity?' + 'pc=' + pc + '&cn=' + cn + '&hi=' + hi + '&gi=' + gi + '&year_range=' + year_range
+
+        try:
+            response = requests.get(url=api, timeout=10)
+            res = ast.literal_eval(response.text)['data']
+            print(res)
+            datas = []
+            data = {}
+            if res['label'] == 'teacher':
+                data['label'] = '老师'
+            else:
+                data['label'] = '学生'
+
+            if res['degree'] == 'undergraduate':
+                data['degree'] = '本科'
+            elif res['degree'] == 'master':
+                data['degree'] = '硕士'
+            else:
+                data['degree'] = '博士'
+
+            data['p'] = res['p']
+            datas.append(data)
+            return Response(datas)
+
+        except Exception as e:
+            print(e)
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def hoppingprediction(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        hopping_dict = ast.literal_eval(raw_dict_key)
+        print(hopping_dict)
+        ntop = hopping_dict['ntop']
+        org_name = hopping_dict['org_name']
+
+        if re.search('，', org_name):
+            org_names = org_name.split('，')
+            print(org_names)
+        else:
+            org_names = []
+            org_names.append(org_name)
+            print(org_names)
+
+        # api请求内容发生变化
+        # api = 'https://innovaapi.aminer.cn/tools/v1/predict/career?' + 'per_name=' + per_name + '&org_name=' + org_name
+
+        # try:
+        #    response = requests.get(url=api, timeout=10, verify=False)
+        #   res = ast.literal_eval(response.text)['data']
+        #    print(response.text)
+
+        try:
+            # 调用脚本执行预测
+            from .prediction_api.src.jobhopping import JobHopping
+            j = JobHopping()
+            res = j.predict(org_names, int(ntop))
+            print(res)
+            return Response(res)
+        except Exception as e:
+            print(e)
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def scholarrecommend(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        scholar_dict = ast.literal_eval(raw_dict_key)
+        print(scholar_dict)
+        text = scholar_dict['text']
+        num = scholar_dict['num']
+
+        data = {
+            'text': text,
+            'num': int(num)
+        }
+        api = 'https://innovaapi.aminer.cn/tools/v1/predict/experts?'
+
+        try:
+            from .data.user_agent import USER_AGENT
+            import random
+            headers = {
+                'User-Agent': random.choice(USER_AGENT)
+            }
+            response = requests.post(url=api, data=json.dumps(data), headers=headers, timeout=10)
+            res = ast.literal_eval(response.text)['data']
+            print(res)
+            return Response(res)
+
+        except Exception as e:
+            print(e)
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def paperprediction(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        print(raw_dict)
+        raw_dict_key = list(raw_dict.keys())[0]
+        paper_dict = ast.literal_eval(raw_dict_key)
+        print(paper_dict)
+        pid = paper_dict['pid']
+
+        api = 'https://innovaapi.aminer.cn/tools/v1/predict/nsfc/person?' + 'pid=' + pid
+        try:
+            from .data.user_agent import USER_AGENT
+            import random
+            headers = {
+                'User-Agent': random.choice(USER_AGENT)
+            }
+            response = requests.get(url=api, headers=headers, timeout=10)
+            print(response.text)
+            res = ast.literal_eval(response.text)['data']
+            flag = list(res.keys())[0]
+            tableData = []
+            if res[flag] == 'No pubs':
+                return Response('No result')
+            else:
+                res.pop('tree')
+                print(res)
+                levels = list(res.keys())
+                print(levels)
+                for k in range(1, (len(levels) + 1)):
+                    for v in list(res.values())[k - 1]:
+                        v.pop('name')
+                        v['name'] = v.pop('name_zh')
+                        v['group'] = 'level' + str(k)
+                        tableData.append(v)
+                print(tableData)
+
+            return Response(tableData)
+        except Exception as e:
+            print(e)
+            return Response('failed')
 
     if request.method == 'GET':
         return Response('No method!')
