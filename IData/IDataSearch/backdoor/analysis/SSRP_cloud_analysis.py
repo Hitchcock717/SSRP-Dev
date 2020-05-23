@@ -4,6 +4,7 @@
 '''
 
 import codecs
+import jieba.analyse
 import jieba
 
 
@@ -29,38 +30,41 @@ class CloudAnalysis(object):
 
         frequent = []
 
-        for i in range(self.num):
-            frequency = {}
-            frequency['word'], frequency['count'] = items[i]
-            print('{0:<10}{1:>5}'.format(frequency['word'], frequency['count']))
-            frequent.append(frequency)
+        if self.num > len(items):
+            for i in range(len(items)):
+                frequency = {}
+                frequency['word'], frequency['count'] = items[i]
+                print('{0:<10}{1:>5}'.format(frequency['word'], frequency['count']))
+                frequent.append(frequency)
+        else:
+            for i in range(self.num):
+                frequency = {}
+                frequency['word'], frequency['count'] = items[i]
+                print('{0:<10}{1:>5}'.format(frequency['word'], frequency['count']))
+                frequent.append(frequency)
 
         return frequent
 
     def title_or_abstract_count(self, words):
         raw_words = ','.join(words)
-        cut_words = jieba.lcut(raw_words)
-        print(cut_words)
         # 设置停用词
-        stopkey = jieba.analyse.set_stop_words('/Users/felix_zhao/Desktop/stopWord.txt')
-        print(stopkey)
+        jieba.analyse.set_stop_words(self.stop_path)
         # 获取关键词频率
-        tags = jieba.analyse.extract_tags(fr, topK=10, withWeight=True)
-        for tag in tags:
-            print(tag)
+        tags = jieba.analyse.extract_tags(raw_words, topK=self.num, withWeight=True)
 
-        for cut_word in cut_words:
-            if len(cut_word) == 1:
-                cut_words.remove(cut_word)
+        frequent = []
+
+        for i in range(self.num):
+            frequency = {}
+            frequency['word'] = tags[i][0]
+            frequency['count'] = round(tags[i][1]*100)
+            import re
+            if re.search('^[0-9]*$|^([0-9]{1,}[.][0-9]*)$', frequency['word']):
+                print('No Number!')
             else:
-                stops = stop.split('\n')
-                print(stops)
-                if cut_word in stops:
-                    cut_words.remove(cut_word)
-                if cut_word in extra:
-                    cut_words.remove(cut_word)
-
-        frequent = self.keyword_count(cut_words)
+                print('{0:<10}{1:>5}'.format(frequency['word'], frequency['count']))
+                frequent.append(frequency)
         return frequent
+
 
 

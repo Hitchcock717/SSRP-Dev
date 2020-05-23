@@ -3474,12 +3474,50 @@ def frequencyanalyze(request):
             cloud = CloudAnalysis()
             frequent_kws = cloud.keyword_count(kws_data)
             frequent_title = cloud.title_or_abstract_count(titles)
-            # frequent_abstract = cloud.title_or_abstract_count(abstracts)
-            # print(frequent_kws)
-            # print(frequent_title)
-            # print(frequent_abstract)
+            frequent_abstract = cloud.title_or_abstract_count(abstracts)
+            print(frequent_kws)
+            print(frequent_title)
+            print(frequent_abstract)
 
-            return Response('test')
+            new_data = {
+                'kws': frequent_kws,
+                'title': frequent_title,
+                'abstract': frequent_abstract
+            }
+            return Response(new_data)
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def volumeanalyze(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        volume_dict = ast.literal_eval(raw_dict_key)
+        start_date = volume_dict['start']
+        end_date = volume_dict['end']
+        print(start_date)
+        print(end_date)
+
+        if Detailsearch.objects.filter(source='期刊', date__range=(start_date, end_date)):
+            data = Detailsearch.objects.filter(source='期刊', date__range=(start_date, end_date))
+            infos = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                infos.append(d_dict['info'])
+
+            from .analysis.SSRP_cloud_analysis import CloudAnalysis
+            cloud = CloudAnalysis()
+            frequent_infos = cloud.keyword_count(infos)
+            print(frequent_infos)
+
+            return Response(frequent_infos)
 
         else:
             return Response('failed')

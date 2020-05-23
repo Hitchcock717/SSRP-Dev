@@ -21,6 +21,20 @@
             </el-select>
           </el-form-item>
         </div>
+        <div v-if="textForm.subject=='volume'">
+          <el-form-item label="选择日期范围">
+            <el-date-picker
+              v-model="textForm.date"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions">
+            </el-date-picker>
+          </el-form-item>
+        </div>
         <el-form-item>
           <el-button type="primary"
             @click="Analyze()"
@@ -40,6 +54,9 @@
           <el-tab-pane label="摘要高频词" name="abstract">
             <ve-wordcloud :data="abstractData"></ve-wordcloud>
           </el-tab-pane>
+          <el-tab-pane label="期刊发文量" name="volume">
+            <ve-pie :data="volumeData"></ve-pie>
+          </el-tab-pane>
         </el-tabs>
       </el-form>
     </d2-page-cover>
@@ -48,7 +65,7 @@
 
 <script>
 import { FrequencyAnalyze } from '@/api/demo/analysis/frequencyService'
-import { AITitlePrediction } from '@/api/demo/prediction/AItitlePredictionService'
+import { VolumeAnalyze } from '@/api/demo/analysis/volumeService'
 // import { mapState } from 'vuex'
 export default {
   data () {
@@ -57,11 +74,54 @@ export default {
       isFixed: '',
       textForm: {
         subject: '',
-        source: ''
+        source: '',
+        date: ''
       },
-      titleData: [],
-      kwsData: [],
-      abstractData: []
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick (picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+
+      titleData: {
+        columns: ['word', 'count'],
+        rows: []
+      },
+      kwsData: {
+        columns: ['word', 'count'],
+        rows: []
+      },
+      abstractData: {
+        columns: ['word', 'count'],
+        rows: []
+      },
+      volumeData: {
+        columns: ['word', 'count'],
+        rows: []
+      },
+      loading: true
     }
   },
   methods: {
@@ -89,7 +149,12 @@ export default {
             var result = res
             console.log(result)
             if (result !== 'failed') {
-              this.tableData = result
+              let kws = 'kws'
+              let title = 'title'
+              let abstract = 'abstract'
+              this.titleData.rows = result[title]
+              this.kwsData.rows = result[kws]
+              this.abstractData.rows = result[abstract]
               this.$message({
                 type: 'success',
                 message: '解析成功, 请点击下方tab!'
@@ -102,14 +167,20 @@ export default {
             }
           })
       } else {
-        AITitlePrediction({
-          words: this.textForm.body
+        var pubDate = this.textForm.date
+        var startDate = JSON.stringify(pubDate[0]).substring(1, 11)
+        var endDate = JSON.stringify(pubDate[1]).substring(1, 11)
+        console.log(startDate)
+        console.log(endDate)
+        VolumeAnalyze({
+          start: startDate,
+          end: endDate
         })
           .then(res => {
             var result = res
             console.log(result)
             if (result !== 'failed') {
-              this.AIData = result
+              this.volumeData.rows = result
               this.$message({
                 type: 'success',
                 message: '解析成功, 请点击下方tab!'
@@ -139,7 +210,7 @@ export default {
   margin-top: 100px;
  }
  .select-item {
-  width: 150px;
+  width: 300px;
  }
  .input-with-select {
   width: 500px;

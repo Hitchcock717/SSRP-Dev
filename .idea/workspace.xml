@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="aed7ca09-84c2-4601-ba06-72599be16b3b" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/frequencyService.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/volumeService.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/collection/addcollectionService.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/collection/deletecollectionService.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/corpus/appendcorpusService.js" afterDir="false" />
@@ -31,13 +32,10 @@
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/modules/expand/modules/folder.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/modules/expand/modules/repository.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/utils/http.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/corpus/stopwords.txt" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/corpus/stopwords.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/components/index.js" afterDir="false" />
@@ -49,29 +47,9 @@
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/router/routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/router/routes.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/modules/d2admin/modules/account.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/modules/d2admin/modules/account.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/analysis/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/analysis/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/authorPrediction/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/authorPrediction/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/collection/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/collection/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/complete/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/complete/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/corpus/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/corpus/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/corpusearch/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/corpusearch/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detail1/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detail1/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detail2/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detail2/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/folder/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/folder/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/notice1/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/notice1/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/notice2/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/notice2/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/otherPrediction/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/otherPrediction/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/page1/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/page1/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/page2/index.vue" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/page3/index.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/paper/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/paper/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/recommend/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/recommend/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/recommend2/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/recommend2/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/repository/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/repository/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/simplesearch/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/simplesearch/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/startsearch/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/startsearch/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/subrepo/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/subrepo/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/transition1/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/transition1/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/system/login/page.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/system/login/page.vue" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -97,35 +75,35 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="js" value="305" />
+          <entry key="js" value="307" />
           <entry key="json" value="1" />
           <entry key="pk" value="1" />
-          <entry key="py" value="223" />
+          <entry key="py" value="224" />
           <entry key="text" value="1" />
           <entry key="txt" value="4" />
-          <entry key="vue" value="307" />
+          <entry key="vue" value="309" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="JSON" value="1" />
-          <entry key="JavaScript" value="305" />
-          <entry key="PLAIN_TEXT" value="313" />
-          <entry key="Python" value="223" />
+          <entry key="JavaScript" value="307" />
+          <entry key="PLAIN_TEXT" value="315" />
+          <entry key="Python" value="224" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="js" value="5077" />
-          <entry key="py" value="48121" />
-          <entry key="vue" value="43742" />
+          <entry key="js" value="5099" />
+          <entry key="py" value="48982" />
+          <entry key="vue" value="44762" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JavaScript" value="5077" />
-          <entry key="PLAIN_TEXT" value="43742" />
-          <entry key="Python" value="48121" />
+          <entry key="JavaScript" value="5099" />
+          <entry key="PLAIN_TEXT" value="44762" />
+          <entry key="Python" value="48982" />
         </counts>
       </usages-collector>
     </session>
@@ -135,8 +113,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="384">
-              <caret line="3464" column="46" lean-forward="true" selection-start-line="3464" selection-start-column="46" selection-end-line="3464" selection-end-column="46" />
+            <state relative-caret-position="-6">
+              <caret line="3514" column="17" selection-start-line="3514" selection-start-column="17" selection-end-line="3514" selection-end-column="17" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
                 <element signature="e#1052#6165#0" />
@@ -175,32 +153,32 @@
                 <element signature="e#133861#135140#0" />
                 <element signature="e#135206#136243#0" />
                 <element signature="e#136308#137863#0" />
-                <marker date="1590212591299" expanded="true" signature="1002:139736" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="13538:20404" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="25612:139736" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="27891:29340" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="29399:29940" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="29995:139736" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="105394:106843" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="107500:139736" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="109482:111329" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="109538:110724" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="113271:114076" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="127564:139736" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="137923:139736" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="139734:139736" ph="..." />
-                <marker date="1590212591299" expanded="false" signature="139780:139785" ph="..." />
-                <marker date="1590212591299" expanded="true" signature="140780:140859" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="1002:140975" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="13538:20404" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="25612:140975" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="27891:29340" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="29399:29940" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="29995:140975" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="105394:106843" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="107500:140975" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="109482:111329" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="109538:110724" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="113271:114076" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="127564:140975" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="137923:140975" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="139891:140975" ph="..." />
+                <marker date="1590233902264" expanded="false" signature="141019:141024" ph="..." />
+                <marker date="1590233902264" expanded="true" signature="142019:142098" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="50" column="27" selection-start-line="50" selection-start-column="27" selection-end-line="50" selection-end-column="27" />
+            <state relative-caret-position="310">
+              <caret line="32" column="33" lean-forward="true" selection-start-line="32" selection-start-column="33" selection-end-line="32" selection-end-column="33" />
               <folding>
                 <element signature="e#63#76#0" expanded="true" />
               </folding>
@@ -211,8 +189,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1695">
-              <caret line="119" column="55" selection-start-line="119" selection-start-column="55" selection-end-line="119" selection-end-column="55" />
+            <state relative-caret-position="641">
+              <caret line="121" column="42" selection-start-line="121" selection-start-column="42" selection-end-line="121" selection-end-column="42" />
               <folding>
                 <element signature="e#635#667#0" expanded="true" />
               </folding>
@@ -220,11 +198,29 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/Advanceanalysis/index.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="62" column="18" lean-forward="true" selection-start-line="62" selection-start-column="18" selection-end-line="62" selection-end-column="18" />
+            <state relative-caret-position="-982">
+              <caret line="57" column="34" selection-start-line="57" selection-start-column="34" selection-end-line="57" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/subrepo/index.vue">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="539">
+              <caret line="147" column="7" lean-forward="true" selection-start-line="147" selection-start-column="7" selection-end-line="147" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/volumeService.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
             </state>
           </provider>
         </entry>
@@ -267,7 +263,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>service</find>
       <find>http</find>
       <find>localStorage.</find>
       <find>height</find>
@@ -297,6 +292,7 @@
       <find>File</find>
       <find>flag</find>
       <find>gete</find>
+      <find>0</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;</replace>
@@ -324,12 +320,11 @@
     </replaceStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/titlePredictionService.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/main.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/AItitlePredictionService.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/SSRP_CNKIspider.py" />
@@ -377,15 +372,16 @@
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/analysis/index.vue" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/frequencyService.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/volumeService.js" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/Advanceanalysis/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="295" />
-    <option name="y" value="131" />
+    <option name="x" value="92" />
+    <option name="y" value="46" />
     <option name="width" value="1233" />
     <option name="height" value="900" />
   </component>
@@ -1195,10 +1191,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="463" y="16" width="1233" height="900" extended-state="0" />
+    <frame x="92" y="46" width="1233" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.25577557" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25577557" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -1254,7 +1250,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py</url>
-          <line>3544</line>
+          <line>3582</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1301,13 +1297,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/prediction/paperPredictionService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/data/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -1403,6 +1392,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="310">
           <caret line="98" column="47" selection-start-line="98" selection-start-column="47" selection-end-line="98" selection-end-column="47" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+            <marker date="1590135484371" expanded="true" signature="4209:4212" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1544,48 +1537,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/subrepo/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="58">
-          <caret line="113" column="32" selection-start-line="113" selection-start-column="32" selection-end-line="113" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/complete/index.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="57" column="23" selection-start-line="57" selection-start-column="23" selection-end-line="57" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/analysis/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="54" column="4" selection-start-line="54" selection-start-column="4" selection-end-line="54" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/frequencyService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="52" selection-start-line="4" selection-start-column="52" selection-end-line="4" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Volumes/Transcend/综合实践资料/高频词挖掘/freqword_extraction.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="463">
-          <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1695">
-          <caret line="119" column="55" selection-start-line="119" selection-start-column="55" selection-end-line="119" selection-end-column="55" />
-          <folding>
-            <element signature="e#635#667#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1610,17 +1565,65 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/Advanceanalysis/index.vue">
+    <entry file="file:///Volumes/Transcend/综合实践资料/高频词挖掘/freqword_extraction.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="62" column="18" lean-forward="true" selection-start-line="62" selection-start-column="18" selection-end-line="62" selection-end-column="18" />
+        <state relative-caret-position="120">
+          <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="641">
+          <caret line="121" column="42" selection-start-line="121" selection-start-column="42" selection-end-line="121" selection-end-column="42" />
+          <folding>
+            <element signature="e#635#667#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/frequencyService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/volumeService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/subrepo/index.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="539">
+          <caret line="147" column="7" lean-forward="true" selection-start-line="147" selection-start-column="7" selection-end-line="147" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="310">
+          <caret line="32" column="33" lean-forward="true" selection-start-line="32" selection-start-column="33" selection-end-line="32" selection-end-column="33" />
+          <folding>
+            <element signature="e#63#76#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/analysis/index.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="54" column="4" selection-start-line="54" selection-start-column="4" selection-end-line="54" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="3464" column="46" lean-forward="true" selection-start-line="3464" selection-start-column="46" selection-end-line="3464" selection-end-column="46" />
+        <state relative-caret-position="-6">
+          <caret line="3514" column="17" selection-start-line="3514" selection-start-column="17" selection-end-line="3514" selection-end-column="17" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
             <element signature="e#1052#6165#0" />
@@ -1659,33 +1662,30 @@
             <element signature="e#133861#135140#0" />
             <element signature="e#135206#136243#0" />
             <element signature="e#136308#137863#0" />
-            <marker date="1590212591299" expanded="true" signature="1002:139736" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="13538:20404" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="25612:139736" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="27891:29340" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="29399:29940" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="29995:139736" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="105394:106843" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="107500:139736" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="109482:111329" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="109538:110724" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="113271:114076" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="127564:139736" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="137923:139736" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="139734:139736" ph="..." />
-            <marker date="1590212591299" expanded="false" signature="139780:139785" ph="..." />
-            <marker date="1590212591299" expanded="true" signature="140780:140859" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="1002:140975" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="13538:20404" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="25612:140975" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="27891:29340" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="29399:29940" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="29995:140975" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="105394:106843" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="107500:140975" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="109482:111329" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="109538:110724" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="113271:114076" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="127564:140975" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="137923:140975" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="139891:140975" ph="..." />
+            <marker date="1590233902264" expanded="false" signature="141019:141024" ph="..." />
+            <marker date="1590233902264" expanded="true" signature="142019:142098" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py">
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/Advanceanalysis/index.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="50" column="27" selection-start-line="50" selection-start-column="27" selection-end-line="50" selection-end-column="27" />
-          <folding>
-            <element signature="e#63#76#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-982">
+          <caret line="57" column="34" selection-start-line="57" selection-start-column="34" selection-end-line="57" selection-end-column="34" />
         </state>
       </provider>
     </entry>
