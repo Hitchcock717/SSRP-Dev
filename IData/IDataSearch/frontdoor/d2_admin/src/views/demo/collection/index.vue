@@ -38,7 +38,7 @@
 </style>
 
 <script>
-// import { mapState, mapActions } from 'vuex'
+// import { mapState } from 'vuex'
 import { GetCollection } from '@/api/demo/collection/getcollectionService'
 import { DeleteCollection } from '@/api/demo/collection/deletecollectionService'
 export default {
@@ -52,10 +52,6 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: '/folder'
-    })
-
     GetCollection({
       collection: this.selectedCollection
     })
@@ -71,16 +67,6 @@ export default {
           this.tableData = this.result
         }
       })
-  },
-  mounted () {
-    // 获取收藏夹, 清除key
-    if (localStorage.getItem('folders')) {
-      this.folders = JSON.parse(localStorage.getItem('folders'))
-      console.log(this.folders)
-      localStorage.removeItem('folders')
-    } else {
-      console.log('No folders')
-    }
   },
   methods: {
     deleteCollection (scope) {
@@ -121,10 +107,7 @@ export default {
     },
     submit () {
       this.$router.push({
-        name: 'folder',
-        params: {
-          storage: this.folders // 传输页面数据
-        }
+        path: '/folder'
       })
     }
   }

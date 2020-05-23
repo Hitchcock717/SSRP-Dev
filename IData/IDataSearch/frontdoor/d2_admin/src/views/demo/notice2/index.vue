@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -78,16 +78,6 @@ export default {
         number: ''
       }
     }
-  },
-  created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: this.current
-    })
-  },
-  computed: {
-    ...mapState('d2admin/page', [
-      'current'
-    ])
   },
   methods: {
     viewQuery () {

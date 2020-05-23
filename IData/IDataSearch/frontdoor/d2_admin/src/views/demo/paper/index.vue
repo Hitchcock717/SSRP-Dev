@@ -54,18 +54,10 @@ export default {
       }
     }
   },
-  created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: this.current
-    })
-  },
   computed: {
     ...mapState('expand/messages', {
       messages: state => state.messages
-    }),
-    ...mapState('d2admin/page', [
-      'current'
-    ])
+    })
   },
   methods: {
     ...mapActions('expand/messages', [

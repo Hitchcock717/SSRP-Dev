@@ -44,11 +44,6 @@ export default {
       name: ''
     }
   },
-  created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: '/transition1'
-    })
-  },
   methods: {
     handleChange (file, fileList) {
       let reader = new FileReader()

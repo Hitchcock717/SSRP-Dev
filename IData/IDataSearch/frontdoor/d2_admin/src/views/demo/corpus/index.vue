@@ -40,7 +40,7 @@
 </style>
 
 <script>
-// import { mapState, mapActions } from 'vuex'
+// import { mapState } from 'vuex'
 import { GetCorpus } from '@/api/demo/corpus/getcorpusService'
 import { AddCorpus } from '@/api/demo/corpus/addcorpusService'
 import { DeleteCorpus } from '@/api/demo/corpus/deletecorpusService'
@@ -55,10 +55,6 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: '/repository'
-    })
-
     GetCorpus({
       corpus: this.selectedCorpus
     })
@@ -73,16 +69,6 @@ export default {
           this.tableData = this.result
         }
       })
-  },
-  mounted () {
-    // 获取词表库, 清除key
-    if (localStorage.getItem('repositorys')) {
-      this.repositorys = JSON.parse(localStorage.getItem('repositorys'))
-      console.log(this.repositorys)
-      localStorage.removeItem('repositorys')
-    } else {
-      console.log('No repositorys')
-    }
   },
   methods: {
     addCorpus () {
@@ -148,10 +134,7 @@ export default {
     },
     submit () {
       this.$router.push({
-        name: 'repository',
-        params: {
-          storage: this.repositorys // 传输页面数据
-        }
+        path: '/repository'
       })
     }
   }

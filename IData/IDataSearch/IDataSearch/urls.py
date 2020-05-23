@@ -19,7 +19,7 @@ from rest_framework import routers
 
 from django.conf.urls import url
 from backdoor import views
-from backdoor.views import MessageViewSet, UploadcorpusViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset
+from backdoor.views import MessageViewSet, UploadcorpusViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset, FilerepoViewset
 
 router = routers.DefaultRouter()
 router.register('messages', MessageViewSet)
@@ -33,6 +33,7 @@ router.register('folder', FolderViewset)
 router.register('collection', CollectionViewset)
 router.register('repository', RepositoryViewset)
 router.register('corpus', CorpusViewset)
+router.register('filerepo', FilerepoViewset)
 
 
 app_name = 'backdoor'
@@ -88,6 +89,12 @@ urlpatterns = [
 
     url('api/deleterepository/', views.deleterepository),
 
+    url('api/getfilerepo/', views.getfilerepo),
+
+    url('api/deletefilerepo/', views.deletefilerepo),
+
+    url('api/getfile/', views.getfile),
+
     url('api/getcorpus/', views.getcorpus),
 
     url('api/addcorpus/', views.addcorpus),
@@ -109,6 +116,8 @@ urlpatterns = [
     url('api/scholarrecommend/', views.scholarrecommend),
 
     url('api/paperprediction/', views.paperprediction),
+
+    url('api/frequencyanalyze/', views.frequencyanalyze),
 
     # http://localhost:8000/api/admin/
     path('api/admin/', admin.site.urls),

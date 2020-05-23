@@ -197,10 +197,10 @@ const frameIn = [
         path: 'Advanceanalysis',
         name: 'Advanceanalysis',
         meta: {
-          title: '高级分析平台',
+          title: '文献分析平台',
           auth: true
         },
-        component: _import('demo/analysis')
+        component: _import('demo/Advanceanalysis')
       },
       {
         path: 'personal',
@@ -251,10 +251,28 @@ const frameIn = [
         path: 'corpus',
         name: 'corpus',
         meta: {
-          title: '词表详情',
+          title: '词表库详情',
           auth: true
         },
         component: _import('demo/corpus')
+      },
+      {
+        path: 'filerepo',
+        name: 'filerepo',
+        meta: {
+          title: '论文库',
+          auth: true
+        },
+        component: _import('demo/filerepo')
+      },
+      {
+        path: 'file',
+        name: 'file',
+        meta: {
+          title: '论文库详情',
+          auth: true
+        },
+        component: _import('demo/file')
       },
       // 系统 前端日志
       {

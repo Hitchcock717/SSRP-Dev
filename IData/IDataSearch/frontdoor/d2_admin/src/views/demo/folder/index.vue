@@ -28,14 +28,13 @@
 </style>
 
 <script>
-// import { mapState, mapActions } from 'vuex'
+// import { mapState } from 'vuex'
 import { GetFolder } from '@/api/demo/folder/getfolderService'
 import { AddFolder } from '@/api/demo/folder/addfolderService'
 import { DeleteFolder } from '@/api/demo/folder/deletefolderService'
 export default {
   data () {
     return {
-      storage: this.$route.params.storage, // 获取详情页面传递来的页面数据
       tableData: []
     }
   },
@@ -49,22 +48,9 @@ export default {
             message: '收藏夹为空,请添加分组!'
           })
         } else {
-          localStorage.setItem('folders', JSON.stringify(this.result))
           this.tableData = this.result
         }
       })
-  },
-  mounted () {
-    if (localStorage.getItem('folders')) {
-      console.log('1')
-    } else { // key被清除, 无法获取
-      if (this.tableData === 'undefined') {
-        console.log('no import')
-      } else {
-        this.tableData = this.storage
-        console.log(this.tableData)
-      }
-    }
   },
   methods: {
     addFolder () {

@@ -66,7 +66,7 @@
 // 测试学者编号: 53f432b7dabfaeb2ac02dc61
 import { ScholarRecommend } from '@/api/demo/prediction/scholarRecommendService'
 import { PaperPrediction } from '@/api/demo/prediction/paperPredictionService'
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -93,16 +93,6 @@ export default {
         ]
       }
     }
-  },
-  computed: {
-    ...mapState('d2admin/page', [
-      'current'
-    ])
-  },
-  created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: this.current
-    })
   },
   methods: {
     otherReturn () {

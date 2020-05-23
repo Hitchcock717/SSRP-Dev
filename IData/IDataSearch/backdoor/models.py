@@ -72,6 +72,17 @@ class SimplesearchSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('url', 'title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'download', 'abstract', 'fund', 'pk')
 
 
+class Filerepo(models.Model):
+	name = models.TextField()
+	introduction = models.TextField()
+
+
+class FilerepoSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Filerepo
+		fields = ('url', 'name', 'introduction', 'pk')
+
+
 class Detailsearch(models.Model):
 	title = models.CharField(max_length=200)
 	author = models.CharField(max_length=50)
@@ -84,12 +95,14 @@ class Detailsearch(models.Model):
 	download = models.TextField()
 	abstract = models.TextField()
 	fund = models.TextField()
+	name = models.TextField(default="")
+	introduction = models.TextField(default="")
 
 
 class DetailsearchSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Detailsearch
-		fields = ('url', 'title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'download', 'abstract', 'fund', 'pk')
+		fields = ('url', 'title', 'author', 'source', 'info', 'date', 'kws', 'cited', 'downed', 'download', 'abstract', 'fund', 'name', 'introduction', 'pk')
 
 
 class Temp(models.Model):
@@ -147,8 +160,6 @@ class CorpusSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Corpus
 		fields = ('url', 'kws', 'repository', 'pk')
-
-
 
 
 '''

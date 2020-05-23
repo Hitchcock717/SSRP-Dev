@@ -111,7 +111,7 @@
 
 <script>
 import { GetExpression } from '@/api/demo/expressionService'
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -147,11 +147,6 @@ export default {
         desc: ''
       }
     }
-  },
-  computed: {
-    ...mapState('d2admin/page', [
-      'current'
-    ])
   },
   methods: {
     addRule () {
@@ -250,27 +245,35 @@ export default {
           allData.push(dateDict)
           console.log(JSON.stringify(allData))
         }
-
         GetExpression({
-          expression: JSON.stringify(allData)
+          expression: JSON.stringify(allData),
+          name: this.ruleForm.name,
+          introduction: this.ruleForm.desc
         })
           .then(res => {
             this.result = res
             console.log(JSON.stringify(this.result))
-            this.$message({
-              type: 'success',
-              message: '创建成功!'
-            })
-            this.$refs.ruleForm.validate((valid) => {
-              if (valid) {
-                this.$router.push({
-                  path: '/notice2',
-                  query: {
-                    result: JSON.stringify(this.result)
-                  }
-                })
-              }
-            })
+            if (this.result !== 'failed') {
+              this.$message({
+                type: 'success',
+                message: '创建成功!'
+              })
+              this.$refs.ruleForm.validate((valid) => {
+                if (valid) {
+                  this.$router.push({
+                    path: '/notice2',
+                    query: {
+                      result: JSON.stringify(this.result)
+                    }
+                  })
+                }
+              })
+            } else {
+              this.$message({
+                type: 'info',
+                message: '子库名称已经存在,请更改!'
+              })
+            }
           })
           .catch(err => {
             console.log(err)
@@ -283,9 +286,6 @@ export default {
   },
   created () {
     window.addEventListener('scroll', this.onScroll)
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: this.current
-    })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

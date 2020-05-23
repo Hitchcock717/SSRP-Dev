@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { GetFilerepo } from '@/api/demo/filerepo/getfilerepoService'
 export default {
   data () {
     return {
@@ -44,17 +45,17 @@ export default {
       dialogFormVisible: false
     }
   },
-  created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: '/page1'
-    })
-  },
   mounted () {
     this.imgLoad()
     window.addEventListener('resize', () => {
       this.bannerHeight = this.$refs.bannerHeight[0].height
       this.imgLoad()
     }, false)
+
+    GetFilerepo({})
+      .then(res => {
+        this.result = res
+      })
   },
   methods: {
     imgLoad () {
@@ -80,7 +81,10 @@ export default {
     },
     AdvanceSearch () {
       this.$router.push({
-        path: '/Advanceanlysis'
+        name: 'Advanceanalysis',
+        params: {
+          file: JSON.stringify(this.result)
+        }
       })
     }
   }

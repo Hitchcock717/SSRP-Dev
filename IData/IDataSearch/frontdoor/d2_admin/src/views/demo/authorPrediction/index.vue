@@ -100,7 +100,7 @@
 import { GenderPrediction } from '@/api/demo/prediction/genderPredictionService'
 import { IdentityPrediction } from '@/api/demo/prediction/IdentityPredictionService'
 import { HoppingPrediction } from '@/api/demo/prediction/hoppingPredictionService'
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -148,16 +148,6 @@ export default {
         ]
       }
     }
-  },
-  computed: {
-    ...mapState('d2admin/page', [
-      'current'
-    ])
-  },
-  created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: this.current
-    })
   },
   methods: {
     authorReturn () {

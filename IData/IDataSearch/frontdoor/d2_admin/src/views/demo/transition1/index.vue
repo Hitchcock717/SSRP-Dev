@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -61,16 +61,6 @@ export default {
         ]
       }
     }
-  },
-  computed: {
-    ...mapState('d2admin/page', [
-      'current'
-    ])
-  },
-  created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: this.current
-    })
   },
   mounted () {
     this.imgLoad()

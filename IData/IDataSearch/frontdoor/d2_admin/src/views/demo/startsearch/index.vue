@@ -23,7 +23,7 @@
 
 <script>
 import { StartSpider } from '@/api/demo/spiderService'
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -45,22 +45,12 @@ export default {
       }
     }
   },
-  created () {
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: this.current
-    })
-  },
   mounted () {
     this.imgLoad()
     window.addEventListener('resize', () => {
       this.bannerHeight = this.$refs.bannerHeight[0].height
       this.imgLoad()
     }, false)
-  },
-  computed: {
-    ...mapState('d2admin/page', [
-      'current'
-    ])
   },
   methods: {
     imgLoad () {

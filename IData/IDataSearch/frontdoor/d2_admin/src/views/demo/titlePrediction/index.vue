@@ -57,7 +57,7 @@
 <script>
 import { TitlePrediction } from '@/api/demo/prediction/titlePredictionService'
 import { AITitlePrediction } from '@/api/demo/prediction/AItitlePredictionService'
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -69,11 +69,6 @@ export default {
       tableData: [],
       AIData: []
     }
-  },
-  computed: {
-    ...mapState('d2admin/page', [
-      'current'
-    ])
   },
   methods: {
     onScroll () {
@@ -139,9 +134,6 @@ export default {
   },
   created () {
     window.addEventListener('scroll', this.onScroll)
-    this.$store.dispatch('d2admin/page/close', {
-      tagName: this.current
-    })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)
