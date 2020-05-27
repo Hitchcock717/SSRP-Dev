@@ -88,10 +88,10 @@ export default {
       return isJPG && isLt2M
     },
     collection () {
-      this.$router.push('/collection')
+      this.$router.push('/folder')
     },
     corpusrepo () {
-      this.$router.push('/corpusrepo')
+      this.$router.push('/repository')
     },
     submitForm (ruleForm) {
       this.$refs.ruleForm.validate((valid) => {

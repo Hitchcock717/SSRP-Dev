@@ -3502,11 +3502,13 @@ def volumeanalyze(request):
         volume_dict = ast.literal_eval(raw_dict_key)
         start_date = volume_dict['start']
         end_date = volume_dict['end']
+        source = volume_dict['source']
         print(start_date)
         print(end_date)
+        print(source)
 
-        if Detailsearch.objects.filter(source='期刊', date__range=(start_date, end_date)):
-            data = Detailsearch.objects.filter(source='期刊', date__range=(start_date, end_date))
+        if Detailsearch.objects.filter(name=source, source='期刊', date__range=(start_date, end_date)):
+            data = Detailsearch.objects.filter(name=source, source='期刊', date__range=(start_date, end_date))
             infos = []
             for d in data:
                 d_dict = model_to_dict(d)
@@ -3519,6 +3521,128 @@ def volumeanalyze(request):
 
             return Response(frequent_infos)
 
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def relationanalyze(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        relation_dict = ast.literal_eval(raw_dict_key)
+        source = relation_dict['source']
+        print(source)
+
+        if Detailsearch.objects.filter(name=source):
+            data = Detailsearch.objects.filter(name=source)
+
+            kwss = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                if d_dict['kws'] != '暂无':
+                    if re.search('；', d_dict['kws']):
+                        new_kws = re.sub('"', '', d_dict['kws'])
+                        new_kws1 = re.sub('； |;', ',', new_kws)
+                        kws = new_kws1.split(',')
+                        kwss.append(kws)
+
+                    else:
+                        new_kws = re.sub(';', ',', d_dict['kws'])
+                        kws = new_kws.split(',')
+                        kwss.append(kws)
+                else:
+                    continue
+
+            from .analysis.SSRP_network_analysis import WordVector
+            vec = WordVector()
+            network_data = {
+                'nodes': vec.build_network_scipy_data()[0],
+                'edges': vec.build_network_scipy_data()[1]
+            }
+            return Response(network_data)
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def classifyanalyze(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        classify_dict = ast.literal_eval(raw_dict_key)
+        source = classify_dict['source']
+        print(source)
+
+        if Detailsearch.objects.filter(name=source):
+            data = Detailsearch.objects.filter(name=source)
+
+            abs = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                if d_dict['abstract']:
+                    abs.append(d_dict['abstract'])
+            print(abs)
+
+            from .analysis.SSRP_classify_analysis import ClassifyAnalysis
+            classify = ClassifyAnalysis()
+            lda_data = classify.simple_LDA_analysis(abs)
+            return Response(lda_data)
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('POST','GET',))
+def cooperationanalyze(request):
+
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        cooperation_dict = ast.literal_eval(raw_dict_key)
+        source = cooperation_dict['source']
+        print(source)
+
+        if Detailsearch.objects.filter(name=source):
+            data = Detailsearch.objects.filter(name=source)
+
+            two_aus = []
+            more_aus = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                if not re.search('[a-zA-Z]', d_dict['author']):
+                    if len(d_dict['author'].split()) == 2:
+                        two_aus.append(d_dict['author'])
+                    elif len(d_dict['author'].split()) > 2:
+                        more_aus.append(d_dict['author'])
+                    else:
+                        continue
+                else:
+                    continue
+
+            print(len(two_aus))
+            print(len(more_aus))
+
+            from .analysis.SSRP_cooperation_analysis import CooperateAnalysis
+            cooper = CooperateAnalysis()
+            id_relation = cooper.build_au_relation(two_aus[:5], more_aus[:3])
+            print(id_relation)
+            cooper_data = {
+                'nodes': id_relation[0],
+                'edges': id_relation[1]
+            }
+            return Response(cooper_data)
         else:
             return Response('failed')
 

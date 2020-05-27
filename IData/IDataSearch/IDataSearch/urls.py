@@ -121,6 +121,12 @@ urlpatterns = [
 
     url('api/volumeanalyze/', views.volumeanalyze),
 
+    url('api/relationanalyze/', views.relationanalyze),
+
+    url('api/classifyanalyze/', views.classifyanalyze),
+
+    url('api/cooperationanalyze/', views.cooperationanalyze),
+
     # http://localhost:8000/api/admin/
     path('api/admin/', admin.site.urls),
 ]

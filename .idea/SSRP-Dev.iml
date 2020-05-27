@@ -18,6 +18,7 @@
       <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/prediction_api/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/prediction_api/model" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/prediction_api/src/utils" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/IData/IDataSearch/backdoor/analysis" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

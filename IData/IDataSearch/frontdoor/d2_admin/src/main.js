@@ -16,6 +16,9 @@ import { frameInRoutes } from '@/router/routes'
 // Echarts图表
 import VCharts from 'v-charts'
 
+// 引用vis
+import Vis from 'vis'
+
 // 导入axios
 import Axios from 'axios'
 
@@ -34,6 +37,7 @@ Axios.defaults.headers.post['Content-Type'] = 'application/x-www-fromurlencodeed
 // 核心插件
 Vue.use(d2Admin)
 Vue.use(VCharts)
+Vue.use(Vis)
 
 new Vue({
   router,
