@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
     SSRP分析平台之关系图分析 --- 作者两两合作
+    tips: 数据过载问题
 '''
 
 import itertools

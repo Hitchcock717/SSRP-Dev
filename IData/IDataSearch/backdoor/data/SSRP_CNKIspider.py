@@ -4,6 +4,8 @@
 
     测试链接 ---- 列表页: http://search.cnki.com.cn/Search/ListResult?searchType=MultiyTermsSearch&Content=%E6%B0%A8%E5%9F%BA%E9%85%B8&Order=1&page=12
             ---- 详情页: http://www.cnki.com.cn/Article/CJFDTOTAL-HXGY200402006.htm
+
+    tips: \r\n问题
 '''
 
 import re

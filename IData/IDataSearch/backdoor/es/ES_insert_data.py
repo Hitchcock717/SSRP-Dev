@@ -53,12 +53,12 @@ class Insert2ES(object):
                 res.append(data)
         print(res)
 
-    def insert_data(self, fin):
-        # fin = codecs.open(json_file, 'r', encoding='utf-8')
+    def insert_data(self, json_file):
+        fin = codecs.open(json_file, 'r', encoding='utf-8')
         data = []
         for f in fin.readlines():
             data.append(f)
-        print(data)
+        # print(data)
         fin.close()
         return data
 
@@ -110,12 +110,13 @@ class Insert2ES(object):
 if __name__ == "__main__":
     index = 'spider_data'  # new index
     ip = '127.0.0.1'
-    json_file = '/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data/cnki_doc_json.txt'
-    folder_path = '/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data'
+    # json_file = '/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data/cnki_doc_json.txt'
+    json_file = '/Users/felix_zhao/Desktop/doc_json.txt'
+    # folder_path = '/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/es/SSRP_spiders/spider_data'
     insert = Insert2ES(index, ip)
-    insert.get_folder(folder_path)
-    # insert.create_index()
-    # insert.build_data(json_file)
+    # insert.get_folder(folder_path)
+    insert.create_index()
+    insert.build_data(json_file)
 
 
 

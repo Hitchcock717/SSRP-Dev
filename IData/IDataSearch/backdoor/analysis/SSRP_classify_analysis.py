@@ -40,10 +40,10 @@ class ClassifyAnalysis(object):
     def prepare_data(self, texts):
         stopwords = self.get_stopwords()
         data = [[word for word in jieba.lcut(text) if word not in stopwords and word != ' '] for text in texts]
-        print(data)
+        # print(data)
         return data
 
-    def simple_LDA_analysis(self, texts):
+    def build_topics_model(self, texts):
         words = self.prepare_data(texts)
         dictionary = corpora.Dictionary(words)
         corpus = [dictionary.doc2bow(word) for word in words]
@@ -51,7 +51,10 @@ class ClassifyAnalysis(object):
         topics = [topic for topic in lda.print_topics(num_words=self.num_words)]
         # print('简单LDA分析后显示的主题分布为: %s' % topics)
         # print('主题推断为: %s' % lda.inference(corpus))
+        return topics
 
+    def simple_LDA_analysis(self, texts):
+        topics = self.build_topics_model(texts)
         lda = []
         for topic in topics:
             chart_data = {}

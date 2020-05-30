@@ -2,8 +2,8 @@
   <d2-container class="page">
     <d2-page-cover>
       <el-form :model="detailForm" ref="detailForm" label-width="150px" class="demo-detailForm" :class='{fixed:isFixed}'>
-        <el-form-item label="citespace分析" prop="subrepo">
-          <el-button @click="submit" type="primary" class="citespace">进入</el-button>
+        <el-form-item label="分析平台" prop="subrepo">
+          <el-button @click="submit" type="primary" class="analysis">进入</el-button>
         </el-form-item>
        </el-form>
        <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="500"

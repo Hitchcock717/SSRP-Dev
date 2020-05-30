@@ -33,7 +33,7 @@ class DocRetireveES(object):
                        '}' % (match_method, search_field, kws)
 
         body = json.loads(query)
-        print(body)
+        # print(body)
         return body
 
     # 多字段搜索
@@ -65,7 +65,7 @@ class DocRetireveES(object):
                                '}' % (kws, field1)
 
             body = json.loads(query)
-            print(body)
+            # print(body)
             return body
 
     # 搜索结果高亮显示
@@ -76,7 +76,7 @@ class DocRetireveES(object):
         :return:
         """
         parse_body = [item for item in res]
-        print(parse_body)
+        # print(parse_body)
         count = len(parse_body)
         result = []
 
@@ -154,7 +154,7 @@ class DocRetireveES(object):
                 counts = len(results)
 
             # print(counts, results)
-            print(counts)
+            # print(counts)
             return body, counts, results
 
         elif type(search_field) == str:
@@ -164,7 +164,7 @@ class DocRetireveES(object):
             doc = results[2]
 
             # print(counts, results)
-            print(counts)
+            # print(counts)
             return body, counts, doc
 
     # **********************************end basic query******************************** #
@@ -270,15 +270,15 @@ class DocRetireveES(object):
 
         if in_match != "":
             in_clause_body = in_clause % in_match
-            print(in_clause_body)
+            # print(in_clause_body)
         if ex_match != "":
             ex_clause_body = ex_clause % ex_match
         if ex_clause_body != "":
             query = query + in_clause_body + "," + ex_clause_body + "}}}"
-            print(query)
+            # print(query)
         else:
             query = query + in_clause_body + "," + range_clause_body + "}}}"
-            print(query)
+            # print(query)
 
         body = json.loads(query)
         return body
@@ -286,13 +286,13 @@ class DocRetireveES(object):
     # ES查询
     def advance_search(self, in_fields, in_kws, ex_fields, ex_kws, date_field, start, end, in_method):
         query = self.advance_query(in_fields, in_kws, ex_fields, ex_kws, date_field, start, end, in_method)
-        print(type(query))
+        # print(type(query))
         # res = self.es.search(self.index_name, body=query)
         res = helpers.scan(client=self.es,
                            query=query,
                            index=self.index_name)
         counts, results = self.highlight(res, in_fields)
-        print(counts)
+        # print(counts)
         return query, counts, results
 
     # **********************************end advance query******************************** #
@@ -399,7 +399,7 @@ class DocRetireveES(object):
                            query=query,
                            index=self.index_name)
         counts, results = self.highlight(res, in_fields)
-        print(counts)
+        # print(counts)
         return query, counts, results
 
     # **********************************end regexp query******************************** #
@@ -565,15 +565,15 @@ class DocRetireveES(object):
 
         if in_match != "":
             in_clause_body = in_clause % in_match
-            print(in_clause_body)
+            # print(in_clause_body)
         if ex_match != "":
             ex_clause_body = ex_clause % ex_match
         if ex_clause_body != "":
             query = in_clause_body + "," + ex_clause_body + "}}"
-            print(query)
+            # print(query)
         else:
             query = in_clause_body + "}}"
-            print(query)
+            # print(query)
 
         body = json.loads(query)
         return body
@@ -586,7 +586,7 @@ class DocRetireveES(object):
         for raw_expression_dict in raw_expression_group:
 
             each_nested_query_with_relation = []  # 注意该列表应处于循环内
-            print(raw_expression_dict)
+            # print(raw_expression_dict)
             in_field = raw_expression_dict['type'].split()
             query_content.append(in_field)
             in_kws = raw_expression_dict['info']
@@ -750,18 +750,18 @@ class DocRetireveES(object):
     # 构建外部嵌套高级检索体
     def wrapped_advance_query(self, raw_expression_group, date_field, start, end):
         query_groups = self.build_nested_advance_query(raw_expression_group)  # [[''],['']]
-        print(query_groups)
+        # print(query_groups)
 
         range_clause = '"filter":[ { "range": { "%s" :{ "gte":"%s","lte":"%s" } } } ]'  # range查询用于日期过滤
 
         # 有且仅有两个检索体
         if len(query_groups) == 2:
             in_method = query_groups[0][1]
-            print(in_method)
+            # print(in_method)
             front_query = query_groups[0][0]
-            print(front_query)
+            # print(front_query)
             back_query = query_groups[1][0]
-            print(back_query)
+            # print(back_query)
             in_match = str(front_query) + ',' + str(back_query)
 
             # *************构造检索规则************* #
@@ -776,7 +776,7 @@ class DocRetireveES(object):
                 query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
 
                 query_body = query_body.replace('\'', '\"')
-                print(query_body)
+                # print(query_body)
 
                 body = json.loads(query_body)
                 return body
@@ -787,7 +787,7 @@ class DocRetireveES(object):
                 query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
 
                 query_body = query_body.replace('\'', '\"')
-                print(query_body)
+                # print(query_body)
 
                 body = json.loads(query_body)
                 return body
@@ -802,19 +802,19 @@ class DocRetireveES(object):
                 query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
 
                 query_body = query_body.replace('\'', '\"')
-                print(query_body)
+                # print(query_body)
 
                 body = json.loads(query_body)
                 return body
 
         else:  # 大于两个检索体
             top_two_query = query_groups[:2]
-            print(top_two_query)
+            # print(top_two_query)
             in_method = top_two_query[0][1]
             front_query = top_two_query[0][0]
-            print(front_query)
+            # print(front_query)
             back_query = top_two_query[1][0]
-            print(back_query)
+            # print(back_query)
             in_match = str(front_query) + ',' + str(back_query)
 
             # *************构造前两个检索规则************* #
@@ -844,7 +844,7 @@ class DocRetireveES(object):
                 query_body = query + in_clause_body + ',' + ex_clause_body + '}'
                 top_two_query_body.append(query_body)
 
-            print(top_two_query_body)
+            # print(top_two_query_body)
             base_query_body = top_two_query_body[0]
 
             # 有且仅有三个检索体
@@ -865,7 +865,7 @@ class DocRetireveES(object):
                     query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
 
                     query_body = query_body.replace('\'', '\"')
-                    print(query_body)
+                    # print(query_body)
 
                     body = json.loads(query_body)
                     return body
@@ -876,7 +876,7 @@ class DocRetireveES(object):
                     query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
 
                     query_body = query_body.replace('\'', '\"')
-                    print(query_body)
+                    # print(query_body)
 
                     body = json.loads(query_body)
                     return body
@@ -891,7 +891,7 @@ class DocRetireveES(object):
                     query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
 
                     query_body = query_body.replace('\'', '\"')
-                    print(query_body)
+                    # print(query_body)
 
                     body = json.loads(query_body)
                     return body
@@ -920,14 +920,14 @@ class DocRetireveES(object):
                             in_clause = '"must":[ %s ]'
                             in_clause_body = in_clause % in_match
                             other_query_body = query + in_clause_body + '}'
-                            print(other_query_body)
+                            # print(other_query_body)
                             other_query.append(other_query_body)
 
                         if in_method == '2':
                             in_clause = '"should":[ %s ]'
                             in_clause_body = in_clause % in_match
                             other_query_body = query + in_clause_body + '}'
-                            print(other_query_body)
+                            # print(other_query_body)
                             other_query.append(other_query_body)
 
                         if in_method == '0':
@@ -938,7 +938,7 @@ class DocRetireveES(object):
                             ex_match = base_query_body
                             ex_clause_body = ex_clause % ex_match
                             other_query_body = query + in_clause_body + ',' + ex_clause_body + '}'
-                            print(other_query_body)
+                            # print(other_query_body)
                             other_query.append(other_query_body)
 
                     else:  # 最后一个检索体: 需要修改检索头部 + 添加日期范围
@@ -959,7 +959,7 @@ class DocRetireveES(object):
                             query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
 
                             query_body = query_body.replace('\'', '\"')
-                            print(query_body)
+                            # print(query_body)
 
                             body = json.loads(query_body)
                             return body
@@ -970,7 +970,7 @@ class DocRetireveES(object):
                             query_body = query + in_clause_body + ',' + range_clause_body + '}}}'
 
                             query_body = query_body.replace('\'', '\"')
-                            print(query_body)
+                            # print(query_body)
 
                             body = json.loads(query_body)
                             return body
@@ -985,7 +985,7 @@ class DocRetireveES(object):
                             query_body = query + in_clause_body + ',' + ex_clause_body + ',' + range_clause_body + '}}}'
 
                             query_body = query_body.replace('\'', '\"')
-                            print(query_body)
+                            # print(query_body)
 
                             body = json.loads(query_body)
                             return body
@@ -995,7 +995,7 @@ class DocRetireveES(object):
         query = self.wrapped_advance_query(raw_expression_group, date_field, start, end)
         # res = self.es.search(self.index_name, body=query)
 
-        print(type(query))
+        # print(type(query))
         in_fields = []
         for raw_expression_dict in raw_expression_group:
             in_field = raw_expression_dict['type']
@@ -1005,7 +1005,7 @@ class DocRetireveES(object):
                            query=query,
                            index=self.index_name)
         counts, results = self.highlight(res, in_fields)
-        print(counts)
+        # print(counts)
         return query, counts, results
 
 

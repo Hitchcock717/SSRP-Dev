@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aed7ca09-84c2-4601-ba06-72599be16b3b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_classify_analysis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recomemnd_relation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_data.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_fund.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_topic.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_send_mail.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/filter.pickle" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/classifyService.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/cooperationService.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/frequencyService.js" afterDir="false" />
@@ -39,8 +45,15 @@
       <change afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/utils/http.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/SSRP-Dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SSRP-Dev.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_classify_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_classify_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/ES_doc_convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/ES_doc_convert.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/SSRP_CNKIspider.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/SSRP_CNKIspider.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_doc_retrieve.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_doc_retrieve.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/backdoor/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/backdoor/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/components/index.js" afterDir="false" />
@@ -52,6 +65,7 @@
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/router/routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/router/routes.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/modules/d2admin/modules/account.js" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/store/modules/d2admin/modules/account.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detailsearch/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detailsearch/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/page1/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/page1/index.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/page2/index.vue" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/page3/index.vue" beforeDir="false" />
@@ -67,8 +81,8 @@
     <session id="1143672604">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="10" />
-          <entry key="project.open.time.1" value="2" />
+          <entry key="project.closed" value="12" />
+          <entry key="project.open.time.1" value="4" />
           <entry key="project.open.time.10" value="2" />
           <entry key="project.open.time.11" value="3" />
           <entry key="project.open.time.12" value="1" />
@@ -76,190 +90,55 @@
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.33" value="1" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="13" />
+          <entry key="project.opened" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="js" value="313" />
           <entry key="json" value="1" />
+          <entry key="pickle" value="2" />
           <entry key="pk" value="1" />
-          <entry key="py" value="235" />
+          <entry key="py" value="282" />
           <entry key="text" value="1" />
           <entry key="txt" value="4" />
-          <entry key="vue" value="315" />
+          <entry key="vue" value="316" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="JSON" value="1" />
           <entry key="JavaScript" value="313" />
-          <entry key="PLAIN_TEXT" value="321" />
-          <entry key="Python" value="235" />
+          <entry key="PLAIN_TEXT" value="324" />
+          <entry key="Python" value="282" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="js" value="5200" />
-          <entry key="py" value="57437" />
-          <entry key="vue" value="46038" />
+          <entry key="py" value="66213" />
+          <entry key="vue" value="46086" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="JavaScript" value="5200" />
-          <entry key="PLAIN_TEXT" value="46038" />
-          <entry key="Python" value="57437" />
+          <entry key="PLAIN_TEXT" value="46086" />
+          <entry key="Python" value="66213" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-288">
-              <caret line="3654" column="37" selection-start-line="3654" selection-start-column="37" selection-end-line="3654" selection-end-column="37" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-                <element signature="e#1052#6165#0" />
-                <element signature="e#6217#11883#0" />
-                <element signature="e#11946#12500#0" />
-                <element signature="e#12566#13101#0" />
-                <element signature="e#13194#13467#0" />
-                <element signature="e#13544#20401#0" />
-                <element signature="e#20462#25612#0" />
-                <element signature="e#25663#27832#0" />
-                <element signature="e#27896#29337#0" />
-                <element signature="e#29404#29937#0" />
-                <element signature="e#30001#103099#0" />
-                <element signature="e#103152#105338#0" />
-                <element signature="e#105399#106840#0" />
-                <element signature="e#106910#107443#0" />
-                <element signature="e#107505#109481#0" />
-                <element signature="e#109543#110721#0" />
-                <element signature="e#110788#111326#0" />
-                <element signature="e#111384#113196#0" />
-                <element signature="e#113276#114073#0" />
-                <element signature="e#114151#115620#0" />
-                <element signature="e#115683#116209#0" />
-                <element signature="e#116260#117653#0" />
-                <element signature="e#117711#119096#0" />
-                <element signature="e#119159#119685#0" />
-                <element signature="e#119740#121182#0" />
-                <element signature="e#121244#122655#0" />
-                <element signature="e#122722#123260#0" />
-                <element signature="e#123313#124750#0" />
-                <element signature="e#124815#125560#0" />
-                <element signature="e#127570#128724#0" />
-                <element signature="e#128791#130133#0" />
-                <element signature="e#130199#132213#0" />
-                <element signature="e#132281#133794#0" />
-                <element signature="e#133861#135140#0" />
-                <element signature="e#135206#136243#0" />
-                <element signature="e#136308#137863#0" />
-                <marker date="1590555402623" expanded="true" signature="1002:145128" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="13538:20404" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="25612:145128" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="27891:29340" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="29399:29940" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="29995:145128" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="105394:106843" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="107500:145128" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="109482:111329" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="109538:110724" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="113271:114076" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="127564:145128" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="137923:145128" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="139891:145128" ph="..." />
-                <marker date="1590555402623" expanded="false" signature="145172:145177" ph="..." />
-                <marker date="1590555402623" expanded="true" signature="146172:146251" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1160">
-              <caret line="78" column="29" lean-forward="true" selection-start-line="78" selection-start-column="29" selection-end-line="78" selection-end-column="29" />
-              <folding>
-                <element signature="e#63#79#0" expanded="true" />
-                <marker date="1590553021608" expanded="true" signature="146:147" ph="..." />
-                <marker date="1590553021608" expanded="true" signature="146:152" ph="..." />
-                <marker date="1590553021608" expanded="true" signature="171:1404" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_convert2num.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
-              <folding>
-                <element signature="e#49#62#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="127" column="52" selection-start-line="127" selection-start-column="52" selection-end-line="127" selection-end-column="52" />
-              <folding>
-                <element signature="e#635#667#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/Advanceanalysis/index.vue">
+        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_send_mail.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="349" column="15" selection-start-line="349" selection-start-column="15" selection-end-line="349" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/personal/index.vue">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="79">
-              <caret line="98" column="35" selection-start-line="98" selection-start-column="35" selection-end-line="98" selection-end-column="35" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/folder/index.vue">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="122" column="32" selection-start-line="122" selection-start-column="22" selection-end-line="122" selection-end-column="32" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/cooperationService.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/classifyService.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" selection-start-line="12" selection-end-line="12" />
+            <state relative-caret-position="313">
+              <caret line="24" column="30" lean-forward="true" selection-start-line="24" selection-start-column="30" selection-end-line="24" selection-end-column="30" />
+              <folding>
+                <element signature="e#52#66#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -275,8 +154,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>simple-list</find>
-      <find>title =</find>
       <find>origin</find>
       <find>findAll</find>
       <find>page</find>
@@ -301,10 +178,12 @@
       <find>flag</find>
       <find>gete</find>
       <find>桑基图</find>
-      <find>print</find>
       <find>;</find>
-      <find>0</find>
       <find>collection</find>
+      <find>0</find>
+      <find>info</find>
+      <find>get</find>
+      <find>print</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;</replace>
@@ -334,30 +213,11 @@
     </replaceStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detailsearch/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/menu/header.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/menu/aside.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/router/routes.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/file/addfileService.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/filerepo/getfileService.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/file/deletefileService.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/filerepo/deletefilerepoService.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/filerepo/getfilerepoService.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/file/getfileService.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/models.py" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/titlePrediction/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/authorPrediction/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/otherPrediction/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/repository/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/folder/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/collection/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/corpus/index.vue" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/complete/index.vue" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/corpusearch/index.vue" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detail1/index.vue" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detail2/index.vue" />
@@ -381,22 +241,41 @@
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/relationService.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/main.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/classifyService.js" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_classify_analysis.py" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_network_analysis.py" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/cooperationService.js" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/IDataSearch/urls.py" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_convert2num.py" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py" />
-        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/personal/index.vue" />
         <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/Advanceanalysis/index.vue" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detailsearch/index.vue" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/SSRP_CNKIspider.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/main.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_connect_SSRP.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/spider_data/ES_connect_SSRP.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/test.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/data/ES_doc_convert.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/main.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_network_analysis.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/main.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/utils.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_doc_retrieve.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_data.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_fund.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recomemnd_relation.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_classify_analysis.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_topic.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/main.py" />
+        <option value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_send_mail.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="91" />
-    <option name="y" value="23" />
-    <option name="width" value="1451" />
+    <option name="x" value="210" />
+    <option name="y" value="59" />
+    <option name="width" value="1207" />
     <option name="height" value="900" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -422,6 +301,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -461,14 +341,6 @@
               <item name="IData" type="462c0819:PsiDirectoryNode" />
               <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
               <item name="backdoor" type="462c0819:PsiDirectoryNode" />
-              <item name="corpus" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SSRP-Dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SSRP-Dev" type="462c0819:PsiDirectoryNode" />
-              <item name="IData" type="462c0819:PsiDirectoryNode" />
-              <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
-              <item name="backdoor" type="462c0819:PsiDirectoryNode" />
               <item name="data" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -477,35 +349,7 @@
               <item name="IData" type="462c0819:PsiDirectoryNode" />
               <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
               <item name="backdoor" type="462c0819:PsiDirectoryNode" />
-              <item name="prediction_api" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SSRP-Dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SSRP-Dev" type="462c0819:PsiDirectoryNode" />
-              <item name="IData" type="462c0819:PsiDirectoryNode" />
-              <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
-              <item name="backdoor" type="462c0819:PsiDirectoryNode" />
-              <item name="prediction_api" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SSRP-Dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SSRP-Dev" type="462c0819:PsiDirectoryNode" />
-              <item name="IData" type="462c0819:PsiDirectoryNode" />
-              <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
-              <item name="backdoor" type="462c0819:PsiDirectoryNode" />
-              <item name="prediction_api" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
-              <item name="gender" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SSRP-Dev" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SSRP-Dev" type="462c0819:PsiDirectoryNode" />
-              <item name="IData" type="462c0819:PsiDirectoryNode" />
-              <item name="IDataSearch" type="462c0819:PsiDirectoryNode" />
-              <item name="backdoor" type="462c0819:PsiDirectoryNode" />
-              <item name="prediction_api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="recommend" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="SSRP-Dev" type="b2602c69:ProjectViewProjectNode" />
@@ -1044,12 +888,11 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/corpusService.js" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -1068,8 +911,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.SSRP_cooperation_analysis">
-    <configuration name="SSRP_WFspider" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.SSRP_send_mail">
+    <configuration name="SSRP_recommend" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SSRP-Dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -1077,11 +920,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/es/SSRP_spiders/SSRP_WFspider.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1090,7 +933,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="SSRP_classify_analysis" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="SSRP_recommend_fund" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SSRP-Dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -1098,11 +941,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_classify_analysis.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_fund.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1111,7 +954,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="SSRP_cooperation_analysis" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="SSRP_recommend_topic" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SSRP-Dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -1119,11 +962,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_topic.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1132,7 +975,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="SSRP_network_analysis" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="SSRP_send_mail" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SSRP-Dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -1140,11 +983,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_network_analysis.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_send_mail.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1153,7 +996,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="SSRP_sankey_analysis" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SSRP-Dev" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -1161,11 +1004,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_sankey_analysis.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -1175,19 +1018,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.SSRP_WFspider" />
-      <item itemvalue="Python.SSRP_sankey_analysis" />
-      <item itemvalue="Python.SSRP_network_analysis" />
-      <item itemvalue="Python.SSRP_classify_analysis" />
-      <item itemvalue="Python.SSRP_cooperation_analysis" />
+      <item itemvalue="Python.SSRP_recommend_fund" />
+      <item itemvalue="Python.SSRP_recommend_topic" />
+      <item itemvalue="Python.SSRP_recommend" />
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.SSRP_send_mail" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.SSRP_cooperation_analysis" />
-        <item itemvalue="Python.SSRP_classify_analysis" />
-        <item itemvalue="Python.SSRP_network_analysis" />
-        <item itemvalue="Python.SSRP_sankey_analysis" />
-        <item itemvalue="Python.SSRP_WFspider" />
+        <item itemvalue="Python.SSRP_send_mail" />
+        <item itemvalue="Python.main" />
+        <item itemvalue="Python.SSRP_recommend" />
+        <item itemvalue="Python.SSRP_recommend_topic" />
+        <item itemvalue="Python.SSRP_recommend_fund" />
       </list>
     </recent_temporary>
   </component>
@@ -1205,15 +1048,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-111" y="22" width="1451" height="900" extended-state="0" />
+    <frame x="127" y="76" width="1207" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22447552" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.32799324" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32920793" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.017326733" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.23638614" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39975247" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -1311,177 +1154,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/filerepo/getfileService.js" />
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/filerepo/deletefilerepoService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="50" selection-start-line="4" selection-start-column="50" selection-end-line="4" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/filerepo/getfilerepoService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="47" selection-start-line="4" selection-start-column="47" selection-end-line="4" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/file/getfileService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/file/deletefileService.js" />
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/collection/getcollectionService.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="98" column="47" selection-start-line="98" selection-start-column="47" selection-end-line="98" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-            <marker date="1590135484371" expanded="true" signature="4209:4212" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/authorPrediction/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-717">
-          <caret line="150" column="4" selection-start-line="150" selection-start-column="4" selection-end-line="150" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/otherPrediction/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-84">
-          <caret line="68" column="3" selection-start-line="68" selection-start-column="3" selection-end-line="68" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/repository/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="97">
-          <caret line="30" column="3" selection-start-line="30" selection-start-column="3" selection-end-line="30" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/corpus/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="42" column="3" selection-start-line="42" selection-start-column="3" selection-end-line="42" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/corpusearch/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-687">
-          <caret line="45" column="4" selection-start-line="45" selection-start-column="4" selection-end-line="45" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detail1/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
-          <caret line="175" column="14" selection-start-line="175" selection-start-column="14" selection-end-line="175" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detail2/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="144" column="3" selection-start-line="144" selection-start-column="3" selection-end-line="144" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detailsearch/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="753">
-          <caret line="53" column="25" selection-start-line="53" selection-start-column="25" selection-end-line="53" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/notice1/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="67" column="3" selection-start-line="67" selection-start-column="3" selection-end-line="67" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/notice2/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="80" column="4" selection-start-line="80" selection-start-column="4" selection-end-line="80" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/paper/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="59" column="6" selection-start-line="59" selection-start-column="6" selection-end-line="59" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/recommend2/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="37" column="3" selection-start-line="37" selection-start-column="3" selection-end-line="37" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/simplesearch/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="130" column="14" selection-start-line="130" selection-start-column="14" selection-end-line="130" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/startsearch/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="3" selection-start-line="25" selection-start-column="3" selection-end-line="25" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/transition1/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="64" column="14" selection-start-line="64" selection-start-column="14" selection-end-line="64" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/file/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="41" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/complete/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="57" column="23" selection-start-line="57" selection-start-column="23" selection-end-line="57" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Volumes/Transcend/综合实践资料/高频词挖掘/freqword_extraction.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/analysis/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
-          <caret line="54" column="4" selection-start-line="54" selection-start-column="4" selection-end-line="54" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooccurrence_analysis.py" />
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/subrepo/index.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2205">
@@ -1517,26 +1189,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_sankey_analysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="464">
-          <caret line="31" column="56" lean-forward="true" selection-start-line="31" selection-start-column="56" selection-end-line="31" selection-end-column="56" />
-          <folding>
-            <element signature="e#65#83#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="48" column="23" selection-start-line="48" selection-start-column="23" selection-end-line="48" selection-end-column="23" />
-          <folding>
-            <element signature="e#63#76#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_sankey_analysis.py" />
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/frequencyService.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -1565,30 +1218,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_classify_analysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="67" column="18" selection-start-line="67" selection-start-column="18" selection-end-line="67" selection-end-column="18" />
-          <folding>
-            <element signature="e#68#80#0" expanded="true" />
-            <marker date="1590496309117" expanded="true" signature="149:150" ph="..." />
-            <marker date="1590496309117" expanded="true" signature="149:155" ph="..." />
-            <marker date="1590496309117" expanded="true" signature="739:1199" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_network_analysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
-          <folding>
-            <element signature="e#179#3010#0" />
-            <element signature="e#3043#10504#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/api/demo/analysis/classifyService.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -1600,9 +1229,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="586">
           <caret line="127" column="52" selection-start-line="127" selection-start-column="52" selection-end-line="127" selection-end-column="52" />
-          <folding>
-            <element signature="e#635#667#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1613,25 +1239,278 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_union_find.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-391" />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_union_find.py" />
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_convert2num.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/folder/index.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="122" column="32" selection-start-line="122" selection-start-column="22" selection-end-line="122" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/collection/index.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="975">
+          <caret line="65" column="13" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/personal/index.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="79">
+          <caret line="98" column="35" selection-start-line="98" selection-start-column="35" selection-end-line="98" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_doc_export.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-171">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/Advanceanalysis/index.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="355" column="2" selection-start-line="355" selection-start-column="2" selection-end-line="355" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_build_mappings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-259" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/detailsearch/index.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="424">
+          <caret line="159" column="3" lean-forward="true" selection-start-line="159" selection-start-column="3" selection-end-line="159" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/data/settings.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_connect_SSRP.py" />
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/data/spider_data/ES_connect_SSRP.py" />
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/data/test.py" />
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_insert_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="110" selection-start-line="110" selection-end-line="111" selection-end-column="20" />
           <folding>
-            <element signature="e#49#62#0" expanded="true" />
+            <element signature="e#235#244#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
+          <folding>
+            <element signature="e#83#93#0" expanded="true" />
+            <marker date="1590670828646" expanded="true" signature="991:1173" ph="..." />
+            <marker date="1590670828646" expanded="true" signature="1194:1203" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/data/ES_doc_convert.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="10" selection-start-line="20" selection-start-column="10" selection-end-line="20" selection-end-column="10" />
+          <folding>
+            <element signature="e#92#101#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="439">
+          <caret line="41" column="4" lean-forward="true" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="4" />
+          <folding>
+            <element signature="e#63#102#0" expanded="true" />
+            <marker date="1590716639101" expanded="true" signature="454:455" ph="..." />
+            <marker date="1590716639101" expanded="true" signature="553:554" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cloud_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-307">
+          <caret line="15" column="8" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="21" />
+          <folding>
+            <element signature="e#63#76#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/data/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-226">
+          <caret line="1" column="3" lean-forward="true" selection-start-line="1" selection-start-column="3" selection-end-line="1" selection-end-column="3" />
+          <folding>
+            <element signature="e#54#97#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_network_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4320">
+          <caret line="288" column="29" selection-start-line="288" selection-start-column="29" selection-end-line="288" selection-end-column="29" />
+          <folding>
+            <element signature="e#62#80#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/tests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1087">
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_kws_retrieve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-108" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3840">
+          <caret line="256" column="34" selection-start-line="256" selection-start-column="34" selection-end-line="256" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/es/ES_doc_retrieve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="127">
+          <caret line="164" lean-forward="true" selection-start-line="164" selection-end-line="164" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-118">
+          <caret line="10" column="32" lean-forward="true" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
+          <folding>
+            <marker date="1590716994039" expanded="true" signature="163:164" ph="..." />
+            <marker date="1590716994039" expanded="true" signature="163:169" ph="..." />
+            <marker date="1590716994039" expanded="true" signature="188:1421" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/filter.pickle">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="10" column="28" lean-forward="true" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="28" />
+          <folding>
+            <element signature="e#52#89#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_classify_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="42" column="10" selection-start-line="42" selection-start-column="10" selection-end-line="42" selection-end-column="10" />
+          <folding>
+            <element signature="e#68#80#0" expanded="true" />
+            <marker date="1590807540291" expanded="true" signature="149:150" ph="..." />
+            <marker date="1590807540291" expanded="true" signature="149:155" ph="..." />
+            <marker date="1590807540291" expanded="true" signature="739:1199" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="26" selection-start-line="26" selection-end-line="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_topic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="9" lean-forward="true" selection-start-line="5" selection-start-column="9" selection-end-line="5" selection-end-column="9" />
+          <folding>
+            <marker date="1590806433224" expanded="true" signature="156:157" ph="..." />
+            <marker date="1590806433224" expanded="true" signature="156:162" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recommend_fund.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="321">
+          <caret line="46" column="20" selection-start-line="46" selection-start-column="20" selection-end-line="46" selection-end-column="20" />
+          <folding>
+            <element signature="e#53#62#0" expanded="true" />
+            <marker date="1590806433209" expanded="true" signature="127:128" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_recomemnd_relation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="321">
+          <caret line="97" column="20" selection-start-line="97" selection-start-column="20" selection-end-line="97" selection-end-column="20" />
+          <folding>
+            <element signature="e#63#72#0" expanded="true" />
+            <marker date="1590806433230" expanded="true" signature="204:205" ph="..." />
+            <marker date="1590806433230" expanded="true" signature="344:345" ph="..." />
+            <marker date="1590806433230" expanded="true" signature="344:349" ph="..." />
+            <marker date="1590806433230" expanded="true" signature="1070:1417" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/data/SSRP_CQVIPspider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="334">
+          <caret line="321" column="12" lean-forward="true" selection-start-line="321" selection-start-column="12" selection-end-line="321" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/data/SSRP_CNKIspider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="987">
+          <caret line="386" selection-start-line="386" selection-end-line="387" selection-end-column="30" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-288">
-          <caret line="3654" column="37" selection-start-line="3654" selection-start-column="37" selection-end-line="3654" selection-end-column="37" />
+        <state relative-caret-position="15">
+          <caret line="595" column="25" selection-start-line="595" selection-start-column="25" selection-end-line="595" selection-end-column="25" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
             <element signature="e#1052#6165#0" />
@@ -1640,7 +1519,6 @@
             <element signature="e#12566#13101#0" />
             <element signature="e#13194#13467#0" />
             <element signature="e#13544#20401#0" />
-            <element signature="e#20462#25612#0" />
             <element signature="e#25663#27832#0" />
             <element signature="e#27896#29337#0" />
             <element signature="e#29404#29937#0" />
@@ -1690,44 +1568,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/analysis/SSRP_cooperation_analysis.py">
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1160">
-          <caret line="78" column="29" lean-forward="true" selection-start-line="78" selection-start-column="29" selection-end-line="78" selection-end-column="29" />
+        <state relative-caret-position="45">
+          <caret line="3" column="11" lean-forward="true" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/backdoor/recommend/SSRP_send_mail.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="24" column="30" lean-forward="true" selection-start-line="24" selection-start-column="30" selection-end-line="24" selection-end-column="30" />
           <folding>
-            <element signature="e#63#79#0" expanded="true" />
-            <marker date="1590553021608" expanded="true" signature="146:147" ph="..." />
-            <marker date="1590553021608" expanded="true" signature="146:152" ph="..." />
-            <marker date="1590553021608" expanded="true" signature="171:1404" ph="..." />
+            <element signature="e#52#66#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/folder/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="122" column="32" selection-start-line="122" selection-start-column="22" selection-end-line="122" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/collection/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="975">
-          <caret line="65" column="13" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/personal/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="79">
-          <caret line="98" column="35" selection-start-line="98" selection-start-column="35" selection-end-line="98" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IData/IDataSearch/frontdoor/d2_admin/src/views/demo/Advanceanalysis/index.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="349" column="15" selection-start-line="349" selection-start-column="15" selection-end-line="349" selection-end-column="15" />
         </state>
       </provider>
     </entry>

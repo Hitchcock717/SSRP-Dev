@@ -15,9 +15,11 @@ class ESDocConvert(object):
     # 修改csv
     def edifycsv(self, file):
         df = pd.read_csv(file, encoding='utf-8', header=0)
+        df = df.drop(['id'], axis=1)
         for col in df:
-            df[col] = df[col].astype(str).replace(',', '，')
-        df[u'date'] = df[u'date'].replace([r' \d{1,2}:\d{1,2}'], '', regex=True)
+            df[col] = df[col].astype(str).replace(',', '，', regex=True).replace('\r', '', regex=True).replace('\n', '', regex=True)
+        # print(df)
+        # df[u'date'] = df[u'date'].replace([r' \d{1,2}:\d{1,2}'], '', regex=True)
         # print(df[u'date'].str.contains(r"(\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2})", regex=True))
         df.to_csv(file, index=False, encoding='utf-8')
 
@@ -27,9 +29,7 @@ class ESDocConvert(object):
         info = []
         for f in fin:
             f_1 = f.replace('\n', '')
-            print(f_1)
             info.append(f_1.split(','))
-        print(info)
         fin.close()
         fout = codecs.open(json_file, 'w+', encoding='utf-8')
         for i in range(1, len(info)):
@@ -42,8 +42,8 @@ class ESDocConvert(object):
 
 if __name__ == "__main__":
     os.chdir('/Users/felix_zhao/Desktop')
-    # file = 'amino_acid.csv'
-    file = 'cqvip_data.csv'
+    file = 'amino_acid.csv'
+    # file = 'cqvip_data.csv'
     doc = ESDocConvert()
     # doc.edifycsv(file)
     doc.convert2json(file, json_file='doc_json.txt')

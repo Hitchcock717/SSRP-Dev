@@ -12,6 +12,7 @@ from settings import CommonSettings
 from threading import Thread
 import time
 
+
 class SpiderThreadings(object):
 
     def cnki_task(self):
