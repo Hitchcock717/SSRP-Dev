@@ -11,9 +11,9 @@
         </el-table>
         <el-table :data="wordData" class="word"
             style="width: 800px" empty-text="N/A" max-height="550">
-          <el-table-column label="检索方式" width="100px" align="center" prop="method"></el-table-column>
-          <el-table-column label="抽取词汇" width="250px" align="center" prop="extract"></el-table-column>
-          <el-table-column label="推荐词汇" width="450px" align="center" prop="recommend"></el-table-column>
+          <el-table-column label="抽取词汇" width="300px" align="center" prop="extract"></el-table-column>
+          <el-table-column label="推荐词汇" width="300px" align="center" prop="recommend"></el-table-column>
+          <el-table-column label="检索方式" width="200px" align="center" prop="method"></el-table-column>
         </el-table>
     </d2-page-cover>
   </d2-container>

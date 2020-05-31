@@ -3089,17 +3089,10 @@ def saveproject(request):
             recommend_words = recommends['recommendkws']
             recommend.append(recommend_words)
 
-        print(name)
-        print(date)
-        print(type)
-        print(source)
-        print(description)
-        print(method)
         print(extract)
         print(recommend)
-
         if not Project.objects.filter(project=name):
-            projectinfo =Projectinfo(project=name, date=date, type=type, source=source, description=description, method=method, extract=','.extract, recommend=','.recommend)
+            projectinfo =Projectinfo(project=name, date=date, type=type, source=source, description=description, method=method, extract=','.join(extract), recommend=','.join(recommend))
             projectinfo.save()
             return Response('success')
         else:
