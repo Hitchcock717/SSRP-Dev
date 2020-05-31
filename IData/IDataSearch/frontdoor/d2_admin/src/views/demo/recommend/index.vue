@@ -72,10 +72,10 @@ export default {
             path: '/complete',
             query: {
               extractors: JSON.stringify(this.extractors),
-              recommends: JSON.stringify(this.recommends)
+              recommends: JSON.stringify(this.recommends),
+              name: JSON.stringify(this.$route.query.name)
             }
           })
-          console.log(JSON.stringify(this.extractors))
           this.$message({
             type: 'success',
             message: '成功保存词汇!'

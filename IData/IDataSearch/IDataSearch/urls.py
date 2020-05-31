@@ -19,7 +19,7 @@ from rest_framework import routers
 
 from django.conf.urls import url
 from backdoor import views
-from backdoor.views import MessageViewSet, UploadcorpusViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset, FilerepoViewset
+from backdoor.views import MessageViewSet, UploadcorpusViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset, FilerepoViewset, ProjectViewset, ProjectinfoViewset
 
 router = routers.DefaultRouter()
 router.register('messages', MessageViewSet)
@@ -34,6 +34,8 @@ router.register('collection', CollectionViewset)
 router.register('repository', RepositoryViewset)
 router.register('corpus', CorpusViewset)
 router.register('filerepo', FilerepoViewset)
+router.register('project', ProjectViewset)
+router.register('projectinfo', ProjectinfoViewset)
 
 
 app_name = 'backdoor'
@@ -102,6 +104,16 @@ urlpatterns = [
     url('api/appendcorpus/', views.appendcorpus),
 
     url('api/deletecorpus/', views.deletecorpus),
+
+    url('api/saveproject/', views.saveproject),
+
+    url('api/getproject/', views.getproject),
+
+    url('api/addproject/', views.addproject),
+
+    url('api/deleteproject/', views.deleteproject),
+
+    url('api/getprojectinfo/', views.getprojectinfo),
 
     url('api/titleprediction/', views.titleprediction),
 

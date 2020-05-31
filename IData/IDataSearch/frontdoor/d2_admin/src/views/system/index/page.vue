@@ -20,7 +20,7 @@
             </p>
           </el-popover>
         </div>
-        <d2-badge/>
+        <el-button type="primary" size="large" class="enter" @click="submit">创 建 项 目</el-button>
         <d2-help/>
       </template>
     </d2-page-cover>
@@ -28,18 +28,23 @@
 </template>
 
 <script>
-import D2Badge from './components/d2-badge'
 import D2Help from './components/d2-help'
 import D2PageCover from './components/d2-page-cover'
 export default {
   components: {
-    D2Badge,
     D2Help,
     D2PageCover
   },
   data () {
     return {
       filename: __filename
+    }
+  },
+  methods: {
+    submit () {
+      this.$router.push({
+        path: '/project'
+      })
     }
   }
 }
@@ -49,6 +54,10 @@ export default {
 .page {
   .logo {
     width: 120px;
+  }
+  .enter {
+    margin-top: 15px;
+    margin-bottom: 15px;
   }
   .btn-group {
     color: $color-text-placehoder;

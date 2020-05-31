@@ -67,7 +67,12 @@ export default {
     handleSubmit () {
       this.$refs.textForm.validate((valid) => {
         if (valid) {
-          this.$router.push('/recommend')
+          this.$router.push({
+            path: '/recommend',
+            query: {
+              name: this.$route.query.name
+            }
+          })
         }
       })
     }

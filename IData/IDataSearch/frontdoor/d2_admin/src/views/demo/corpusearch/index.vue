@@ -105,7 +105,12 @@ export default {
               var results = JSON.stringify(this.feedback)
               localStorage.setItem('results', results)
 
-              this.$router.push('/recommend2')
+              this.$router.push({
+                path: '/recommend2',
+                query: {
+                  name: this.$route.query.name
+                }
+              })
             } else {
               this.$message({
                 type: 'info',

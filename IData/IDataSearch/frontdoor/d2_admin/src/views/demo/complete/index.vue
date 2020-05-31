@@ -3,26 +3,11 @@
     <d2-page-cover>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="项目名称" prop="name">
-          <el-input v-model="ruleForm.name" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="存储位置" prop="region">
-          <el-upload
-            :disabled="true"
-            class="upload"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            multiple
-            :limit="1"
-            :on-exceed="handleExceed"
-            :file-list="fileList">
-            <el-button size=”small“ type="primary">浏览</el-button>
-          </el-upload>
+          <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="创建时间" required>{{gettime}}</el-form-item>
         <el-form-item label="研究领域" prop="type">
-          <el-checkbox-group v-model="ruleForm.type" :disabled="true">
+          <el-checkbox-group v-model="ruleForm.type">
             <el-checkbox
               v-for="item in checkList"
               :key="item.label"
@@ -31,25 +16,17 @@
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="数据来源" prop="resource">
-          <el-checkbox-group v-model="ruleForm.resource" :disabled="true">
+          <el-checkbox-group v-model="ruleForm.resource">
             <el-checkbox label="知网" name="resource"></el-checkbox>
             <el-checkbox label="维普" name="resource"></el-checkbox>
             <el-checkbox label="万方" name="resource"></el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="项目简介" prop="desc">
-          <el-input type="textarea" v-model="ruleForm.desc" :disabled="true"></el-input>
+          <el-input type="textarea" v-model="ruleForm.desc"></el-input>
         </el-form-item>
         <el-form-item label="搜索方式" prop="method">
-          <el-select v-model="ruleForm.method" :disabled="true">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-              name="method">{{item.label}}
-            </el-option>
-          </el-select>
+          <el-input v-model="ruleForm.method" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="抽取词表" prop="extract">
           <el-select v-model="ruleForm.extract" placeholder="查看抽取词">
@@ -71,17 +48,13 @@
 
 <script>
 // import { mapState } from 'vuex'
+import { AddProject } from '@/api/demo/project/addprojectService'
+import { SaveProject } from '@/api/demo/project/saveprojectService'
 export default {
   data () {
     return {
       extractors: JSON.parse(this.$route.query.extractors), // 注意解析格式
       recommends: JSON.parse(this.$route.query.recommends),
-      fileList: [
-        {
-          name: 'example',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ],
       checkList: [
         {
           label: '基础科学'
@@ -102,25 +75,14 @@ export default {
           label: '其他'
         }
       ],
-      options: [{
-        value: '选项1',
-        label: '关键词搜索'
-      }, {
-        value: '选项2',
-        label: '标题搜索'
-      }, {
-        value: '选项3',
-        label: '词表搜索'
-      }],
+      options: [],
       gettime: this.getTime(),
       ruleForm: {
-        name: 'demo',
-        region: '',
-        subrepo: true,
-        type: ['基础科学'],
-        resource: ['知网'],
-        desc: 'this is for scientific research',
-        method: '论文搜索',
+        name: '',
+        type: [],
+        resource: [],
+        desc: '',
+        method: '',
         extract: '',
         recomm: ''
       },
@@ -141,19 +103,24 @@ export default {
       }
     }
   },
+  mounted () {
+    var projectName = this.$route.query.name.replace('"', '')
+    var newName = projectName.replace('"', '')
+    console.log(newName)
+    this.ruleForm.name = newName
+  },
+  beforeRouteEnter (to, from, next) {
+    if (from.name === 'recommend') {
+      next(vm => {
+        vm.ruleForm.method = '论文搜索'
+      })
+    } else {
+      next(vm => {
+        vm.ruleForm.method = '词表搜索'
+      })
+    }
+  },
   methods: {
-    handleRemove (file, fileList) {
-      console.log(file, fileList)
-    },
-    handlePreview (file) {
-      console.log(file)
-    },
-    handleExceed (files, fileList) {
-      this.$message.warning('当前限制选择1个文件')
-    },
-    beforeRemove (file, fileList) {
-      return this.$confirm('确定移除 $(file.name}?')
-    },
     getTime: function () {
       // var _this = this
       let yy = new Date().getFullYear()
@@ -163,6 +130,48 @@ export default {
       return gettime
     },
     submitForm (ruleForm) {
+      AddProject({
+        name: this.ruleForm.name
+      })
+        .then(res => {
+          this.feedback = res
+          console.log(this.feedback)
+          if (this.feedback !== 'failed') {
+            this.$message({
+              type: 'success',
+              message: '新建项目名称是: ' + this.ruleForm.name
+            })
+          } else {
+            this.$message({
+              type: 'info',
+              message: '项目名称已存在!'
+            })
+          }
+        })
+      SaveProject({
+        name: this.ruleForm.name,
+        date: this.getTime(),
+        type: this.ruleForm.type.join(','),
+        source: this.ruleForm.resource.join(','),
+        description: this.ruleForm.desc,
+        method: this.ruleForm.method,
+        extract: JSON.stringify(this.extractors),
+        recommend: JSON.stringify(this.recommends)
+      })
+        .then(res => {
+          var feedback = res
+          if (feedback === 'success') {
+            this.$message({
+              type: 'success',
+              message: '创建成功!'
+            })
+          } else if (feedback === 'failed') {
+            this.$message({
+              type: 'info',
+              message: '创建失败, 请重试!'
+            })
+          }
+        })
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.$router.push({
@@ -172,9 +181,6 @@ export default {
               recommends: JSON.stringify(this.recommends)
             }
           })
-          console.log(this.extractors)
-          console.log(this.recommends)
-          // alert('创建成功!')
         } else {
           console.log('error submit!!')
           return false

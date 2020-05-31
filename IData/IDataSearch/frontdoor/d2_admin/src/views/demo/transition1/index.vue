@@ -83,14 +83,16 @@ export default {
             this.$router.push({
               path: '/paper',
               query: {
-                method: 'papersearch'
+                method: 'papersearch',
+                name: this.$route.query.name
               }
             })
           } else if (this.searchForm.method === '选项2') {
             this.$router.push({
               path: '/corpusearch',
               query: {
-                method: 'corpusearch'
+                method: 'corpusearch',
+                name: this.$route.query.name
               }
             })
           }

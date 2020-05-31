@@ -115,7 +115,8 @@ export default {
             path: '/complete',
             query: {
               extractors: JSON.stringify(this.extractData),
-              recommends: JSON.stringify(this.recommendData)
+              recommends: JSON.stringify(this.recommendData),
+              name: JSON.stringify(this.$route.query.name)
             }
           })
           this.$message({

@@ -17,20 +17,12 @@ const frameIn = [
         path: 'index',
         name: 'index',
         meta: {
+          title: '欢迎页',
           auth: true
         },
         component: _import('system/index')
       },
       // 演示页面
-      {
-        path: 'page1',
-        name: 'page1',
-        meta: {
-          title: '创建项目',
-          auth: true
-        },
-        component: _import('demo/page1')
-      },
       {
         path: 'transition1',
         name: 'transition1',
@@ -273,6 +265,24 @@ const frameIn = [
           auth: true
         },
         component: _import('demo/file')
+      },
+      {
+        path: 'project',
+        name: 'project',
+        meta: {
+          title: '项目库',
+          auth: true
+        },
+        component: _import('demo/project')
+      },
+      {
+        path: 'projectinfo',
+        name: 'projectinfo',
+        meta: {
+          title: '项目库详情',
+          auth: true
+        },
+        component: _import('demo/projectinfo')
       },
       // 系统 前端日志
       {

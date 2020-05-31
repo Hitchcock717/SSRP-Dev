@@ -17,7 +17,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
 from django.core.cache import caches
-from .models import Message, Uploadcorpus, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, Filerepo, MessageSerializer, UploadcorpusSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer, FilerepoSerializer
+from .models import Message, Uploadcorpus, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, Filerepo, Project, Projectinfo, MessageSerializer, UploadcorpusSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer, FilerepoSerializer, ProjectSerializer, ProjectinfoSerializer
 
 
 @api_view(('GET',))
@@ -898,6 +898,9 @@ def getexpression(request):
         if Filerepo.objects.filter(name=subrepo_name):
             return Response('failed')
         else:
+            file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
+            file.save()
+            
             # 有无日期筛选
             expression_date = expression_body[-1]
             start_date = expression_date['startdate']
@@ -986,9 +989,6 @@ def getexpression(request):
                                                    download=download, name=subrepo_name, introduction=subrepo_intro)
                                 det.save()
 
-                                file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                file.save()
-
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
@@ -1054,9 +1054,6 @@ def getexpression(request):
                                                    kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
                                                    download=download, name=subrepo_name, introduction=subrepo_intro)
                                 det.save()
-
-                                file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                file.save()
 
                             data = {
                                 'query': results[0],
@@ -1135,9 +1132,6 @@ def getexpression(request):
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
 
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
-
                                 data = {
                                     'query': results[0],
                                     'raw_count': results[1],
@@ -1204,9 +1198,6 @@ def getexpression(request):
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
 
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
-
                                 data = {
                                     'query': results[0],
                                     'raw_count': results[1],
@@ -1272,9 +1263,6 @@ def getexpression(request):
                                                        kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
-
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
 
                                 data = {
                                     'query': results[0],
@@ -1351,9 +1339,6 @@ def getexpression(request):
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
 
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
-
                                 data = {
                                     'query': results[0],
                                     'raw_count': results[1],
@@ -1420,9 +1405,6 @@ def getexpression(request):
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
 
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
-
                                 data = {
                                     'query': results[0],
                                     'raw_count': results[1],
@@ -1488,9 +1470,6 @@ def getexpression(request):
                                                        kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
-
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
 
                                 data = {
                                     'query': results[0],
@@ -1582,9 +1561,6 @@ def getexpression(request):
                                            download=download, name=subrepo_name, introduction=subrepo_intro)
                         det.save()
 
-                        file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                        file.save()
-
                     data = {
                         'query': results[0],
                         'raw_count': results[1],
@@ -1675,9 +1651,6 @@ def getexpression(request):
                                                    download=download, name=subrepo_name, introduction=subrepo_intro)
                                 det.save()
 
-                                file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                file.save()
-
                             data = {
                                 'query': results[0],
                                 'raw_count': results[1],
@@ -1744,8 +1717,6 @@ def getexpression(request):
                                                    download=download, name=subrepo_name, introduction=subrepo_intro)
                                 det.save()
 
-                                file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                file.save()
 
                             data = {
                                 'query': results[0],
@@ -1824,9 +1795,6 @@ def getexpression(request):
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
 
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
-
                                 data = {
                                     'query': results[0],
                                     'raw_count': results[1],
@@ -1893,9 +1861,6 @@ def getexpression(request):
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
 
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
-
                                 data = {
                                     'query': results[0],
                                     'raw_count': results[1],
@@ -1961,9 +1926,6 @@ def getexpression(request):
                                                        kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
-
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
 
                                 data = {
                                     'query': results[0],
@@ -2039,9 +2001,6 @@ def getexpression(request):
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
 
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
-
                                 data = {
                                     'query': results[0],
                                     'raw_count': results[1],
@@ -2107,9 +2066,6 @@ def getexpression(request):
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
 
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
-
                                 data = {
                                     'query': results[0],
                                     'raw_count': results[1],
@@ -2174,9 +2130,6 @@ def getexpression(request):
                                                        kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
                                                        download=download, name=subrepo_name, introduction=subrepo_intro)
                                     det.save()
-
-                                    file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                                    file.save()
 
                                 data = {
                                     'query': results[0],
@@ -2265,9 +2218,6 @@ def getexpression(request):
                                            kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
                                            download=download, name=subrepo_name, introduction=subrepo_intro)
                         det.save()
-
-                        file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-                        file.save()
 
                     data = {
                         'query': results[0],
@@ -2828,6 +2778,10 @@ def deletefolder(request):
         if not delete_id:
             return Response('failed')
         else:
+            data = Folder.objects.filter(pk=int(delete_id))
+            d_dict = model_to_dict(data[0])
+            folder_name = d_dict['folder']
+            Collection.objects.filter(folder=folder_name).delete()
             get_object_or_404(Folder, pk=int(delete_id)).delete()
             return Response('success')
 
@@ -2949,6 +2903,10 @@ def deleterepository(request):
         if not delete_id:
             return Response('failed')
         else:
+            data = Repository.objects.filter(pk=int(delete_id))
+            d_dict = model_to_dict(data[0])
+            repo_name = d_dict['repository']
+            Corpus.objects.filter(repository=repo_name).delete()
             get_object_or_404(Repository, pk=int(delete_id)).delete()
             return Response('success')
 
@@ -3022,7 +2980,7 @@ def deletefilerepo(request):
             return Response('failed')
         else:
             data = Filerepo.objects.filter(pk=int(delete_id))
-            d_dict = model_to_dict(data)
+            d_dict = model_to_dict(data[0])
             subrepo_name = d_dict['name']
             Detailsearch.objects.filter(name=subrepo_name).delete()
             get_object_or_404(Filerepo, pk=int(delete_id)).delete()
@@ -3088,6 +3046,250 @@ def getfile(request):
             print(files)
 
             return Response(files)
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('GET', 'POST',))
+def saveproject(request):
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        project_dict = ast.literal_eval(raw_dict_key)
+        print(project_dict)
+        name = project_dict['name']
+        date = project_dict['date']
+        type = project_dict['type']
+        source = project_dict['source']
+        description = project_dict['description']
+        method = project_dict['method']
+        raw_extract = project_dict['extract']
+        raw_recommend = project_dict['recommend']
+        extracts = ast.literal_eval(raw_extract.strip(']['))
+        recommends = ast.literal_eval(raw_recommend.strip(']['))
+        extract = []
+        if isinstance(extracts, tuple):
+            for extractors_dict in extracts:
+                extracted_words = extractors_dict['originkws']
+                extract.append(extracted_words)
+        else:
+            extracted_words = extracts['originkws']
+            extract.append(extracted_words)
+
+        recommend = []
+        if isinstance(recommends, tuple):
+            for recommends_dict in recommends:
+                recommend_words = recommends_dict['recommendkws']
+                recommend.append(recommend_words)
+        else:
+            recommend_words = recommends['recommendkws']
+            recommend.append(recommend_words)
+
+        print(name)
+        print(date)
+        print(type)
+        print(source)
+        print(description)
+        print(method)
+        print(extract)
+        print(recommend)
+
+        if not Project.objects.filter(project=name):
+            projectinfo =Projectinfo(project=name, date=date, type=type, source=source, description=description, method=method, extract=','.extract, recommend=','.recommend)
+            projectinfo.save()
+            return Response('success')
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('GET',))
+def getproject(request):
+    if request.method == 'GET':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/project/'
+
+        data = Project.objects.all()
+        print(data)
+
+        projects = []
+        if data:
+            raw_d_dict = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                raw_d_dict.append(d_dict)
+
+            set_only = []
+            set_only.append(raw_d_dict[0])
+
+            # drop reqeated
+            for item in raw_d_dict:
+                k = 0
+                for iitem in set_only:
+                    if item['project'] != iitem['project']:
+                        k += 1
+                    else:
+                        break
+
+                    if k == len(set_only):
+                        set_only.append(item)
+
+            for only in set_only:
+                pkid = only['id']
+                project_data = ProjectSerializer(data=only, context=serializer_context)
+                if project_data.is_valid():
+                    ordered_li = project_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    projects.append(ordered_li)
+            print(projects)
+
+            return Response(projects)
+
+        else:
+            return Response('failed')
+
+
+@api_view(('GET', 'POST',))
+def addproject(request):
+    if request.method == 'POST':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/project/'
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        project_dict = ast.literal_eval(raw_dict_key)
+        print(project_dict)
+
+        # 收藏夹名称
+        project_name = project_dict['name']
+        print(project_name)
+
+        projects = []
+
+        if not Project.objects.filter(project=project_name):  # 未找到重复值, 先存再取
+            project = Project(project=project_name)
+            project.save()
+
+            data = Project.objects.filter(project=project_name)
+
+            for d in data:
+                raw_dict = model_to_dict(d)
+
+                pkid = raw_dict['id']
+                project_data = ProjectSerializer(data=raw_dict, context=serializer_context)
+                if project_data.is_valid():
+                    ordered_li = project_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    projects.append(ordered_li)
+            print(projects)
+
+            return Response(projects[0])
+
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('DELETE','GET',))
+def deleteproject(request):
+    if request.method == 'DELETE':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        project_dict = ast.literal_eval(raw_dict_key)
+
+        delete_id = project_dict['delid']
+        print(delete_id)
+
+        if not delete_id:
+            return Response('failed')
+        else:
+            data = Project.objects.filter(pk=int(delete_id))
+            d_dict = model_to_dict(data[0])
+            project_name = d_dict['project']
+            Projectinfo.objects.filter(project=project_name).delete()
+            get_object_or_404(Project, pk=int(delete_id)).delete()
+            return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('GET', 'POST',))
+def getprojectinfo(request):
+    if request.method == 'POST':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/projectinfo/'
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        projectinfo_dict = ast.literal_eval(raw_dict_key)
+
+        project_name = projectinfo_dict['name'].strip('"')
+        print(project_name)
+
+        if Projectinfo.objects.filter(project=project_name):
+            data = Projectinfo.objects.filter(project=project_name)
+
+            infos = []
+
+            raw_d_dict = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                print(d_dict)
+                raw_d_dict.append(d_dict)
+
+            set_only = []
+            set_only.append(raw_d_dict[0])
+
+            # drop reqeated
+            for item in raw_d_dict:
+                k = 0
+                for iitem in set_only:
+                    if item['project'] != iitem['project'] and item['date'] != iitem['date']:
+                        k += 1
+                    else:
+                        break
+
+                    if k == len(set_only):
+                        set_only.append(item)
+
+            for only in set_only:
+                print(only)
+                pkid = only['id']
+                info_data = ProjectinfoSerializer(data=only, context=serializer_context)
+                if info_data.is_valid():
+                    ordered_li = info_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    infos.append(ordered_li)
+            print(infos[0])
+
+            return Response(infos[0])
 
         else:
             return Response('failed')
@@ -3712,6 +3914,16 @@ class CorpusViewset(viewsets.ModelViewSet):
 class FilerepoViewset(viewsets.ModelViewSet):
     queryset = Filerepo.objects.all()
     serializer_class = FilerepoSerializer
+
+
+class ProjectViewset(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+
+
+class ProjectinfoViewset(viewsets.ModelViewSet):
+    queryset = Projectinfo.objects.all()
+    serializer_class = ProjectinfoSerializer
 
 
 

@@ -162,6 +162,32 @@ class CorpusSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('url', 'kws', 'repository', 'pk')
 
 
+class Project(models.Model):
+	project = models.TextField()
+
+
+class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Project
+		fields = ('url', 'project', 'pk')
+
+
+class Projectinfo(models.Model):
+	project = models.TextField()
+	date = models.TextField()
+	type = models.TextField()
+	source = models.TextField()
+	description = models.TextField()
+	method = models.TextField()
+	extract = models.TextField()
+	recommend = models.TextField()
+
+
+class ProjectinfoSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Projectinfo
+		fields = ('url', 'project', 'date', 'type', 'source', 'description', 'method', 'extract', 'recommend', 'pk')
+
 '''
 # connect scrapy spiders
 

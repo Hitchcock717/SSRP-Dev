@@ -5,7 +5,6 @@ export default [
     title: '步骤一: 初始化',
     icon: 'folder-o',
     children: [
-      { path: '/page1', title: '创建项目', icon: 'tag' },
       { path: '/transition1', title: '搜索方式', icon: 'tags' },
       { path: '/complete', title: '完成创建', icon: 'tag' }
     ]
@@ -33,7 +32,8 @@ export default [
       { path: '/personal', title: '个人中心设置', icon: 'tag' },
       { path: '/folder', title: '收藏夹', icon: 'tag' },
       { path: '/repository', title: '词表库', icon: 'tag' },
-      { path: '/filerepo', title: '论文库', icon: 'tag' }
+      { path: '/filerepo', title: '论文库', icon: 'tag' },
+      { path: '/project', title: '项目库', icon: 'tag' }
     ]
   }
 ]
