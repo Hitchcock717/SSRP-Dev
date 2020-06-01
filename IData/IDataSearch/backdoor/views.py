@@ -2,22 +2,14 @@ import re
 import ast
 import requests
 import json
-import pickle
-import subprocess
 from .utils import ExtractAndRecommend, GetRawResult, GetDetailResult
-from .main import execute_spider
 
-from django.http import QueryDict
 from rest_framework import viewsets
-from rest_framework import status
-from rest_framework.decorators import action
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
-from django.core.cache import caches
-from .models import Message, Uploadcorpus, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, Filerepo, Project, Projectinfo, MessageSerializer, UploadcorpusSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer, FilerepoSerializer, ProjectSerializer, ProjectinfoSerializer
+from .models import Message, Uploadcorpus, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, Filerepo, Project, Projectinfo, Personal, MessageSerializer, UploadcorpusSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer, FilerepoSerializer, ProjectSerializer, ProjectinfoSerializer, PersonalSerializer
 
 
 @api_view(('GET',))
@@ -3291,6 +3283,170 @@ def getprojectinfo(request):
         return Response('No method!')
 
 
+@api_view(('GET', 'POST',))
+def saveproject(request):
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        project_dict = ast.literal_eval(raw_dict_key)
+        print(project_dict)
+        name = project_dict['name']
+        date = project_dict['date']
+        type = project_dict['type']
+        source = project_dict['source']
+        description = project_dict['description']
+        method = project_dict['method']
+        raw_extract = project_dict['extract']
+        raw_recommend = project_dict['recommend']
+        extracts = ast.literal_eval(raw_extract.strip(']['))
+        recommends = ast.literal_eval(raw_recommend.strip(']['))
+        extract = []
+        if isinstance(extracts, tuple):
+            for extractors_dict in extracts:
+                extracted_words = extractors_dict['originkws']
+                extract.append(extracted_words)
+        else:
+            extracted_words = extracts['originkws']
+            extract.append(extracted_words)
+
+        recommend = []
+        if isinstance(recommends, tuple):
+            for recommends_dict in recommends:
+                recommend_words = recommends_dict['recommendkws']
+                recommend.append(recommend_words)
+        else:
+            recommend_words = recommends['recommendkws']
+            recommend.append(recommend_words)
+
+        print(extract)
+        print(recommend)
+        if not Project.objects.filter(project=name):
+            projectinfo =Projectinfo(project=name, date=date, type=type, source=source, description=description, method=method, extract=','.join(extract), recommend=','.join(recommend))
+            projectinfo.save()
+            return Response('success')
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('GET', 'POST',))
+def savepersonal(request):
+    if request.method == 'POST':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        print(raw_dict_key)
+        personal_dict = ast.literal_eval(raw_dict_key)
+        print(personal_dict)
+        name = personal_dict['name']
+        gender = personal_dict['gender']
+        age = personal_dict['age']
+        email = personal_dict['email']
+        job = personal_dict['job']
+        place = personal_dict['place']
+        post = personal_dict['post']
+        sign = personal_dict['sign']
+
+        # 调用命令行
+        """
+        order = 'nohup python3.7 /Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/recommend/main.py  >nohup.out 2>&1 &'
+        if post == 'true':
+            print('开启推送入口')
+            import os
+            os.system(order)
+            
+        else:
+            import os
+            print('关闭推送入口')
+            from utils import NohupProcess
+            output = NohupProcess().execCmd(order)
+            pid = re.sub('[1]', '', output)
+            kill = 'kill -' + pid
+            os.system(kill)
+        """
+
+        if not Personal.objects.filter(name=name, gender=gender, age=age, email=email, job=job, place=place, post=post, sign=sign):
+            personalinfo = Personal(name=name, gender=gender, age=age, email=email, job=job, place=place, post=post, sign=sign)
+            personalinfo.save()
+            return Response('success')
+        else:
+            return Response('failed')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
+
+@api_view(('GET',))
+def getpersonal(request):
+    if request.method == 'GET':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/personal/'
+
+        data = Personal.objects.all()
+        print(data)
+
+        personals = []
+        if data:
+            raw_d_dict = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                raw_d_dict.append(d_dict)
+
+            set_only = []
+            set_only.append(raw_d_dict[0])
+
+            # drop reqeated
+            for item in raw_d_dict:
+                k = 0
+                for iitem in set_only:
+                    if item['name'] != iitem['name'] and item['gender'] != iitem['gender'] and item['age'] != iitem['age'] and item['email'] != iitem['email']:
+                        k += 1
+                    else:
+                        break
+
+                    if k == len(set_only):
+                        set_only.append(item)
+            for only in set_only:
+                pkid = only['id']
+                personal_data = PersonalSerializer(data=only, context=serializer_context)
+                if personal_data.is_valid():
+                    ordered_li = personal_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    personals.append(ordered_li)
+            print(personals)
+
+            return Response(personals[-1])
+
+        else:
+            return Response('failed')
+
+
+@api_view(('GET',))
+def getrecommend(request):
+    if request.method == 'GET':
+        data = Personal.objects.last()
+        print(data)
+        if data:
+            d_dict = model_to_dict(data)
+            region = d_dict['job']
+            print(region)
+        else:
+            print('还未填写个人信息!')
+            region = '氨基酸'
+        from .recommend.SSRP_recommend_data import GetRecommendResult
+        get = GetRecommendResult()
+        daily_recommend = get.get_daily_recommend(region)
+        print(daily_recommend)
+        return Response(daily_recommend)
+
+
 @api_view(('POST','GET',))
 def titleprediction(request):
 
@@ -3918,5 +4074,9 @@ class ProjectinfoViewset(viewsets.ModelViewSet):
     queryset = Projectinfo.objects.all()
     serializer_class = ProjectinfoSerializer
 
+
+class PersonalViewset(viewsets.ModelViewSet):
+    queryset = Personal.objects.all()
+    serializer_class = PersonalSerializer
 
 

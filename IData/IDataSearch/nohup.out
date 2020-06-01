@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/recommend/main.py", line 6, in <module>
+    from .SSRP_send_mail import *
+ModuleNotFoundError: No module named '__main__.SSRP_send_mail'; '__main__' is not a package

@@ -29,7 +29,8 @@ export default [
     title: '步骤四: 推荐',
     icon: 'folder-o',
     children: [
-      { path: '/personal', title: '个人中心设置', icon: 'tag' },
+      { path: '/personal', title: '个人中心', icon: 'tag' },
+      { path: '/daily', title: '每日推荐', icon: 'tag' },
       { path: '/folder', title: '收藏夹', icon: 'tag' },
       { path: '/repository', title: '词表库', icon: 'tag' },
       { path: '/filerepo', title: '论文库', icon: 'tag' },

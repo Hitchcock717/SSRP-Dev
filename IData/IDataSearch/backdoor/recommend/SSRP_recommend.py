@@ -11,12 +11,12 @@ from SSRP_recommend_data import *
 
 class SSRPRecommend(object):
 
-    def __init__(self):
-        self.au = AuthorRecommend()
-        self.fu = FundRecommend()
-        self.to = TopicRecommend()
+    def __init__(self, region):
+        self.au = AuthorRecommend(region)
+        self.fu = FundRecommend(region)
+        self.to = TopicRecommend(region)
         self.get = GetRecommendResult()
-        self.csvname = './recommend_data.csv'
+        self.csvname = '/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/recommend/recommend_data.csv'
 
     def pool_recommend_data(self):
         import time
@@ -47,8 +47,3 @@ class SSRPRecommend(object):
             print('data saved')
         except Exception as e:
             print('存储推荐数据报错: %s' % e)
-
-
-if __name__ == '__main__':
-    ssrp = SSRPRecommend()
-    ssrp.pool_recommend_data()

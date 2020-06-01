@@ -8,8 +8,8 @@ from SSRP_recommend_data import *
 
 class FundRecommend(object):
 
-    def __init__(self):
-        self.data = GetRecommendResult().get_recom_result(GetRecommendResult().region)
+    def __init__(self, region):
+        self.data = GetRecommendResult().get_recom_result(region)
 
     def filter_data(self):
         recom_data = self.data[2]  # spider_data中的日期格式不统一

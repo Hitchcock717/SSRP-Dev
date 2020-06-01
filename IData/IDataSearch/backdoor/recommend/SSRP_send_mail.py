@@ -11,17 +11,17 @@ from SSRP_recommend import SSRPRecommend
 
 class YagSendMail(object):
 
-    def __init__(self):
-        self.csvname = SSRPRecommend().csvname
+    def __init__(self, region):
+        self.csvname = SSRPRecommend(region).csvname
         self.main_email = 'zhaobowen9876@gmail.com'
         self.back1 = '506513024@qq.com'
         self.group = [self.main_email, self.back1]
 
-    def automatic_send_mail(self):
+    def automatic_send_mail(self, email):
         yag = yagmail.SMTP(user="841057707@qq.com", password="qviloameyckebfic", host="smtp.qq.com")
         content = ['自动邮件发送测试']
         try:
-            yag.send(self.main_email, 'subject', content)
+            yag.send(email, 'subject', content)
             print("邮件发送成功")
         except Exception as e:
             print(e)
@@ -35,14 +35,48 @@ class YagSendMail(object):
         except Exception as e:
             print(e)
 
-    def automatic_send_attachment(self):
+    def automatic_send_attachment(self, email):
         yag = yagmail.SMTP(user="841057707@qq.com", password="qviloameyckebfic", host="smtp.qq.com")
-        content = ['自动邮件发送测试']
+        import datetime
+        today = datetime.date.today()
+        title = '【' + str(today) + '】' + '每日推荐论文速递'
+        content = ['详情请见附件']
         try:
-            yag.send(self.back1, '发送附件', content, [self.csvname])
+            yag.send(email, title, content, [self.csvname])
             print("邮件发送成功")
         except Exception as e:
             print(e)
+
+    def long_interval_send_mail(self, email):
+        import time
+        print('现在时间时间是：\n' + time.strftime('%H:%M:%S', time.localtime()))
+        # 每天早上10点10分定时推送
+        hour = 10
+        minute = 10
+        second = 00
+        while True:
+            current_time = time.localtime(time.time())
+            if (current_time.tm_hour == hour) and (current_time.tm_min == minute) and (current_time.tm_sec == second):
+                print('时间到，开始自动发送邮件')
+                time.sleep(1)
+                self.automatic_send_attachment(email)
+
+    # 每隔5分钟推荐
+    def short_interval_send_mail(self, email):
+        import time
+        time_intvl = 1 * 60
+        start_time = int(time.time())
+        print(start_time)
+        while True:
+            end_time = int(time.time())
+            cost_time = end_time - start_time
+            # print(cost_time)
+            if cost_time == time_intvl:
+                print('时间到，开始自动发送邮件')
+                time.sleep(1)
+                self.automatic_send_attachment(email)
+                start_time = end_time
+                print('regular send email....%s' % time.ctime(start_time))
 
 
 class SMTPSendMail(object):

@@ -9,8 +9,8 @@ from SSRP_recommend_data import *
 
 class TopicRecommend(object):
 
-    def __init__(self):
-        self.data = GetRecommendResult().get_recom_result(GetRecommendResult().region)
+    def __init__(self, region):
+        self.data = GetRecommendResult().get_recom_result(region)
         self.pickle_path = './filter.pickle'
         self.term_filter = '/Users/felix_zhao/Desktop/sourcetree_file/SSRP-Dev/IData/IDataSearch/backdoor/corpus/term_filters.txt'
 

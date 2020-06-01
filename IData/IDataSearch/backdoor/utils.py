@@ -5,6 +5,17 @@ from .es.ES_term_recommend import TermRecommendES
 from .es.ES_doc_retrieve import DocRetireveES
 
 
+# ******************* 处理命令行 ***************** #
+
+
+class NohupProcess(object):
+
+    def execCmd(self, cmd):
+        r = os.popen(cmd)
+        text = r.read()
+        r.close()
+        return text
+
 # ******************* 处理关键词 ***************** #
 
 

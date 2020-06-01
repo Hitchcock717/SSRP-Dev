@@ -198,19 +198,19 @@ const frameIn = [
         path: 'personal',
         name: 'personal',
         meta: {
-          title: '个人中心设置',
+          title: '个人中心',
           auth: true
         },
         component: _import('demo/personal')
       },
       {
-        path: 'personal1',
-        name: 'personal1',
+        path: 'daily',
+        name: 'daily',
         meta: {
-          title: '个人中心',
+          title: '每日推荐',
           auth: true
         },
-        component: _import('demo/personal1')
+        component: _import('demo/daily')
       },
       {
         path: 'folder',

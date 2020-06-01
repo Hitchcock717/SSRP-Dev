@@ -188,6 +188,23 @@ class ProjectinfoSerializer(serializers.HyperlinkedModelSerializer):
 		model = Projectinfo
 		fields = ('url', 'project', 'date', 'type', 'source', 'description', 'method', 'extract', 'recommend', 'pk')
 
+
+class Personal(models.Model):
+	name = models.TextField()
+	gender = models.TextField()
+	age = models.TextField()
+	job = models.TextField()
+	place = models.TextField()
+	email = models.TextField()
+	post = models.TextField(default="")
+	sign = models.TextField()
+
+
+class PersonalSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Personal
+		fields = ('url', 'name', 'gender', 'age', 'email', 'job', 'place', 'post', 'sign', 'pk')
+
 '''
 # connect scrapy spiders
 
