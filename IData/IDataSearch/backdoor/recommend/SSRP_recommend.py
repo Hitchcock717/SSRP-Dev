@@ -42,6 +42,7 @@ class SSRPRecommend(object):
             import pandas as pd
             choice = random.sample(rec, 10)
             dataframe = pd.DataFrame(choice)
+            dataframe.drop(columns=['highlight'])
             print(dataframe)
             dataframe.to_csv(self.csvname, index=False, sep=',', encoding='utf-8')
             print('data saved')

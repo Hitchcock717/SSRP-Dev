@@ -7,6 +7,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 import yagmail
 from SSRP_recommend import SSRPRecommend
+from SSRP_recommend_data import get_params
 
 
 class YagSendMail(object):
@@ -57,6 +58,7 @@ class YagSendMail(object):
         while True:
             current_time = time.localtime(time.time())
             if (current_time.tm_hour == hour) and (current_time.tm_min == minute) and (current_time.tm_sec == second):
+                SSRPRecommend(get_params()[0]).pool_recommend_data()
                 print('时间到，开始自动发送邮件')
                 time.sleep(1)
                 self.automatic_send_attachment(email)
@@ -72,6 +74,7 @@ class YagSendMail(object):
             cost_time = end_time - start_time
             # print(cost_time)
             if cost_time == time_intvl:
+                SSRPRecommend(get_params()[0]).pool_recommend_data()
                 print('时间到，开始自动发送邮件')
                 time.sleep(1)
                 self.automatic_send_attachment(email)
