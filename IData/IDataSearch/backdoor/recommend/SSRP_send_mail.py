@@ -14,12 +14,12 @@ class YagSendMail(object):
 
     def __init__(self, region):
         self.csvname = SSRPRecommend(region).csvname
-        self.main_email = 'zhaobowen9876@gmail.com'
-        self.back1 = '506513024@qq.com'
+        self.main_email = '*************'
+        self.back1 = '*************'
         self.group = [self.main_email, self.back1]
 
     def automatic_send_mail(self, email):
-        yag = yagmail.SMTP(user="841057707@qq.com", password="qviloameyckebfic", host="smtp.qq.com")
+        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")
         content = ['自动邮件发送测试']
         try:
             yag.send(email, 'subject', content)
@@ -28,7 +28,7 @@ class YagSendMail(object):
             print(e)
 
     def automatic_send_group(self):
-        yag = yagmail.SMTP(user="841057707@qq.com", password="qviloameyckebfic", host="smtp.qq.com")
+        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")
         content = ['自动邮件发送测试']
         try:
             yag.send(self.group, 'subject', content)
@@ -37,7 +37,7 @@ class YagSendMail(object):
             print(e)
 
     def automatic_send_attachment(self, email):
-        yag = yagmail.SMTP(user="841057707@qq.com", password="qviloameyckebfic", host="smtp.qq.com")
+        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")
         import datetime
         today = datetime.date.today()
         title = '【' + str(today) + '】' + '每日推荐论文速递'
