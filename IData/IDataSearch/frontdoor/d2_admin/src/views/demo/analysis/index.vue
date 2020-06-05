@@ -95,6 +95,7 @@ export default {
   .img-warp {
     width: 500px;
     margin: 0 -8px;
+    margin-top: 200px;
     &:after{
       display:block;
       clear:both;

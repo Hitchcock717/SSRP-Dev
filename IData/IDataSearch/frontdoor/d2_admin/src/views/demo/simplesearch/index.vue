@@ -2,8 +2,8 @@
   <d2-container class="page">
     <d2-page-cover>
       <el-form :model="simpleForm" ref="simpleForm" label-width="150px" class="demo-simpleForm" :class='{fixed:isFixed}'>
-        <el-form-item label="子库" prop="subrepo">
-          <el-button @click="submit" type="primary" class="nextpage">进入子库</el-button>
+        <el-form-item label="子库入口" prop="subrepo">
+          <el-button @click="submit" type="primary" class="nextpage">创建子库</el-button>
         </el-form-item>
       </el-form>
       <div v-if="tableData">

@@ -9,7 +9,84 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
-from .models import Message, Uploadcorpus, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, Filerepo, Project, Projectinfo, Personal, MessageSerializer, UploadcorpusSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer, FilerepoSerializer, ProjectSerializer, ProjectinfoSerializer, PersonalSerializer
+from .models import Message, Uploadcorpus, Extractor, Recommend, Simplesearch, Detailsearch, Temp, Folder, Collection, Repository, Corpus, Filerepo, Pending, Project, Projectinfo, Personal, MessageSerializer, UploadcorpusSerializer, ExtractorSerializer, RecommendSerializer, SimplesearchSerializer, DetailsearchSerializer, TempSerializer, FolderSerializer, CollectionSerializer, RepositorySerializer, CorpusSerializer, FilerepoSerializer, PendingSerializer, ProjectSerializer, ProjectinfoSerializer, PersonalSerializer
+
+
+@api_view(('POST', 'GET',))
+def scrapy(request):
+    if request.method == 'POST':
+
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        scrapy_dict = ast.literal_eval(raw_dict_key)
+        print(scrapy_dict)
+
+        extractors = scrapy_dict['extractors']
+        recommends = scrapy_dict['recommends']
+
+        keywords = []
+        from backdoor.main import cnki_main, cqvip_main, wf_main
+        data = Projectinfo.objects.last()
+        source = model_to_dict(data)['source'].split(',')
+        project = model_to_dict(data)['project']
+        extract = model_to_dict(data)['extract'].split(',')
+        recommend = model_to_dict(data)['recommend'].split(',')
+        keywords.extend(extract)
+        keywords.extend(recommend)
+        for k in keywords:
+            if k == '':
+                keywords.remove(k)
+        print(keywords)
+
+        if not Pending.objects.filter(project=project):
+            pend = Pending(project=project, extract=extractors, recommend=recommends)
+            pend.save()
+        else:
+            print('待办项目已存在!')
+
+        # ****** 自此开始, 根据source字段启动相应爬虫 ****** #
+
+        if len(source) == 1:
+            if source[0] == '知网':
+                for word in keywords:
+                    cnki_main(word)
+            elif source[0] == '维普':
+                for word in keywords:
+                    cqvip_main(word)
+            else:
+                for word in keywords:
+                    wf_main(word)
+
+        elif len(source) == 2:
+            if re.search('知网,维普', model_to_dict(data)['source']):
+                for word in keywords:
+                    cnki_main(word)
+                    cqvip_main(word)
+            elif re.search('维普,万方', model_to_dict(data)['source']):
+                for word in keywords:
+                    cqvip_main(word)
+                    wf_main(word)
+            else:
+                for word in keywords:
+                    cnki_main(word)
+                    wf_main(word)
+
+        else:
+            for word in keywords:
+                cnki_main(word)
+                cqvip_main(word)
+                wf_main(word)
+
+        # ****** 截此为止, 数据已插入ES中 ****** #
+
+        # ****** 自动发送邮件 ****** #
+        from backdoor.email import SendMail
+        SendMail().automatic_send_email(project, keywords)
+
+        return Response('待办项目已完成!')
+
+    if request.method == 'GET':
+        return Response('No method!')
 
 
 @api_view(('GET',))
@@ -591,23 +668,15 @@ def startspider(request):
         raw_dict_key = list(raw_dict.keys())[0]
         spider_dict = ast.literal_eval(raw_dict_key)
         print(spider_dict)
-        spider_names = spider_dict['spiders']
+        print(spider_dict['recommends'])
+        # spider_names = spider_dict['spiders']
 
         # 转义符处理
         drop_slash_extractors = re.sub('\\\\*', '', spider_dict['extractors'])
         drop_quotation_extractors = re.sub('^"|"$', '', drop_slash_extractors)
-        print(drop_quotation_extractors)
-
-        drop_slash_recommends = re.sub('\\\\*', '', spider_dict['recommends'])
-        drop_quotation_recommends = re.sub('^"|"$', '', drop_slash_recommends)
-        print(drop_quotation_recommends)
-
         spider_extractors = ast.literal_eval(drop_quotation_extractors.strip(']['))  # tuple
-        print(spider_extractors)
-        spider_recommends = ast.literal_eval(drop_quotation_recommends.strip(']['))
-        # extractors_dict = {item['originkws']:item for item in spider_extractors}  # list[dict{}] ---> dict{dict{}}
+        extractors, recommends, search_keywords = [], [], []
 
-        extractors = []
         if isinstance(spider_extractors, tuple):
             for extractors_dict in spider_extractors:
                 extracted_words = extractors_dict['originkws']
@@ -615,19 +684,22 @@ def startspider(request):
         else:
             extracted_words = spider_extractors['originkws']
             extractors.append(extracted_words)
-
-        recommends = []
-        if isinstance(spider_recommends, tuple):
-            for recommends_dict in spider_recommends:
-                recommend_words = recommends_dict['recommendkws']
-                recommends.append(recommend_words)
-        else:
-            recommend_words = spider_recommends['recommendkws']
-            recommends.append(recommend_words)
-
-        search_keywords = []
         search_keywords.extend(extractors)
-        search_keywords.extend(recommends)
+
+        if spider_dict['recommends'] != '"[]"' and spider_dict['recommends'] != '[]':
+            drop_slash_recommends = re.sub('\\\\*', '', spider_dict['recommends'])
+            drop_quotation_recommends = re.sub('^"|"$', '', drop_slash_recommends)
+            spider_recommends = ast.literal_eval(drop_quotation_recommends.strip(']['))
+            if isinstance(spider_recommends, tuple):
+                for recommends_dict in spider_recommends:
+                    recommend_words = recommends_dict['recommendkws']
+                    recommends.append(recommend_words)
+            else:
+                recommend_words = spider_recommends['recommendkws']
+                recommends.append(recommend_words)
+            search_keywords.extend(recommends)
+        else:
+            print('暂无推荐词')
 
         keywords = list(set(search_keywords))
         print(keywords)
@@ -722,7 +794,11 @@ def startspider(request):
             # for word in keywords:
                 # execute_spider(name, word)
                 # subprocess.check_output(['scrapy', 'crawl', name, '-a', 'keyword='+word])
-        return Response(data)
+
+        if filter_count > 50:  # 阈值根据es数据量设置
+            return Response(data)
+        else:
+            return Response('failed')
 
     if request.method == 'GET':
         return Response('No method!')
@@ -886,1338 +962,1331 @@ def getexpression(request):
         expression_body = ast.literal_eval(raw_expression_body.strip(']['))
         print(expression_body)
 
-        # 判断子库名称是否重复
-        if Filerepo.objects.filter(name=subrepo_name):
-            return Response('failed')
-        else:
-            file = Filerepo(name=subrepo_name, introduction=subrepo_intro)
-            file.save()
-            
-            # 有无日期筛选
-            expression_date = expression_body[-1]
-            start_date = expression_date['startdate']
-            end_date = expression_date['endate']
+        # 有无日期筛选
+        expression_date = expression_body[-1]
+        start_date = expression_date['startdate']
+        end_date = expression_date['endate']
 
-            # 无有效日期
-            if start_date == 'null' or end_date == 'null':
-                # 1.有且仅有一个表达式
-                if len(expression_body) == 2:
-                    expression_context = expression_body[0]
+        # 无有效日期
+        if start_date == 'null' or end_date == 'null':
+            # 1.有且仅有一个表达式
+            if len(expression_body) == 2:
+                expression_context = expression_body[0]
 
-                    # 转换成ES中的字段
-                    if expression_context['type'] == '标题':
-                        expression_context['type'] = 'title'
-                    elif expression_context['type'] == '作者':
-                        expression_context['type'] = 'author'
-                    elif expression_context['type'] == '来源':
-                        expression_context['type'] = 'source'
-                    elif expression_context['type'] == '机构/单位':
-                        expression_context['type'] = 'info'
-                    elif expression_context['type'] == '基金':
-                        expression_context['type'] = 'fund'
-                    elif expression_context['type'] == '关键词':
-                        expression_context['type'] = 'kws'
-                    elif expression_context['type'] == '摘要':
-                        expression_context['type'] = 'abstract'
+                # 转换成ES中的字段
+                if expression_context['type'] == '标题':
+                    expression_context['type'] = 'title'
+                elif expression_context['type'] == '作者':
+                    expression_context['type'] = 'author'
+                elif expression_context['type'] == '来源':
+                    expression_context['type'] = 'source'
+                elif expression_context['type'] == '机构/单位':
+                    expression_context['type'] = 'info'
+                elif expression_context['type'] == '基金':
+                    expression_context['type'] = 'fund'
+                elif expression_context['type'] == '关键词':
+                    expression_context['type'] = 'kws'
+                elif expression_context['type'] == '摘要':
+                    expression_context['type'] = 'abstract'
 
-                    # 1.1 有且仅有必填项 关键词+单字段
-                    if not expression_context.get('relation'):
-                        # 1.1.1 无正则
-                        if expression_context['regex'] == '否':
-                            expression_type = expression_context['type'].split()
-                            expression_info = expression_context['info']
+                # 1.1 有且仅有必填项 关键词+单字段
+                if not expression_context.get('relation'):
+                    # 1.1.1 无正则
+                    if expression_context['regex'] == '否':
+                        expression_type = expression_context['type'].split()
+                        expression_info = expression_context['info']
 
-                            detail = GetDetailResult()
-                            results = detail.get_only_expression(expression_type, expression_info)
-                            print(results)
+                        detail = GetDetailResult()
+                        results = detail.get_only_expression(expression_type, expression_info)
+                        print(results)
 
-                            sum_doc = results[2]
-                            set_only = []
-                            set_only.append(sum_doc[0])
+                        sum_doc = results[2]
+                        set_only = []
+                        set_only.append(sum_doc[0])
 
-                            # drop reqeated
-                            for item in sum_doc:
-                                k = 0
-                                for iitem in set_only:
-                                    if item['title'] != iitem['title']:
-                                        k += 1
-                                    else:
-                                        break
+                        # drop reqeated
+                        for item in sum_doc:
+                            k = 0
+                            for iitem in set_only:
+                                if item['title'] != iitem['title']:
+                                    k += 1
+                                else:
+                                    break
 
-                                    if k == len(set_only):
-                                        set_only.append(item)  # [{no repeated}]
+                                if k == len(set_only):
+                                    set_only.append(item)  # [{no repeated}]
 
-                            # 过滤后的搜索结果数
-                            filter_count = len(set_only)
+                        # 过滤后的搜索结果数
+                        filter_count = len(set_only)
 
-                            # 清洗字段
-                            for each_word_doc in set_only:
+                        # 清洗字段
+                        for each_word_doc in set_only:
 
-                                title = each_word_doc['title']
-                                author = each_word_doc['author']
-                                if re.search(';', author):
-                                    author = re.sub(';', '', author)
-                                source = each_word_doc['source']
-                                info = each_word_doc['info']
-                                date = each_word_doc['date']
-                                kws = each_word_doc['kws']
-                                if kws == 'nan':
-                                    kws = '暂无'
-                                fund = each_word_doc['fund']
-                                if fund == 'nan':
-                                    fund = '暂无'
-                                abstract = each_word_doc['abstract']
-                                cited = each_word_doc['cited'].rstrip('.0')
-                                if cited == 'nan':
-                                    cited = '0'
+                            title = each_word_doc['title']
+                            author = each_word_doc['author']
+                            if re.search(';', author):
+                                author = re.sub(';', '', author)
+                            source = each_word_doc['source']
+                            info = each_word_doc['info']
+                            date = each_word_doc['date']
+                            kws = each_word_doc['kws']
+                            if kws == 'nan':
+                                kws = '暂无'
+                            fund = each_word_doc['fund']
+                            if fund == 'nan':
+                                fund = '暂无'
+                            abstract = each_word_doc['abstract']
+                            cited = each_word_doc['cited'].rstrip('.0')
+                            if cited == 'nan':
+                                cited = '0'
 
-                                downed = each_word_doc['downed'].rstrip('.0')
-                                if downed == 'nan':
-                                    downed = '0'
-                                download = each_word_doc['download']
+                            downed = each_word_doc['downed'].rstrip('.0')
+                            if downed == 'nan':
+                                downed = '0'
+                            download = each_word_doc['download']
 
-                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
-                                det.save()
+                            det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                               kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                               download=download, name=subrepo_name, introduction=subrepo_intro)
+                            det.save()
 
-                            data = {
-                                'query': results[0],
-                                'raw_count': results[1],
-                                'filter_search_count': filter_count
-                            }
-                            print(data)
-                            return Response(data)
+                        data = {
+                            'query': results[0],
+                            'raw_count': results[1],
+                            'filter_search_count': filter_count
+                        }
+                        print(data)
+                        return Response(data)
 
-                        # 1.1.2 有正则
-                        else:
-                            expression_type = expression_context['type'].split()
-                            expression_info = expression_context['info']
-
-                            detail = GetDetailResult()
-                            results = detail.get_only_expression_with_regexp(expression_type, expression_info)
-
-                            sum_doc = results[2]
-                            set_only = []
-                            set_only.append(sum_doc[0])
-
-                            # drop reqeated
-                            for item in sum_doc:
-                                k = 0
-                                for iitem in set_only:
-                                    if item['title'] != iitem['title']:
-                                        k += 1
-                                    else:
-                                        break
-
-                                    if k == len(set_only):
-                                        set_only.append(item)  # [{no repeated}]
-
-                            # 过滤后的搜索结果数
-                            filter_count = len(set_only)
-
-                            # 清洗字段
-                            for each_word_doc in set_only:
-
-                                title = each_word_doc['title']
-                                author = each_word_doc['author']
-                                if re.search(';', author):
-                                    author = re.sub(';', '', author)
-                                source = each_word_doc['source']
-                                info = each_word_doc['info']
-                                date = each_word_doc['date']
-                                kws = each_word_doc['kws']
-                                if kws == 'nan':
-                                    kws = '暂无'
-                                fund = each_word_doc['fund']
-                                if fund == 'nan':
-                                    fund = '暂无'
-                                abstract = each_word_doc['abstract']
-                                cited = each_word_doc['cited'].rstrip('.0')
-                                if cited == 'nan':
-                                    cited = '0'
-
-                                downed = each_word_doc['downed'].rstrip('.0')
-                                if downed == 'nan':
-                                    downed = '0'
-                                download = each_word_doc['download']
-
-                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
-                                det.save()
-
-                            data = {
-                                'query': results[0],
-                                'raw_count': results[1],
-                                'filter_search_count': filter_count
-                            }
-                            print(data)
-                            return Response(data)
-
-                    # 1.2 不止必填项 多关键字+单字段
+                    # 1.1.2 有正则
                     else:
-                        # 1.2.1 无正则
-                        if expression_context['regex'] == '否':
-                            expression_type = expression_context['type'].split()
-                            expression_info = expression_context['info']
-                            expression_relation = expression_context['relation']
-                            expression_otherinfo = expression_context['otherinfo']
+                        expression_type = expression_context['type'].split()
+                        expression_info = expression_context['info']
 
-                            detail = GetDetailResult()
+                        detail = GetDetailResult()
+                        results = detail.get_only_expression_with_regexp(expression_type, expression_info)
 
-                            if expression_relation == '并含':
-                                in_method = '1'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = ['']
-                                exclude_kws = ''
-                                results = detail.get_only_relation_expression(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
+                        sum_doc = results[2]
+                        set_only = []
+                        set_only.append(sum_doc[0])
 
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
+                        # drop reqeated
+                        for item in sum_doc:
+                            k = 0
+                            for iitem in set_only:
+                                if item['title'] != iitem['title']:
+                                    k += 1
+                                else:
+                                    break
 
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
+                                if k == len(set_only):
+                                    set_only.append(item)  # [{no repeated}]
 
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
+                        # 过滤后的搜索结果数
+                        filter_count = len(set_only)
 
-                                # 清洗字段
-                                for each_word_doc in set_only:
+                        # 清洗字段
+                        for each_word_doc in set_only:
 
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
+                            title = each_word_doc['title']
+                            author = each_word_doc['author']
+                            if re.search(';', author):
+                                author = re.sub(';', '', author)
+                            source = each_word_doc['source']
+                            info = each_word_doc['info']
+                            date = each_word_doc['date']
+                            kws = each_word_doc['kws']
+                            if kws == 'nan':
+                                kws = '暂无'
+                            fund = each_word_doc['fund']
+                            if fund == 'nan':
+                                fund = '暂无'
+                            abstract = each_word_doc['abstract']
+                            cited = each_word_doc['cited'].rstrip('.0')
+                            if cited == 'nan':
+                                cited = '0'
 
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
+                            downed = each_word_doc['downed'].rstrip('.0')
+                            if downed == 'nan':
+                                downed = '0'
+                            download = each_word_doc['download']
 
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
+                            det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                               kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                               download=download, name=subrepo_name, introduction=subrepo_intro)
+                            det.save()
 
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
+                        data = {
+                            'query': results[0],
+                            'raw_count': results[1],
+                            'filter_search_count': filter_count
+                        }
+                        print(data)
+                        return Response(data)
 
-                            elif expression_relation == '或含':
-                                in_method = '2'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = ['']
-                                exclude_kws = ''
-                                results = detail.get_only_relation_expression(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                            elif expression_relation == '不含':
-                                in_method = '2'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = expression_type
-                                exclude_kws = expression_otherinfo
-                                results = detail.get_only_relation_expression(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                        # 1.2.2 有正则
-                        else:
-                            expression_type = expression_context['type'].split()
-                            expression_info = expression_context['info']
-                            expression_relation = expression_context['relation']
-                            expression_otherinfo = expression_context['otherinfo']
-
-                            detail = GetDetailResult()
-
-                            if expression_relation == '并含':
-                                in_method = '1'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = ['']
-                                exclude_kws = ''
-                                results = detail.get_only_relation_expression_with_regexp(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                            elif expression_relation == '或含':
-                                in_method = '2'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = ['']
-                                exclude_kws = ''
-                                results = detail.get_only_relation_expression_with_regexp(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                            elif expression_relation == '不含':
-                                in_method = '2'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = expression_type
-                                exclude_kws = expression_otherinfo
-                                results = detail.get_only_relation_expression_with_regexp(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                # 2.多个表达式
+                # 1.2 不止必填项 多关键字+单字段
                 else:
-                    new_expression_body = []
-                    print(expression_body[:-1])
-                    for expression_context in expression_body[:-1]:
-                        # 转换成ES中的字段
-                        if expression_context['type'] == '标题':
-                            expression_context['type'] = 'title'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '作者':
-                            expression_context['type'] = 'author'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '来源':
-                            expression_context['type'] = 'source'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '机构/单位':
-                            expression_context['type'] = 'info'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '基金':
-                            expression_context['type'] = 'fund'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '关键词':
-                            expression_context['type'] = 'kws'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '摘要':
-                            expression_context['type'] = 'abstract'
-                            new_expression_body.append(expression_context)
+                    # 1.2.1 无正则
+                    if expression_context['regex'] == '否':
+                        expression_type = expression_context['type'].split()
+                        expression_info = expression_context['info']
+                        expression_relation = expression_context['relation']
+                        expression_otherinfo = expression_context['otherinfo']
 
-                    print('元数据:' + str(new_expression_body))
-                    detail = GetDetailResult()
-                    results = detail.get_multiple_expression(new_expression_body)
+                        detail = GetDetailResult()
 
-                    sum_doc = results[2]
-                    set_only = []
-                    set_only.append(sum_doc[0])
+                        if expression_relation == '并含':
+                            in_method = '1'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = ['']
+                            exclude_kws = ''
+                            results = detail.get_only_relation_expression(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
 
-                    # drop reqeated
-                    for item in sum_doc:
-                        k = 0
-                        for iitem in set_only:
-                            if item['title'] != iitem['title']:
-                                k += 1
-                            else:
-                                break
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
 
-                            if k == len(set_only):
-                                set_only.append(item)  # [{no repeated}]
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
 
-                    # 过滤后的搜索结果数
-                    filter_count = len(set_only)
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
 
-                    # 清洗字段
-                    for each_word_doc in set_only:
+                            # 清洗字段
+                            for each_word_doc in set_only:
 
-                        title = each_word_doc['title']
-                        author = each_word_doc['author']
-                        if re.search(';', author):
-                            author = re.sub(';', '', author)
-                        source = each_word_doc['source']
-                        info = each_word_doc['info']
-                        date = each_word_doc['date']
-                        kws = each_word_doc['kws']
-                        if kws == 'nan':
-                            kws = '暂无'
-                        fund = each_word_doc['fund']
-                        if fund == 'nan':
-                            fund = '暂无'
-                        abstract = each_word_doc['abstract']
-                        cited = each_word_doc['cited'].rstrip('.0')
-                        if cited == 'nan':
-                            cited = '0'
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
 
-                        downed = each_word_doc['downed'].rstrip('.0')
-                        if downed == 'nan':
-                            downed = '0'
-                        download = each_word_doc['download']
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
 
-                        det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                           kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                           download=download, name=subrepo_name, introduction=subrepo_intro)
-                        det.save()
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
 
-                    data = {
-                        'query': results[0],
-                        'raw_count': results[1],
-                        'filter_search_count': filter_count
-                    }
-                    print(data)
-                    return Response(data)
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
 
-            # 有日期筛选
+                        elif expression_relation == '或含':
+                            in_method = '2'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = ['']
+                            exclude_kws = ''
+                            results = detail.get_only_relation_expression(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                        elif expression_relation == '不含':
+                            in_method = '2'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = expression_type
+                            exclude_kws = expression_otherinfo
+                            results = detail.get_only_relation_expression(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                    # 1.2.2 有正则
+                    else:
+                        expression_type = expression_context['type'].split()
+                        expression_info = expression_context['info']
+                        expression_relation = expression_context['relation']
+                        expression_otherinfo = expression_context['otherinfo']
+
+                        detail = GetDetailResult()
+
+                        if expression_relation == '并含':
+                            in_method = '1'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = ['']
+                            exclude_kws = ''
+                            results = detail.get_only_relation_expression_with_regexp(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                        elif expression_relation == '或含':
+                            in_method = '2'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = ['']
+                            exclude_kws = ''
+                            results = detail.get_only_relation_expression_with_regexp(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                        elif expression_relation == '不含':
+                            in_method = '2'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = expression_type
+                            exclude_kws = expression_otherinfo
+                            results = detail.get_only_relation_expression_with_regexp(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+            # 2.多个表达式
             else:
-                # 1.有且仅有一个表达式
-                if len(expression_body) == 2:
-                    expression_context = expression_body[0]
-
+                new_expression_body = []
+                print(expression_body[:-1])
+                for expression_context in expression_body[:-1]:
                     # 转换成ES中的字段
                     if expression_context['type'] == '标题':
                         expression_context['type'] = 'title'
+                        new_expression_body.append(expression_context)
                     elif expression_context['type'] == '作者':
                         expression_context['type'] = 'author'
+                        new_expression_body.append(expression_context)
                     elif expression_context['type'] == '来源':
                         expression_context['type'] = 'source'
+                        new_expression_body.append(expression_context)
                     elif expression_context['type'] == '机构/单位':
                         expression_context['type'] = 'info'
+                        new_expression_body.append(expression_context)
                     elif expression_context['type'] == '基金':
                         expression_context['type'] = 'fund'
+                        new_expression_body.append(expression_context)
                     elif expression_context['type'] == '关键词':
                         expression_context['type'] = 'kws'
+                        new_expression_body.append(expression_context)
                     elif expression_context['type'] == '摘要':
                         expression_context['type'] = 'abstract'
+                        new_expression_body.append(expression_context)
 
-                    # 1.1 有且仅有必填项 关键词+单字段
-                    if not expression_context['relation']:
-                        # 1.1.1 无正则
-                        if expression_context['regex'] == '否':
-                            expression_type = expression_context['type'].split()
-                            expression_info = expression_context['info']
+                print('元数据:' + str(new_expression_body))
+                detail = GetDetailResult()
+                results = detail.get_multiple_expression(new_expression_body)
 
-                            detail = GetDetailResult()
-                            results = detail.get_only_expression_with_date(expression_type, expression_info, start_date, end_date)
+                sum_doc = results[2]
+                set_only = []
+                set_only.append(sum_doc[0])
 
-                            sum_doc = results[2]
-                            set_only = []
-                            set_only.append(sum_doc[0])
-
-                            # drop reqeated
-                            for item in sum_doc:
-                                k = 0
-                                for iitem in set_only:
-                                    if item['title'] != iitem['title']:
-                                        k += 1
-                                    else:
-                                        break
-
-                                    if k == len(set_only):
-                                        set_only.append(item)  # [{no repeated}]
-
-                            # 过滤后的搜索结果数
-                            filter_count = len(set_only)
-
-                            # 清洗字段
-                            for each_word_doc in set_only:
-
-                                title = each_word_doc['title']
-                                author = each_word_doc['author']
-                                if re.search(';', author):
-                                    author = re.sub(';', '', author)
-                                source = each_word_doc['source']
-                                info = each_word_doc['info']
-                                date = each_word_doc['date']
-                                kws = each_word_doc['kws']
-                                if kws == 'nan':
-                                    kws = '暂无'
-                                fund = each_word_doc['fund']
-                                if fund == 'nan':
-                                    fund = '暂无'
-                                abstract = each_word_doc['abstract']
-                                cited = each_word_doc['cited'].rstrip('.0')
-                                if cited == 'nan':
-                                    cited = '0'
-
-                                downed = each_word_doc['downed'].rstrip('.0')
-                                if downed == 'nan':
-                                    downed = '0'
-                                download = each_word_doc['download']
-
-                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
-                                det.save()
-
-                            data = {
-                                'query': results[0],
-                                'raw_count': results[1],
-                                'filter_search_count': filter_count
-                            }
-                            print(data)
-                            return Response(data)
-
-                        # 1.1.2 有正则
+                # drop reqeated
+                for item in sum_doc:
+                    k = 0
+                    for iitem in set_only:
+                        if item['title'] != iitem['title']:
+                            k += 1
                         else:
-                            expression_type = expression_context['type'].split()
-                            expression_info = expression_context['info']
+                            break
 
-                            detail = GetDetailResult()
-                            results = detail.get_only_expression_with_regexp(expression_type, expression_info, start_date, end_date)
+                        if k == len(set_only):
+                            set_only.append(item)  # [{no repeated}]
 
-                            sum_doc = results[2]
-                            set_only = []
-                            set_only.append(sum_doc[0])
+                # 过滤后的搜索结果数
+                filter_count = len(set_only)
 
-                            # drop reqeated
-                            for item in sum_doc:
-                                k = 0
-                                for iitem in set_only:
-                                    if item['title'] != iitem['title']:
-                                        k += 1
-                                    else:
-                                        break
+                # 清洗字段
+                for each_word_doc in set_only:
 
-                                    if k == len(set_only):
-                                        set_only.append(item)  # [{no repeated}]
+                    title = each_word_doc['title']
+                    author = each_word_doc['author']
+                    if re.search(';', author):
+                        author = re.sub(';', '', author)
+                    source = each_word_doc['source']
+                    info = each_word_doc['info']
+                    date = each_word_doc['date']
+                    kws = each_word_doc['kws']
+                    if kws == 'nan':
+                        kws = '暂无'
+                    fund = each_word_doc['fund']
+                    if fund == 'nan':
+                        fund = '暂无'
+                    abstract = each_word_doc['abstract']
+                    cited = each_word_doc['cited'].rstrip('.0')
+                    if cited == 'nan':
+                        cited = '0'
 
-                            # 过滤后的搜索结果数
-                            filter_count = len(set_only)
+                    downed = each_word_doc['downed'].rstrip('.0')
+                    if downed == 'nan':
+                        downed = '0'
+                    download = each_word_doc['download']
 
-                            # 清洗字段
-                            for each_word_doc in set_only:
+                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                       download=download, name=subrepo_name, introduction=subrepo_intro)
+                    det.save()
 
-                                title = each_word_doc['title']
-                                author = each_word_doc['author']
-                                if re.search(';', author):
-                                    author = re.sub(';', '', author)
-                                source = each_word_doc['source']
-                                info = each_word_doc['info']
-                                date = each_word_doc['date']
-                                kws = each_word_doc['kws']
-                                if kws == 'nan':
-                                    kws = '暂无'
-                                fund = each_word_doc['fund']
-                                if fund == 'nan':
-                                    fund = '暂无'
-                                abstract = each_word_doc['abstract']
-                                cited = each_word_doc['cited'].rstrip('.0')
-                                if cited == 'nan':
-                                    cited = '0'
+                data = {
+                    'query': results[0],
+                    'raw_count': results[1],
+                    'filter_search_count': filter_count
+                }
+                print(data)
+                return Response(data)
 
-                                downed = each_word_doc['downed'].rstrip('.0')
-                                if downed == 'nan':
-                                    downed = '0'
-                                download = each_word_doc['download']
+        # 有日期筛选
+        else:
+            # 1.有且仅有一个表达式
+            if len(expression_body) == 2:
+                expression_context = expression_body[0]
 
-                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
-                                det.save()
+                # 转换成ES中的字段
+                if expression_context['type'] == '标题':
+                    expression_context['type'] = 'title'
+                elif expression_context['type'] == '作者':
+                    expression_context['type'] = 'author'
+                elif expression_context['type'] == '来源':
+                    expression_context['type'] = 'source'
+                elif expression_context['type'] == '机构/单位':
+                    expression_context['type'] = 'info'
+                elif expression_context['type'] == '基金':
+                    expression_context['type'] = 'fund'
+                elif expression_context['type'] == '关键词':
+                    expression_context['type'] = 'kws'
+                elif expression_context['type'] == '摘要':
+                    expression_context['type'] = 'abstract'
 
+                # 1.1 有且仅有必填项 关键词+单字段
+                if not expression_context['relation']:
+                    # 1.1.1 无正则
+                    if expression_context['regex'] == '否':
+                        expression_type = expression_context['type'].split()
+                        expression_info = expression_context['info']
 
-                            data = {
-                                'query': results[0],
-                                'raw_count': results[1],
-                                'filter_search_count': filter_count
-                            }
-                            print(data)
-                            return Response(data)
+                        detail = GetDetailResult()
+                        results = detail.get_only_expression_with_date(expression_type, expression_info, start_date, end_date)
 
-                    # 1.2 不止必填项 多关键字+单字段
+                        sum_doc = results[2]
+                        set_only = []
+                        set_only.append(sum_doc[0])
+
+                        # drop reqeated
+                        for item in sum_doc:
+                            k = 0
+                            for iitem in set_only:
+                                if item['title'] != iitem['title']:
+                                    k += 1
+                                else:
+                                    break
+
+                                if k == len(set_only):
+                                    set_only.append(item)  # [{no repeated}]
+
+                        # 过滤后的搜索结果数
+                        filter_count = len(set_only)
+
+                        # 清洗字段
+                        for each_word_doc in set_only:
+
+                            title = each_word_doc['title']
+                            author = each_word_doc['author']
+                            if re.search(';', author):
+                                author = re.sub(';', '', author)
+                            source = each_word_doc['source']
+                            info = each_word_doc['info']
+                            date = each_word_doc['date']
+                            kws = each_word_doc['kws']
+                            if kws == 'nan':
+                                kws = '暂无'
+                            fund = each_word_doc['fund']
+                            if fund == 'nan':
+                                fund = '暂无'
+                            abstract = each_word_doc['abstract']
+                            cited = each_word_doc['cited'].rstrip('.0')
+                            if cited == 'nan':
+                                cited = '0'
+
+                            downed = each_word_doc['downed'].rstrip('.0')
+                            if downed == 'nan':
+                                downed = '0'
+                            download = each_word_doc['download']
+
+                            det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                               kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                               download=download, name=subrepo_name, introduction=subrepo_intro)
+                            det.save()
+
+                        data = {
+                            'query': results[0],
+                            'raw_count': results[1],
+                            'filter_search_count': filter_count
+                        }
+                        print(data)
+                        return Response(data)
+
+                    # 1.1.2 有正则
                     else:
-                        # 1.2.1 无正则
-                        if expression_context['regex'] == '否':
-                            expression_type = expression_context['type'].split()
-                            expression_info = expression_context['info']
-                            expression_relation = expression_context['relation']
-                            expression_otherinfo = expression_context['otherinfo']
+                        expression_type = expression_context['type'].split()
+                        expression_info = expression_context['info']
 
-                            detail = GetDetailResult()
+                        detail = GetDetailResult()
+                        results = detail.get_only_expression_with_regexp(expression_type, expression_info, start_date, end_date)
 
-                            if expression_relation == '并含':
-                                in_method = '1'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = ['']
-                                exclude_kws = ''
-                                results = detail.get_only_relation_expression_with_date(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, start_date, end_date, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
+                        sum_doc = results[2]
+                        set_only = []
+                        set_only.append(sum_doc[0])
 
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
+                        # drop reqeated
+                        for item in sum_doc:
+                            k = 0
+                            for iitem in set_only:
+                                if item['title'] != iitem['title']:
+                                    k += 1
+                                else:
+                                    break
 
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
+                                if k == len(set_only):
+                                    set_only.append(item)  # [{no repeated}]
 
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
+                        # 过滤后的搜索结果数
+                        filter_count = len(set_only)
 
-                                # 清洗字段
-                                for each_word_doc in set_only:
+                        # 清洗字段
+                        for each_word_doc in set_only:
 
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
+                            title = each_word_doc['title']
+                            author = each_word_doc['author']
+                            if re.search(';', author):
+                                author = re.sub(';', '', author)
+                            source = each_word_doc['source']
+                            info = each_word_doc['info']
+                            date = each_word_doc['date']
+                            kws = each_word_doc['kws']
+                            if kws == 'nan':
+                                kws = '暂无'
+                            fund = each_word_doc['fund']
+                            if fund == 'nan':
+                                fund = '暂无'
+                            abstract = each_word_doc['abstract']
+                            cited = each_word_doc['cited'].rstrip('.0')
+                            if cited == 'nan':
+                                cited = '0'
 
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
+                            downed = each_word_doc['downed'].rstrip('.0')
+                            if downed == 'nan':
+                                downed = '0'
+                            download = each_word_doc['download']
 
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
+                            det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                               kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                               download=download, name=subrepo_name, introduction=subrepo_intro)
+                            det.save()
 
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
 
-                            elif expression_relation == '或含':
-                                in_method = '2'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = ['']
-                                exclude_kws = ''
-                                results = detail.get_only_relation_expression_with_date(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, start_date, end_date, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
+                        data = {
+                            'query': results[0],
+                            'raw_count': results[1],
+                            'filter_search_count': filter_count
+                        }
+                        print(data)
+                        return Response(data)
 
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                            elif expression_relation == '不含':
-                                in_method = '2'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = expression_type
-                                exclude_kws = expression_otherinfo
-                                results = detail.get_only_relation_expression_with_date(include_fields, include_kws, exclude_fields,
-                                                                              exclude_kws, start_date, end_date, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                        # 1.2.2 有正则
-                        else:
-                            expression_type = expression_context['type'].split()
-                            expression_info = expression_context['info']
-                            expression_relation = expression_context['relation']
-                            expression_otherinfo = expression_context['otherinfo']
-
-                            detail = GetDetailResult()
-
-                            if expression_relation == '并含':
-                                in_method = '1'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = ['']
-                                exclude_kws = ''
-                                results = detail.get_only_relation_expression_with_regexp_and_date(include_fields, include_kws, exclude_fields, exclude_kws, start_date, end_date, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                            elif expression_relation == '或含':
-                                in_method = '2'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = ['']
-                                exclude_kws = ''
-                                results = detail.get_only_relation_expression_with_regexp_and_date(include_fields, include_kws, exclude_fields, exclude_kws, start_date, end_date, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                            elif expression_relation == '不含':
-                                in_method = '2'
-                                include_fields = expression_type
-                                include_kws = expression_info
-                                exclude_fields = expression_type
-                                exclude_kws = expression_otherinfo
-                                results = detail.get_only_relation_expression_with_regexp_and_date(include_fields, include_kws, exclude_fields, exclude_kws, start_date, end_date, in_method)
-                                sum_doc = results[2]
-                                set_only = []
-                                set_only.append(sum_doc[0])
-
-                                # drop reqeated
-                                for item in sum_doc:
-                                    k = 0
-                                    for iitem in set_only:
-                                        if item['title'] != iitem['title']:
-                                            k += 1
-                                        else:
-                                            break
-
-                                        if k == len(set_only):
-                                            set_only.append(item)  # [{no repeated}]
-
-                                # 过滤后的搜索结果数
-                                filter_count = len(set_only)
-
-                                # 清洗字段
-                                for each_word_doc in set_only:
-
-                                    title = each_word_doc['title']
-                                    author = each_word_doc['author']
-                                    if re.search(';', author):
-                                        author = re.sub(';', '', author)
-                                    source = each_word_doc['source']
-                                    info = each_word_doc['info']
-                                    date = each_word_doc['date']
-                                    kws = each_word_doc['kws']
-                                    if kws == 'nan':
-                                        kws = '暂无'
-                                    fund = each_word_doc['fund']
-                                    if fund == 'nan':
-                                        fund = '暂无'
-                                    abstract = each_word_doc['abstract']
-                                    cited = each_word_doc['cited'].rstrip('.0')
-                                    if cited == 'nan':
-                                        cited = '0'
-
-                                    downed = each_word_doc['downed'].rstrip('.0')
-                                    if downed == 'nan':
-                                        downed = '0'
-                                    download = each_word_doc['download']
-
-                                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                                       download=download, name=subrepo_name, introduction=subrepo_intro)
-                                    det.save()
-
-                                data = {
-                                    'query': results[0],
-                                    'raw_count': results[1],
-                                    'filter_search_count': filter_count
-                                }
-                                print(data)
-                                return Response(data)
-
-                # 2.多个表达式
+                # 1.2 不止必填项 多关键字+单字段
                 else:
-                    new_expression_body = []
-                    for expression_context in expression_body[:-1]:
-                        # 转换成ES中的字段
-                        if expression_context['type'] == '标题':
-                            expression_context['type'] = 'title'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '作者':
-                            expression_context['type'] = 'author'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '来源':
-                            expression_context['type'] = 'source'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '机构/单位':
-                            expression_context['type'] = 'info'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '基金':
-                            expression_context['type'] = 'fund'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '关键词':
-                            expression_context['type'] = 'kws'
-                            new_expression_body.append(expression_context)
-                        elif expression_context['type'] == '摘要':
-                            expression_context['type'] = 'abstract'
-                            new_expression_body.append(expression_context)
+                    # 1.2.1 无正则
+                    if expression_context['regex'] == '否':
+                        expression_type = expression_context['type'].split()
+                        expression_info = expression_context['info']
+                        expression_relation = expression_context['relation']
+                        expression_otherinfo = expression_context['otherinfo']
 
-                    detail = GetDetailResult()
-                    results = detail.get_multiple_expression_with_date(new_expression_body, start_date, end_date)
+                        detail = GetDetailResult()
 
-                    sum_doc = results[2]
-                    set_only = []
-                    set_only.append(sum_doc[0])
+                        if expression_relation == '并含':
+                            in_method = '1'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = ['']
+                            exclude_kws = ''
+                            results = detail.get_only_relation_expression_with_date(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, start_date, end_date, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
 
-                    # drop reqeated
-                    for item in sum_doc:
-                        k = 0
-                        for iitem in set_only:
-                            if item['title'] != iitem['title']:
-                                k += 1
-                            else:
-                                break
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
 
-                            if k == len(set_only):
-                                set_only.append(item)  # [{no repeated}]
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
 
-                    # 过滤后的搜索结果数
-                    filter_count = len(set_only)
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
 
-                    # 清洗字段
-                    for each_word_doc in set_only:
+                            # 清洗字段
+                            for each_word_doc in set_only:
 
-                        title = each_word_doc['title']
-                        author = each_word_doc['author']
-                        if re.search(';', author):
-                            author = re.sub(';', '', author)
-                        source = each_word_doc['source']
-                        info = each_word_doc['info']
-                        date = each_word_doc['date']
-                        kws = each_word_doc['kws']
-                        if kws == 'nan':
-                            kws = '暂无'
-                        fund = each_word_doc['fund']
-                        if fund == 'nan':
-                            fund = '暂无'
-                        abstract = each_word_doc['abstract']
-                        cited = each_word_doc['cited'].rstrip('.0')
-                        if cited == 'nan':
-                            cited = '0'
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
 
-                        downed = each_word_doc['downed'].rstrip('.0')
-                        if downed == 'nan':
-                            downed = '0'
-                        download = each_word_doc['download']
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
 
-                        det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
-                                           kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
-                                           download=download, name=subrepo_name, introduction=subrepo_intro)
-                        det.save()
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
 
-                    data = {
-                        'query': results[0],
-                        'raw_count': results[1],
-                        'filter_search_count': filter_count
-                    }
-                    print(data)
-                    return Response(data)
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                        elif expression_relation == '或含':
+                            in_method = '2'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = ['']
+                            exclude_kws = ''
+                            results = detail.get_only_relation_expression_with_date(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, start_date, end_date, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                        elif expression_relation == '不含':
+                            in_method = '2'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = expression_type
+                            exclude_kws = expression_otherinfo
+                            results = detail.get_only_relation_expression_with_date(include_fields, include_kws, exclude_fields,
+                                                                          exclude_kws, start_date, end_date, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                    # 1.2.2 有正则
+                    else:
+                        expression_type = expression_context['type'].split()
+                        expression_info = expression_context['info']
+                        expression_relation = expression_context['relation']
+                        expression_otherinfo = expression_context['otherinfo']
+
+                        detail = GetDetailResult()
+
+                        if expression_relation == '并含':
+                            in_method = '1'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = ['']
+                            exclude_kws = ''
+                            results = detail.get_only_relation_expression_with_regexp_and_date(include_fields, include_kws, exclude_fields, exclude_kws, start_date, end_date, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                        elif expression_relation == '或含':
+                            in_method = '2'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = ['']
+                            exclude_kws = ''
+                            results = detail.get_only_relation_expression_with_regexp_and_date(include_fields, include_kws, exclude_fields, exclude_kws, start_date, end_date, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+                        elif expression_relation == '不含':
+                            in_method = '2'
+                            include_fields = expression_type
+                            include_kws = expression_info
+                            exclude_fields = expression_type
+                            exclude_kws = expression_otherinfo
+                            results = detail.get_only_relation_expression_with_regexp_and_date(include_fields, include_kws, exclude_fields, exclude_kws, start_date, end_date, in_method)
+                            sum_doc = results[2]
+                            set_only = []
+                            set_only.append(sum_doc[0])
+
+                            # drop reqeated
+                            for item in sum_doc:
+                                k = 0
+                                for iitem in set_only:
+                                    if item['title'] != iitem['title']:
+                                        k += 1
+                                    else:
+                                        break
+
+                                    if k == len(set_only):
+                                        set_only.append(item)  # [{no repeated}]
+
+                            # 过滤后的搜索结果数
+                            filter_count = len(set_only)
+
+                            # 清洗字段
+                            for each_word_doc in set_only:
+
+                                title = each_word_doc['title']
+                                author = each_word_doc['author']
+                                if re.search(';', author):
+                                    author = re.sub(';', '', author)
+                                source = each_word_doc['source']
+                                info = each_word_doc['info']
+                                date = each_word_doc['date']
+                                kws = each_word_doc['kws']
+                                if kws == 'nan':
+                                    kws = '暂无'
+                                fund = each_word_doc['fund']
+                                if fund == 'nan':
+                                    fund = '暂无'
+                                abstract = each_word_doc['abstract']
+                                cited = each_word_doc['cited'].rstrip('.0')
+                                if cited == 'nan':
+                                    cited = '0'
+
+                                downed = each_word_doc['downed'].rstrip('.0')
+                                if downed == 'nan':
+                                    downed = '0'
+                                download = each_word_doc['download']
+
+                                det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                                   kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                                   download=download, name=subrepo_name, introduction=subrepo_intro)
+                                det.save()
+
+                            data = {
+                                'query': results[0],
+                                'raw_count': results[1],
+                                'filter_search_count': filter_count
+                            }
+                            print(data)
+                            return Response(data)
+
+            # 2.多个表达式
+            else:
+                new_expression_body = []
+                for expression_context in expression_body[:-1]:
+                    # 转换成ES中的字段
+                    if expression_context['type'] == '标题':
+                        expression_context['type'] = 'title'
+                        new_expression_body.append(expression_context)
+                    elif expression_context['type'] == '作者':
+                        expression_context['type'] = 'author'
+                        new_expression_body.append(expression_context)
+                    elif expression_context['type'] == '来源':
+                        expression_context['type'] = 'source'
+                        new_expression_body.append(expression_context)
+                    elif expression_context['type'] == '机构/单位':
+                        expression_context['type'] = 'info'
+                        new_expression_body.append(expression_context)
+                    elif expression_context['type'] == '基金':
+                        expression_context['type'] = 'fund'
+                        new_expression_body.append(expression_context)
+                    elif expression_context['type'] == '关键词':
+                        expression_context['type'] = 'kws'
+                        new_expression_body.append(expression_context)
+                    elif expression_context['type'] == '摘要':
+                        expression_context['type'] = 'abstract'
+                        new_expression_body.append(expression_context)
+
+                detail = GetDetailResult()
+                results = detail.get_multiple_expression_with_date(new_expression_body, start_date, end_date)
+
+                sum_doc = results[2]
+                set_only = []
+                set_only.append(sum_doc[0])
+
+                # drop reqeated
+                for item in sum_doc:
+                    k = 0
+                    for iitem in set_only:
+                        if item['title'] != iitem['title']:
+                            k += 1
+                        else:
+                            break
+
+                        if k == len(set_only):
+                            set_only.append(item)  # [{no repeated}]
+
+                # 过滤后的搜索结果数
+                filter_count = len(set_only)
+
+                # 清洗字段
+                for each_word_doc in set_only:
+
+                    title = each_word_doc['title']
+                    author = each_word_doc['author']
+                    if re.search(';', author):
+                        author = re.sub(';', '', author)
+                    source = each_word_doc['source']
+                    info = each_word_doc['info']
+                    date = each_word_doc['date']
+                    kws = each_word_doc['kws']
+                    if kws == 'nan':
+                        kws = '暂无'
+                    fund = each_word_doc['fund']
+                    if fund == 'nan':
+                        fund = '暂无'
+                    abstract = each_word_doc['abstract']
+                    cited = each_word_doc['cited'].rstrip('.0')
+                    if cited == 'nan':
+                        cited = '0'
+
+                    downed = each_word_doc['downed'].rstrip('.0')
+                    if downed == 'nan':
+                        downed = '0'
+                    download = each_word_doc['download']
+
+                    det = Detailsearch(title=title, author=author, source=source, info=info, date=date,
+                                       kws=kws, fund=fund, abstract=abstract, cited=cited, downed=downed,
+                                       download=download, name=subrepo_name, introduction=subrepo_intro)
+                    det.save()
+
+                data = {
+                    'query': results[0],
+                    'raw_count': results[1],
+                    'filter_search_count': filter_count
+                }
+                print(data)
+                return Response(data)
 
     if request.method == 'GET':
         return Response('No method!')
@@ -2296,6 +2365,23 @@ def filteresult(request):
                 return Response(data)
             else:
                 return Response('No suitable data!')
+
+
+@api_view(('GET',))
+def getsubrepo(request):
+    if request.method == 'GET':
+
+        latest = Projectinfo.objects.last()
+        if latest:
+            name = model_to_dict(latest)['subrepo']
+            intro = model_to_dict(latest)['introduction']
+            data = {
+                'name': name,
+                'intro': intro
+            }
+            return Response(data)
+        else:
+            return Response('failed')
 
 
 @api_view(('POST', 'GET',))
@@ -3059,11 +3145,15 @@ def saveproject(request):
         source = project_dict['source']
         description = project_dict['description']
         method = project_dict['method']
+        corpus = project_dict['corpus']
+        subrepo = project_dict['subrepo']
+        introduction = project_dict['intro']
         raw_extract = project_dict['extract']
         raw_recommend = project_dict['recommend']
+
+        extract, recommend = [], []
+
         extracts = ast.literal_eval(raw_extract.strip(']['))
-        recommends = ast.literal_eval(raw_recommend.strip(']['))
-        extract = []
         if isinstance(extracts, tuple):
             for extractors_dict in extracts:
                 extracted_words = extractors_dict['originkws']
@@ -3072,19 +3162,24 @@ def saveproject(request):
             extracted_words = extracts['originkws']
             extract.append(extracted_words)
 
-        recommend = []
-        if isinstance(recommends, tuple):
-            for recommends_dict in recommends:
-                recommend_words = recommends_dict['recommendkws']
+        if raw_recommend != '[]':
+            recommends = ast.literal_eval(raw_recommend.strip(']['))
+            if isinstance(recommends, tuple):
+                for recommends_dict in recommends:
+                    recommend_words = recommends_dict['recommendkws']
+                    recommend.append(recommend_words)
+            else:
+                recommend_words = recommends['recommendkws']
                 recommend.append(recommend_words)
         else:
-            recommend_words = recommends['recommendkws']
-            recommend.append(recommend_words)
+            print('暂无推荐词')
 
-        print(extract)
-        print(recommend)
-        if not Project.objects.filter(project=name):
-            projectinfo =Projectinfo(project=name, date=date, type=type, source=source, description=description, method=method, extract=','.join(extract), recommend=','.join(recommend))
+        # print(extract)
+        # print(recommend)
+        print(Project.objects.filter(project=name))
+        print(Projectinfo.objects.filter(project=name))
+        if Project.objects.filter(project=name) and not Projectinfo.objects.filter(project=name):
+            projectinfo = Projectinfo(project=name, date=date, type=type, source=source, description=description, method=method, extract=','.join(extract), recommend=','.join(recommend), corpus=corpus, subrepo=subrepo, introduction=introduction)
             projectinfo.save()
             return Response('success')
         else:
@@ -3219,6 +3314,80 @@ def deleteproject(request):
         return Response('No method!')
 
 
+@api_view(('GET',))
+def getpending(request):
+    if request.method == 'GET':
+
+        serializer_context = {
+            'request': request,
+        }
+
+        base_router = 'http://127.0.0.1:8000/api/pending/'
+
+        data = Pending.objects.all()
+        print(data)
+
+        pendings = []
+        if data:
+            raw_d_dict = []
+            for d in data:
+                d_dict = model_to_dict(d)
+                raw_d_dict.append(d_dict)
+
+            set_only = []
+            set_only.append(raw_d_dict[0])
+
+            # drop reqeated
+            for item in raw_d_dict:
+                k = 0
+                for iitem in set_only:
+                    if item['project'] != iitem['project']:
+                        k += 1
+                    else:
+                        break
+
+                    if k == len(set_only):
+                        set_only.append(item)
+
+            for only in set_only:
+                pkid = only['id']
+                if only['recommend'] == '':
+                    temp = []
+                    only['recommend'] = str(temp.append('暂无'))
+                pending_data = PendingSerializer(data=only, context=serializer_context)
+                if pending_data.is_valid():
+                    ordered_li = pending_data.validated_data
+                    ordered_li['pk'] = pkid
+                    ordered_li['url'] = base_router + str(pkid) + '/'
+                    ordered_li = dict(ordered_li)
+                    pendings.append(ordered_li)
+            print(pendings)
+
+            return Response(pendings)
+
+        else:
+            return Response('failed')
+
+
+@api_view(('DELETE','GET',))
+def deletepending(request):
+    if request.method == 'DELETE':
+        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
+        raw_dict_key = list(raw_dict.keys())[0]
+        pending_dict = ast.literal_eval(raw_dict_key)
+
+        delete_id = pending_dict['delid']
+        print(delete_id)
+
+        if not delete_id:
+            return Response('failed')
+        else:
+            get_object_or_404(Pending, pk=int(delete_id)).delete()
+            return Response('success')
+
+    if request.method == 'GET':
+        return Response('No method!')
+
 @api_view(('GET', 'POST',))
 def getprojectinfo(request):
     if request.method == 'POST':
@@ -3244,7 +3413,6 @@ def getprojectinfo(request):
             raw_d_dict = []
             for d in data:
                 d_dict = model_to_dict(d)
-                print(d_dict)
                 raw_d_dict.append(d_dict)
 
             set_only = []
@@ -3263,67 +3431,25 @@ def getprojectinfo(request):
                         set_only.append(item)
 
             for only in set_only:
-                print(only)
                 pkid = only['id']
+                if only['recommend'] == '':
+                    temp = []
+                    only['recommend'] = str(temp.append('暂无'))
                 info_data = ProjectinfoSerializer(data=only, context=serializer_context)
                 if info_data.is_valid():
                     ordered_li = info_data.validated_data
                     ordered_li['pk'] = pkid
                     ordered_li['url'] = base_router + str(pkid) + '/'
                     ordered_li = dict(ordered_li)
+                    ordered_li['extract'] = re.sub('\'', '', ordered_li['extract'].strip(']['))
+                    ordered_li['recommend'] = re.sub('\'', '', ordered_li['recommend'].strip(']['))
                     infos.append(ordered_li)
+                else:
+                    print('暂无推荐词')
             print(infos[0])
 
             return Response(infos[0])
 
-        else:
-            return Response('failed')
-
-    if request.method == 'GET':
-        return Response('No method!')
-
-
-@api_view(('GET', 'POST',))
-def saveproject(request):
-    if request.method == 'POST':
-        raw_dict = dict(zip(request.POST.keys(), request.POST.values()))
-        raw_dict_key = list(raw_dict.keys())[0]
-        project_dict = ast.literal_eval(raw_dict_key)
-        print(project_dict)
-        name = project_dict['name']
-        date = project_dict['date']
-        type = project_dict['type']
-        source = project_dict['source']
-        description = project_dict['description']
-        method = project_dict['method']
-        raw_extract = project_dict['extract']
-        raw_recommend = project_dict['recommend']
-        extracts = ast.literal_eval(raw_extract.strip(']['))
-        recommends = ast.literal_eval(raw_recommend.strip(']['))
-        extract = []
-        if isinstance(extracts, tuple):
-            for extractors_dict in extracts:
-                extracted_words = extractors_dict['originkws']
-                extract.append(extracted_words)
-        else:
-            extracted_words = extracts['originkws']
-            extract.append(extracted_words)
-
-        recommend = []
-        if isinstance(recommends, tuple):
-            for recommends_dict in recommends:
-                recommend_words = recommends_dict['recommendkws']
-                recommend.append(recommend_words)
-        else:
-            recommend_words = recommends['recommendkws']
-            recommend.append(recommend_words)
-
-        print(extract)
-        print(recommend)
-        if not Project.objects.filter(project=name):
-            projectinfo =Projectinfo(project=name, date=date, type=type, source=source, description=description, method=method, extract=','.join(extract), recommend=','.join(recommend))
-            projectinfo.save()
-            return Response('success')
         else:
             return Response('failed')
 
@@ -4063,6 +4189,11 @@ class CorpusViewset(viewsets.ModelViewSet):
 class FilerepoViewset(viewsets.ModelViewSet):
     queryset = Filerepo.objects.all()
     serializer_class = FilerepoSerializer
+
+
+class PendingViewset(viewsets.ModelViewSet):
+    queryset = Pending.objects.all()
+    serializer_class = PendingSerializer
 
 
 class ProjectViewset(viewsets.ModelViewSet):

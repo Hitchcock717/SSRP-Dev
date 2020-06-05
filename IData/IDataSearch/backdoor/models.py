@@ -162,6 +162,18 @@ class CorpusSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('url', 'kws', 'repository', 'pk')
 
 
+class Pending(models.Model):
+	project = models.TextField()
+	extract = models.TextField()
+	recommend = models.TextField()
+
+
+class PendingSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Pending
+		fields = ('url', 'project', 'extract', 'recommend', 'pk')
+
+
 class Project(models.Model):
 	project = models.TextField()
 
@@ -181,12 +193,15 @@ class Projectinfo(models.Model):
 	method = models.TextField()
 	extract = models.TextField()
 	recommend = models.TextField()
+	corpus = models.TextField(default="")
+	subrepo = models.TextField(default="")
+	introduction = models.TextField(default="")
 
 
 class ProjectinfoSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Projectinfo
-		fields = ('url', 'project', 'date', 'type', 'source', 'description', 'method', 'extract', 'recommend', 'pk')
+		fields = ('url', 'project', 'date', 'type', 'source', 'description', 'method', 'extract', 'recommend', 'corpus', 'subrepo', 'introduction', 'pk')
 
 
 class Personal(models.Model):

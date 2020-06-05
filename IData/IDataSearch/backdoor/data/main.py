@@ -15,29 +15,33 @@ import time
 
 class SpiderThreadings(object):
 
-    def cnki_task(self):
+    def cnki_task(self, search_word):
         cnki = CnkispaceSpider()
-        cnki.pandas_save_data()
+        cnki.get_candidate_words(search_word)
         time.sleep(2)
 
-    def cqvip_task(self):
+    def cqvip_task(self, search_word):
         cq = CqvipSpider()
-        cq.save_data()
+        cq.save_data(search_word)
         time.sleep(2)
 
-    def wanfang_task(self):
+    def wanfang_task(self, search_word):
         wf = WFdataspider()
-        wf.pandas_save_data()
+        wf.pandas_save_data(search_word)
         time.sleep(2)
 
 
 def main():
+    """
+    search_word: from前台
+    :return:
+    """
 
     # ************ 爬取 ************* #
     sp = SpiderThreadings()
-    th1 = Thread(target=sp.cnki_task())
-    th2 = Thread(target=sp.cqvip_task())
-    th3 = Thread(target=sp.wanfang_task())
+    th1 = Thread(target=sp.cnki_task(search_word))
+    th2 = Thread(target=sp.cqvip_task(search_word))
+    th3 = Thread(target=sp.wanfang_task(search_word))
     th1.start()
     th2.start()
     th3.start()

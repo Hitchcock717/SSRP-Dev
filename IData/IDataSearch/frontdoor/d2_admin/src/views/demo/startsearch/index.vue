@@ -46,6 +46,8 @@ export default {
     }
   },
   mounted () {
+    console.log(this.$route.params.extractors)
+    console.log(this.$route.params.recommends)
     this.imgLoad()
     window.addEventListener('resize', () => {
       this.bannerHeight = this.$refs.bannerHeight[0].height
@@ -65,27 +67,45 @@ export default {
         message: '正在启动...'
       })
       StartSpider({
-        spiders: ['idata'],
-        extractors: this.$route.query.extractors,
-        recommends: this.$route.query.recommends
+        extractors: this.$route.params.extractors,
+        recommends: this.$route.params.recommends
       })
         .then(res => {
           this.result = res
           console.log(this.result)
-          this.$message({
-            type: 'success',
-            message: '成功启动爬虫!'
-          })
-          this.$refs.searchForm.validate((valid) => {
-            if (valid) {
-              this.$router.push({
-                path: '/notice1',
-                query: {
-                  result: JSON.stringify(this.result)
-                }
-              })
-            }
-          })
+          if (this.result !== 'failed') {
+            this.$message({
+              type: 'success',
+              message: '您的搜索字段成功命中, 立即获取相应数据!'
+            })
+            this.$refs.searchForm.validate((valid) => {
+              if (valid) {
+                this.$router.push({
+                  name: 'notice3',
+                  params: {
+                    result: JSON.stringify(this.result),
+                    time: this.$route.params.time
+                  }
+                })
+              }
+            })
+          } else {
+            this.$message({
+              type: 'info',
+              message: '很遗憾, 暂无现成数据, 请等候邮件通知!'
+            })
+            this.$refs.searchForm.validate((valid) => {
+              if (valid) {
+                this.$router.push({
+                  name: 'notice1',
+                  params: {
+                    extractors: this.$route.params.extractors,
+                    recommends: this.$route.params.recommends
+                  }
+                })
+              }
+            })
+          }
         })
         .catch(err => {
           console.log(err)

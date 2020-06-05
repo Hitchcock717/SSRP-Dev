@@ -139,6 +139,9 @@ export default {
                   message: '个人信息未修改!'
                 })
               }
+              this.$router.push({
+                path: '/index'
+              })
             })
         } else {
           console.log('error submit!!')

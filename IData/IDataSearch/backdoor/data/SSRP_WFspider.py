@@ -29,7 +29,7 @@ class WFdataspider(object):
 
         com = CommonSettings()
         self.headers = com.set_common_headers()
-        self.keyword = com.set_common_keyword()
+        # self.keyword = com.set_common_keyword()
         self.pagesize = com.set_common_pagesize()
         self.csvname = com.set_common_output()[2]
 
@@ -39,13 +39,13 @@ class WFdataspider(object):
         result = self.session.get(url, params=params, timeout=10)
         return result
 
-    def get_init_page(self):
+    def get_init_page(self, search_word):
 
         data = {
             'searchType': 'all',
             'showType': 'detail',
             'pageSize': str(self.pagesize),
-            'searchWord': self.keyword
+            'searchWord': search_word
         }
 
         query_string = parse.urlencode(data)
@@ -78,8 +78,8 @@ class WFdataspider(object):
                 if attempts == 50:
                     break
 
-    def get_list_page(self):
-        page_count = self.get_init_page()
+    def get_list_page(self, search_word):
+        page_count = self.get_init_page(search_word)
         repository = []
         breakpoint = 1
         attempts = 0
@@ -94,7 +94,7 @@ class WFdataspider(object):
                         'searchType': 'all',
                         'pageSize': '20',
                         'page': str(breakpoint),
-                        'searchWord': self.keyword,
+                        'searchWord': search_word,
                         'order': 'correlation',
                         'showType': 'detail',
                         'isCheck': 'check',
@@ -698,9 +698,9 @@ class WFdataspider(object):
                 if attempts == 50:
                     break
 
-    def save_data(self):
+    def save_data(self, search_word):
         try:
-            csv_data = self.get_list_page()
+            csv_data = self.get_list_page(search_word)
             sheet = pyexcel.Sheet()
             for data in csv_data:
                 sheet.row += pyexcel.get_sheet(adict=data, transpose_after=True)
@@ -711,9 +711,9 @@ class WFdataspider(object):
         except Exception as e:
             print('404 error!%s' % e)
 
-    def pandas_save_data(self):
+    def pandas_save_data(self, search_word):
         try:
-            csv_data = self.get_list_page()
+            csv_data = self.get_list_page(search_word)
             dataframe = pd.DataFrame(csv_data)
             print(dataframe)
             dataframe.to_csv(self.csvname, index=False, sep=',', encoding='utf-8')
@@ -725,4 +725,4 @@ class WFdataspider(object):
 
 if __name__ == '__main__':
     wf = WFdataspider()
-    wf.pandas_save_data()
+    wf.pandas_save_data(search_word)

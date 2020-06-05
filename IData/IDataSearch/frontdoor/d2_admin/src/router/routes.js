@@ -9,7 +9,13 @@ const _import = require('@/libs/util.import.' + process.env.NODE_ENV)
 const frameIn = [
   {
     path: '/',
-    redirect: { name: 'index' },
+    redirect: {
+      name: 'index',
+      meta: {
+        title: '欢迎页',
+        auth: true
+      }
+    },
     component: layoutHeaderAside,
     children: [
       // 首页
@@ -94,6 +100,15 @@ const frameIn = [
           auth: true
         },
         component: _import('demo/notice1')
+      },
+      {
+        path: 'notice3',
+        name: 'notice3',
+        meta: {
+          title: '查看检索结果',
+          auth: true
+        },
+        component: _import('demo/notice3')
       },
       {
         path: 'simplesearch',

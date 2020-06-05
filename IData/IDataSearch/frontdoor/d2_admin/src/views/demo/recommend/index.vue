@@ -32,6 +32,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { GetRepository } from '@/api/demo/repository/getrepositoryService'
 export default {
   data () {
     return {
@@ -69,11 +70,12 @@ export default {
       this.$refs.wordForm.validate((valid) => {
         if (valid) {
           this.$router.push({
-            path: '/complete',
-            query: {
+            name: 'complete',
+            params: {
               extractors: JSON.stringify(this.extractors),
               recommends: JSON.stringify(this.recommends),
-              name: JSON.stringify(this.$route.query.name)
+              name: JSON.stringify(this.$route.query.name),
+              corpus: JSON.stringify(this.corpus)
             }
           })
           this.$message({
@@ -93,6 +95,19 @@ export default {
     window.addEventListener('scroll', this.onScroll)
     this.$store.dispatch('expand/extractors/getExtractors')
     this.$store.dispatch('expand/recommends/getRecommends')
+  },
+  mounted () {
+    GetRepository({})
+      .then(res => {
+        this.corpus = res
+        if (this.corpus === 'failed') {
+          var nullData = []
+          nullData.push('暂无数据')
+          this.corpus = nullData
+        } else {
+          this.corpus = this.corpus
+        }
+      })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)

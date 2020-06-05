@@ -6,7 +6,7 @@
 import os
 from urllib import request
 import urllib.request
-from user_agent import *
+from .user_agent import *
 import random
 
 

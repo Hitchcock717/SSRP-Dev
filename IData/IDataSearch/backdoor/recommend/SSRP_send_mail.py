@@ -19,7 +19,7 @@ class YagSendMail(object):
         self.group = [self.main_email, self.back1]
 
     def automatic_send_mail(self, email):
-        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")
+        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")  # qviloameyckebfic
         content = ['自动邮件发送测试']
         try:
             yag.send(email, 'subject', content)

@@ -1,6 +1,13 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
+      <el-steps :active="2" class="process" space="20%" align-center="true">
+        <el-step title="选择检索方式" description="请选择输入论文信息检索或上传词表搜索"></el-step>
+        <el-step title="准备检索" description="请按提示输入检索信息或上传格式正确的词表"></el-step>
+        <el-step title="完成项目创建" description="项目信息保存完毕"></el-step>
+        <el-step title="创建子库" description="获取更有价值的数据并分析"></el-step>
+        <el-step title="完成子库创建" description="子库信息保存完毕"></el-step>
+      </el-steps>
       <el-form :model="uploadForm" enctype="multipart/form-data">
         <el-form-item label="上传词表文件">
           <el-upload
@@ -138,5 +145,8 @@ export default {
   .button-view {
     margin-top: 15px;
     float: right;
+  }
+  .process {
+    margin-bottom: 80px;
   }
 </style>

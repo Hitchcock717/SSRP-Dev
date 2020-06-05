@@ -1,11 +1,6 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
-      <el-form :model="detailForm" ref="detailForm" label-width="150px" class="demo-detailForm" :class='{fixed:isFixed}'>
-        <el-form-item label="分析平台" prop="subrepo">
-          <el-button @click="submit" type="primary" class="analysis">进入</el-button>
-        </el-form-item>
-       </el-form>
        <el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 800px" empty-text="N/A" max-height="500"
         highlight-current-row @current-change="handleChange" ref="simpleTable">
         <el-table-column label="编号" width="60px" type="index"></el-table-column>
@@ -42,12 +37,10 @@ export default {
   data () {
     return {
       height: '',
-      isFixed: '',
       currentPage: 1,
       currentRow: '',
       pagesize: 50,
-      tableData: [],
-      detailForm: {}
+      tableData: []
     }
   },
   computed: {
@@ -56,16 +49,6 @@ export default {
     ])
   },
   methods: {
-    onScroll () {
-      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-      var offsetTop = this.$refs.wordForm.offsetTop
-      console.log('scrollTop:' + scrollTop + 'offsetTop:' + offsetTop)
-      if (scrollTop > offsetTop) {
-        this.isFixed = true
-      } else {
-        this.isFixed = false
-      }
-    },
     handleSizeChange (val) {
       this.pagesize = val
     },
@@ -151,10 +134,6 @@ export default {
 </script>
 
 <style scoped>
-  .demo-detailForm {
-    margin-right: 100px;
-    margin-top: 150px;
-  }
   .demo-table-expand {
     font-size: 0;
   }

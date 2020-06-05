@@ -21,12 +21,6 @@
               <el-option class="file" v-for="(file, index) in filerepos" :key="index" :value="file.name">{{file.name}}</el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="启动分析">
-          <el-button type="primary"
-            @click="Analyze()"
-            :disabled="!textForm.subject"
-            class="button-add">分 析</el-button>
-        </el-form-item>
         <div v-if="textForm.subject=='volume'">
           <el-form-item label="选择日期范围">
             <el-date-picker
@@ -41,6 +35,12 @@
             </el-date-picker>
           </el-form-item>
         </div>
+        <el-form-item label="启动分析">
+          <el-button type="primary"
+            @click="Analyze()"
+            :disabled="!textForm.subject"
+            class="button-add">分 析</el-button>
+        </el-form-item>
         <div v-if="textForm.subject=='relation'">
           <el-form-item label="启动绘制">
             <el-button type="primary"
@@ -62,7 +62,7 @@
         </el-form-item>
         <el-tabs class="visualization">
           <el-tab-pane label="标题高频词" name="title">
-            <ve-wordcloud :data="titleData"></ve-wordcloud>
+            <ve-wordcloud :data="titleData" :loading="loading" :data-empty="dataEmpty"></ve-wordcloud>
           </el-tab-pane>
           <el-tab-pane label="关键词高频词" name="kws">
             <ve-wordcloud :data="kwsData"></ve-wordcloud>
@@ -99,6 +99,7 @@ import { VolumeAnalyze } from '@/api/demo/analysis/volumeService'
 import { RelationAnalyze } from '@/api/demo/analysis/relationService'
 import { ClassifyAnalyze } from '@/api/demo/analysis/classifyService'
 import { CooperationAnalyze } from '@/api/demo/analysis/cooperationService'
+import 'v-charts/lib/style.css'
 // import { mapState } from 'vuex'
 export default {
   data () {
@@ -156,7 +157,8 @@ export default {
         columns: ['word', 'count'],
         rows: []
       },
-      loading: true
+      loading: false,
+      dataEmpty: false
     }
   },
   methods: {
@@ -216,6 +218,8 @@ export default {
       this.network = new Network(container, data, options)
     },
     Analyze () {
+      this.loading = true
+      this.dataEmpty = true
       if (this.textForm.subject === 'frequency') {
         FrequencyAnalyze({
           source: this.textForm.source
@@ -234,6 +238,9 @@ export default {
                 type: 'success',
                 message: '解析成功, 请点击下方tab!'
               })
+              this.dataEmpty = !this.chartData.rows.length
+              console.log('1')
+              this.loading = false
             } else {
               this.$message({
                 type: 'info',
@@ -349,7 +356,7 @@ export default {
 <style scoped>
  .demo-textForm {
   margin-right: 50px;
-  margin-top: 400px;
+  margin-top: 100px;
  }
  .select-item {
   width: 300px;

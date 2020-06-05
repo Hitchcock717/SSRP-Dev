@@ -1,30 +1,19 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
+      <el-steps :active="4" class="process" space="19%" align-center="true">
+        <el-step title="选择检索方式" description="请选择输入论文信息检索或上传词表搜索"></el-step>
+        <el-step title="准备检索" description="请按提示输入检索信息或上传格式正确的词表"></el-step>
+        <el-step title="完成项目创建" description="项目信息保存完毕"></el-step>
+        <el-step title="创建子库" description="获取更有价值的数据并分析"></el-step>
+        <el-step title="完成子库创建" description="子库信息保存完毕"></el-step>
+      </el-steps>
       <el-form :model="ruleForm" ref="ruleForm" label-width="250px" class="demo-ruleForm" :class='{fixed:isFixed}'>
         <el-form-item label="子库名称" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>
+          <el-input v-model="ruleForm.name" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="子库说明" prop="desc">
-          <el-input type="textarea" v-model="ruleForm.desc"></el-input>
-        </el-form-item>
-        <el-form-item label="子库存储位置" prop="region">
-          <el-upload
-            class="upload"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            multiple
-            :limit="1"
-            :on-exceed="handleExceed"
-            :file-list="fileList">
-            <el-button size=”small“ type="primary">浏览</el-button>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="创建时间" required>{{gettime}}</el-form-item>
-        <el-form-item label="领域词表" prop="subrepo">
-          <el-button @click="subrepo" type="primary" class="nextpage">浏览</el-button>
+          <el-input type="textarea" v-model="ruleForm.desc" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="选择发表时间" prop="date">
           <el-date-picker
@@ -111,14 +100,13 @@
 
 <script>
 import { GetExpression } from '@/api/demo/expressionService'
+import { GetSubrepo } from '@/api/demo/getsubrepoService'
 // import { mapState } from 'vuex'
 export default {
   data () {
     return {
       tableData: [],
-      fileList: [],
       isFixed: '',
-      gettime: this.getTime(),
       pickerOptions: {
         shortcuts: [{
           text: '本月',
@@ -147,6 +135,23 @@ export default {
         desc: ''
       }
     }
+  },
+  mounted () {
+    GetSubrepo({})
+      .then(res => {
+        var feedback = res
+        if (feedback !== 'failed') {
+          let name = 'name'
+          let intro = 'intro'
+          this.ruleForm.name = feedback[name]
+          this.ruleForm.desc = feedback[intro]
+        } else {
+          this.$message({
+            type: 'info',
+            message: '暂无子库信息, 请重试!'
+          })
+        }
+      })
   },
   methods: {
     addRule () {
@@ -200,26 +205,6 @@ export default {
       } else {
         this.isFixed = false
       }
-    },
-    handleRemove (file, fileList) {
-      console.log(file, fileList)
-    },
-    handlePreview (file) {
-      console.log(file)
-    },
-    handleExceed (files, fileList) {
-      this.$message.warning('当前限制选择1个文件')
-    },
-    beforeRemove (file, fileList) {
-      return this.$confirm('确定移除 $(file.name}?')
-    },
-    getTime: function () {
-      // var _this = this
-      let yy = new Date().getFullYear()
-      let mm = new Date().getMonth() + 1
-      let dd = new Date().getDate()
-      let gettime = yy + '-' + mm + '-' + dd
-      return gettime
     },
     subrepo () {
       this.$router.push('/repository')
@@ -296,7 +281,7 @@ export default {
 <style scoped>
  .demo-ruleForm {
     margin-right: 200px;
-    margin-top: 100px;
+    margin-top: 70px;
  }
  .el-input {
    width: 500px;

@@ -30,7 +30,7 @@ class CqvipSpider(object):
 
         com = CommonSettings()
         self.headers = com.set_common_headers()
-        self.keyword = com.set_common_keyword()
+        # self.keyword = com.set_common_keyword()
         self.pagesize = com.set_common_pagesize()
         self.csvname = com.set_common_output()[1]
 
@@ -40,12 +40,12 @@ class CqvipSpider(object):
         result.encoding = result.apparent_encoding
         return result
 
-    def get_init_page(self):
+    def get_init_page(self, search_word):
         data = {
-            'key': 'U=' + self.keyword,
+            'key': 'U=' + search_word,
             'isNoteHistory': '1',
             'isLog': '1',
-            'indexKey': self.keyword,
+            'indexKey': search_word,
             'indexIdentifier': 'U'
         }
         attempts = 0
@@ -80,11 +80,11 @@ class CqvipSpider(object):
                 if attempts == 100:
                     break
 
-    def get_qikan_page(self):
+    def get_qikan_page(self, search_word):
         containers = []
         null = None  # python中的None vs js中的Null
-        total_count = self.get_init_page()[0]
-        page_count = self.get_init_page()[1]
+        total_count = self.get_init_page(search_word)[0]
+        page_count = self.get_init_page(search_word)[1]
         breakpoint = 1
         attempts = 0
         success = False
@@ -149,12 +149,12 @@ class CqvipSpider(object):
                 if attempts == 100:
                     break
 
-    def get_detail_page(self):
+    def get_detail_page(self, search_word):
         breakpoint = 0
         attempts = 0
         repos = []
         success = False
-        containers = self.get_qikan_page()
+        containers = self.get_qikan_page(search_word)
         while attempts < 100 and not success:
             try:
                 while breakpoint < len(containers):
@@ -305,9 +305,9 @@ class CqvipSpider(object):
                 if attempts == 100:
                     break
 
-    def save_data(self):
+    def save_data(self, search_word):
         try:
-            csv_data = self.get_detail_page()
+            csv_data = self.get_detail_page(search_word)
             sheet = pyexcel.Sheet()
             for data in csv_data:
                 sheet.row += pyexcel.get_sheet(adict=data, transpose_after=True)
@@ -318,9 +318,9 @@ class CqvipSpider(object):
         except Exception as e:
             print('404 error!%s' % e)
 
-    def pandas_save_data(self):
+    def pandas_save_data(self, search_word):
         try:
-            csv_data = self.get_detail_page()
+            csv_data = self.get_detail_page(search_word)
             dataframe = pd.DataFrame(csv_data)
             print(dataframe)
             dataframe.to_csv(self.csvname, index=False, sep=',', encoding='utf-8')
@@ -332,4 +332,4 @@ class CqvipSpider(object):
 
 if __name__ == '__main__':
     cq = CqvipSpider()
-    cq.pandas_save_data()
+    cq.pandas_save_data(search_word)

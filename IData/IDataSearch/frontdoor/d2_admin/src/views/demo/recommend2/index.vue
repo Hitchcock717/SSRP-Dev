@@ -35,6 +35,7 @@
 <script>
 import { DeleteExtractor } from '@/api/demo/deletextractorService'
 import { DeleteRecommend } from '@/api/demo/deleterecommendService'
+import { GetRepository } from '@/api/demo/repository/getrepositoryService'
 // import { mapState } from 'vuex'
 export default {
   data () {
@@ -54,6 +55,18 @@ export default {
       this.extractData = this.results[0]
       this.recommendData = this.results[1]
     }
+
+    GetRepository({})
+      .then(res => {
+        this.corpus = res
+        if (this.corpus === 'failed') {
+          var nullData = []
+          nullData.push('暂无数据')
+          this.corpus = nullData
+        } else {
+          this.corpus = this.corpus
+        }
+      })
   },
   methods: {
     deleteExtractor (scope) {
@@ -112,11 +125,12 @@ export default {
       this.$refs.wordForm.validate((valid) => {
         if (valid) {
           this.$router.push({
-            path: '/complete',
-            query: {
+            name: 'complete',
+            params: {
               extractors: JSON.stringify(this.extractData),
               recommends: JSON.stringify(this.recommendData),
-              name: JSON.stringify(this.$route.query.name)
+              name: JSON.stringify(this.$route.query.name),
+              corpus: JSON.stringify(this.corpus)
             }
           })
           this.$message({

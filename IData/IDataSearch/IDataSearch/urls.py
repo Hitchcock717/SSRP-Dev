@@ -19,7 +19,7 @@ from rest_framework import routers
 
 from django.conf.urls import url
 from backdoor import views
-from backdoor.views import MessageViewSet, UploadcorpusViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset, FilerepoViewset, ProjectViewset, ProjectinfoViewset, PersonalViewset
+from backdoor.views import MessageViewSet, UploadcorpusViewSet, ExtractorViewset, RecommedViewset, SimplesearchViewset, DetailsearchViewset, TempViewset, FolderViewset, CollectionViewset, RepositoryViewset, CorpusViewset, FilerepoViewset, PendingViewset, ProjectViewset, ProjectinfoViewset, PersonalViewset
 
 router = routers.DefaultRouter()
 router.register('messages', MessageViewSet)
@@ -34,6 +34,7 @@ router.register('collection', CollectionViewset)
 router.register('repository', RepositoryViewset)
 router.register('corpus', CorpusViewset)
 router.register('filerepo', FilerepoViewset)
+router.register('pending', PendingViewset)
 router.register('project', ProjectViewset)
 router.register('projectinfo', ProjectinfoViewset)
 router.register('personal', PersonalViewset)
@@ -44,6 +45,8 @@ urlpatterns = [
 
     # http://localhost:8000/api/<router-viewsets>
     path('api/', include(router.urls)),
+
+    url('api/scrapy/', views.scrapy),
 
     url('api/extract/', views.extract),
 
@@ -64,6 +67,8 @@ urlpatterns = [
     url('api/getrecordrawId/', views.getrecordrawId),
 
     url('api/getexpression/', views.getexpression),
+
+    url('api/getsubrepo/', views.getsubrepo),
 
     url('api/filteresult/', views.filteresult),
 
@@ -112,6 +117,10 @@ urlpatterns = [
     url('api/addproject/', views.addproject),
 
     url('api/deleteproject/', views.deleteproject),
+
+    url('api/getpending/', views.getpending),
+
+    url('api/deletepending/', views.deletepending),
 
     url('api/savepersonal/', views.savepersonal),
 

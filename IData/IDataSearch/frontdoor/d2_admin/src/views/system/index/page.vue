@@ -20,7 +20,12 @@
             </p>
           </el-popover>
         </div>
-        <el-button type="primary" size="large" class="enter" @click="submit">创 建 项 目</el-button>
+        <el-tooltip class="item1" effect="dark" content="首次进入请完善个人信息" placement="top">
+          <el-button type="primary" size="large" class="enter1" @click="personal">填 写 个 人 信 息</el-button>
+        </el-tooltip>
+        <el-tooltip class="item2" effect="dark" content="如有疑问请先阅读平台说明文档" placement="top">
+          <el-button type="primary" size="large" class="enter2" @click="submit">创 建 项 目</el-button>
+        </el-tooltip>
         <d2-help/>
       </template>
     </d2-page-cover>
@@ -45,6 +50,11 @@ export default {
       this.$router.push({
         path: '/project'
       })
+    },
+    personal () {
+      this.$router.push({
+        path: '/personal'
+      })
     }
   }
 }
@@ -55,7 +65,7 @@ export default {
   .logo {
     width: 120px;
   }
-  .enter {
+  .enter2 {
     margin-top: 15px;
     margin-bottom: 15px;
   }

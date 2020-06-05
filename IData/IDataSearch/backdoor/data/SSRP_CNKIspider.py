@@ -12,7 +12,6 @@ import re
 import csv
 import math
 import time
-import random
 import codecs
 import socket
 from requests_html import HTMLSession
@@ -20,8 +19,8 @@ from urllib import parse
 from bs4 import BeautifulSoup
 import urllib.request
 import ssl
+from .settings import *
 ssl._create_default_https_context = ssl._create_unverified_context
-from settings import *
 
 
 class CnkispaceSpider(object):
@@ -34,18 +33,18 @@ class CnkispaceSpider(object):
         com = CommonSettings()
         self.headers = com.set_common_headers()
         print('伪造新的请求头为: %s' % self.headers)
-        self.keyword = com.set_common_keyword()
+        # self.keyword = com.set_common_keyword()
         self.pagesize = com.set_common_pagesize()
         self.csvname = com.set_common_output()[0]
 
         print('----------------- Spiders Begin -----------------')
 
-    def get_candidate_words(self):
+    def get_candidate_words(self, search_word):
         # for search_word in self.keyword:
             # self.sqlite3_save_data(search_word)
-        csv_data = self.get_detail_page(self.keyword)
+        csv_data = self.get_detail_page(search_word)
         self.sqlite3_save_data(csv_data)
-        print('目标词%s全部存储完成!' % self.keyword)
+        print('目标词%s全部存储完成!' % search_word)
         print('----------------- Spiders Over -----------------')
 
     def get_init_page(self, search_word):
@@ -385,5 +384,5 @@ class CnkispaceSpider(object):
 
 if __name__ == '__main__':
     cnki = CnkispaceSpider()
-    cnki.get_candidate_words()
+    cnki.get_candidate_words(search_word)
 

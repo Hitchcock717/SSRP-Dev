@@ -15,6 +15,12 @@
           <el-table-column label="推荐词汇" width="300px" align="center" prop="recommend"></el-table-column>
           <el-table-column label="检索方式" width="200px" align="center" prop="method"></el-table-column>
         </el-table>
+        <el-table :data="repoData" class="repo"
+            style="width: 800px" empty-text="N/A" max-height="550">
+          <el-table-column label="子库名称" width="300px" align="center" prop="subrepo"></el-table-column>
+          <el-table-column label="子库说明" width="300px" align="center" prop="introduction"></el-table-column>
+          <el-table-column label="项目自定义词表" width="200px" align="center" prop="corpus"></el-table-column>
+        </el-table>
     </d2-page-cover>
   </d2-container>
 </template>
@@ -24,6 +30,9 @@
     margin-bottom: 15px;
   }
   .word {
+    margin-top: 20px;
+  }
+  .repo {
     margin-top: 20px;
   }
 </style>
@@ -36,7 +45,8 @@ export default {
     return {
       selectedProject: this.$route.query.selectedProject,
       tableData: [],
-      wordData: []
+      wordData: [],
+      repoData: []
     }
   },
   created () {
@@ -59,12 +69,18 @@ export default {
           let method = 'method'
           let extract = 'extract'
           let recommend = 'recommend'
+          let corpus = 'corpus'
+          let introduction = 'introduction'
+          let subrepo = 'subrepo'
 
           var tableDict1 = { 'project': this.result[project], 'date': this.result[date], 'type': this.result[type], 'source': this.result[source] }
           this.tableData = Array(1).fill(tableDict1)
 
           var tableDict2 = { 'method': this.result[method], 'extract': this.result[extract], 'recommend': this.result[recommend] }
           this.wordData = Array(1).fill(tableDict2)
+
+          var tableDict3 = { 'corpus': this.result[corpus], 'subrepo': this.result[subrepo], 'introduction': this.result[introduction] }
+          this.repoData = Array(1).fill(tableDict3)
         }
       })
   },

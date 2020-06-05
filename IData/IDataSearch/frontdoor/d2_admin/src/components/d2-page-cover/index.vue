@@ -14,6 +14,9 @@
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+  position: sticky;
+  z-index: 1;
+  top: 20px;
   .d2-page-cover__logo {
     img {
       width: 200px;

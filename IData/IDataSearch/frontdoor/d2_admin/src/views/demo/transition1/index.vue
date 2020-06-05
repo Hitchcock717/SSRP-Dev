@@ -1,6 +1,13 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
+      <el-steps :active="1" class="process" space="20%" align-center="true">
+        <el-step title="选择检索方式" description="请选择输入论文信息检索或上传词表搜索"></el-step>
+        <el-step title="准备检索" description="请按提示输入检索信息或上传格式正确的词表"></el-step>
+        <el-step title="完成项目创建" description="项目信息保存完毕"></el-step>
+        <el-step title="创建子库" description="获取更有价值的数据并分析"></el-step>
+        <el-step title="完成子库创建" description="子库信息保存完毕"></el-step>
+      </el-steps>
       <div class="block">
         <el-carousel height="200px" type="card" :interval="4000">
           <el-carousel-item v-for="item in imgList" :key="item.id">
@@ -123,5 +130,8 @@ export default {
   }
   .el-carousel__item:nth-child(2n+1) {
      background-color: #d3dce6;
+  }
+  .process {
+    margin-bottom: 80px;
   }
 </style>

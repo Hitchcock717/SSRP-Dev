@@ -1,6 +1,13 @@
 <template>
   <d2-container>
     <d2-page-cover>
+      <el-steps :active="2" class="process" space="20%" align-center="true">
+        <el-step title="选择检索方式" description="请选择输入论文信息检索或上传词表搜索"></el-step>
+        <el-step title="准备检索" description="请按提示输入检索信息或上传格式正确的词表"></el-step>
+        <el-step title="完成项目创建" description="项目信息保存完毕"></el-step>
+        <el-step title="创建子库" description="获取更有价值的数据并分析"></el-step>
+        <el-step title="完成子库创建" description="子库信息保存完毕"></el-step>
+      </el-steps>
       <el-form :model="textForm" ref="textForm" label-width="250px" class="demo-textForm">
         <el-form-item>
           <el-button size="default" @click="handleSubmit" type="primary" class="button-save">查看推荐词汇</el-button>
@@ -83,7 +90,6 @@ export default {
 <style scoped>
  .demo-textForm {
   margin-right: 200px;
-  margin-top: 200px;
  }
  .button-save {
   float:right;
