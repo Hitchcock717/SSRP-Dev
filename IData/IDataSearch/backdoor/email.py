@@ -9,9 +9,9 @@ import yagmail
 class SendMail(object):
 
     def __init__(self):
-        self.to_email = 'zhaobowen9876@gmail.com'
-        self.from_email = '841057707@qq.com'
-        self.password = 'qviloameyckebfic'
+        self.to_email = '************'
+        self.from_email = '************'
+        self.password = '************'
         self.back1 = '************'
         self.group = []
 
