@@ -35,7 +35,7 @@ def main():
         list[dict{}]
     """
     CooperateAnalysis().build_au_relation(two_aus, more_aus)
-    ClassifyAnalysis().simple_LDA_analysis(texts)
+    ClassifyAnalysis().simple_LDA_analysis(texts, num_topics, num_words)
     WordVector().build_network_scipy_data()
     CloudAnalysis().keyword_count(words)
     CloudAnalysis().title_or_abstract_count(words)

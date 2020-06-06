@@ -1,7 +1,7 @@
 <template>
   <d2-container class="page">
     <d2-page-cover>
-      <el-steps :active="5" class="process" space="20%" align-center="true">
+      <el-steps :active="5" class="process" space="20%" align-center=true>
         <el-step title="选择检索方式" description="请选择输入论文信息检索或上传词表搜索"></el-step>
         <el-step title="准备检索" description="请按提示输入检索信息或上传格式正确的词表"></el-step>
         <el-step title="完成项目创建" description="项目信息保存完毕"></el-step>
@@ -30,7 +30,7 @@
         </el-table-column>
         <el-table-column prop="raw_count" label="过滤前搜索结果数" width="100px" align="center">
         </el-table-column>
-        <el-table-column prop="filter_count" label="过滤后搜索结果数" width="100px" align="center">
+        <el-table-column prop="filter_search_count" label="过滤后搜索结果数" width="100px" align="center">
         </el-table-column>
       </el-table>
       <el-button size="default" @click="submit" type="primary" class="confirm">确 定</el-button>
@@ -44,14 +44,15 @@ export default {
   data () {
     return {
       result: JSON.parse(this.$route.query.result),
-      tableData: []
+      tableData: [],
+      gettime: this.getTime()
     }
   },
   mounted () {
     let query = 'query'
     let raw = 'raw_count'
-    let filter = 'filter_count'
-    var tableDict1 = { 'query': this.result[query], 'raw_count': this.result[raw], 'filter_count': this.result[filter] }
+    let filter = 'filter_search_count'
+    var tableDict1 = { 'query': JSON.stringify(this.result[query]), 'raw_count': this.result[raw], 'filter_search_count': this.result[filter] }
     this.tableData = Array(1).fill(tableDict1)
   },
   methods: {

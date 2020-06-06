@@ -3178,7 +3178,7 @@ def saveproject(request):
         # print(recommend)
         print(Project.objects.filter(project=name))
         print(Projectinfo.objects.filter(project=name))
-        if Project.objects.filter(project=name) and not Projectinfo.objects.filter(project=name):
+        if not Projectinfo.objects.filter(project=name):
             projectinfo = Projectinfo(project=name, date=date, type=type, source=source, description=description, method=method, extract=','.join(extract), recommend=','.join(recommend), corpus=corpus, subrepo=subrepo, introduction=introduction)
             projectinfo.save()
             return Response('success')
@@ -4059,6 +4059,8 @@ def classifyanalyze(request):
         classify_dict = ast.literal_eval(raw_dict_key)
         source = classify_dict['source']
         print(source)
+        theme = int(classify_dict['theme'])
+        themeword = int(classify_dict['themeword'])
 
         if Detailsearch.objects.filter(name=source):
             data = Detailsearch.objects.filter(name=source)
@@ -4072,7 +4074,7 @@ def classifyanalyze(request):
 
             from .analysis.SSRP_classify_analysis import ClassifyAnalysis
             classify = ClassifyAnalysis()
-            lda_data = classify.simple_LDA_analysis(abs)
+            lda_data = classify.simple_LDA_analysis(abs, theme, themeword)
             return Response(lda_data)
         else:
             return Response('failed')

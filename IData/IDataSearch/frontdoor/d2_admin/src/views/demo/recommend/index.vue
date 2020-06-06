@@ -117,7 +117,7 @@ export default {
 
 <style scoped>
  .demo-wordForm {
-  margin-right: 100px;
+  margin-right: 200px;
   margin-top: 50px;
  }
  .button-save {

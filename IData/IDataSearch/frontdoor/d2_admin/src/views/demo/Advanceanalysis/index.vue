@@ -21,6 +21,29 @@
               <el-option class="file" v-for="(file, index) in filerepos" :key="index" :value="file.name">{{file.name}}</el-option>
             </el-select>
         </el-form-item>
+        <div v-if="textForm.subject=='classify'">
+          <el-form-item label="自定义主题数">
+            <el-select v-model="textForm.theme" class='select-theme' placeholder="请选择">
+              <el-option label="1" value="1"></el-option>
+              <el-option label="2" value="2"></el-option>
+              <el-option label="3" value="3"></el-option>
+              <el-option label="4" value="4"></el-option>
+              <el-option label="5" value="5"></el-option>
+              <el-option label="6" value="6"></el-option>
+              <el-option label="7" value="7"></el-option>
+              <el-option label="8" value="8"></el-option>
+              <el-option label="9" value="9"></el-option>
+              <el-option label="10" value="10"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="自定义主题词数">
+            <el-select v-model="textForm.themeword" class='select-themeword' placeholder="请选择">
+              <el-option label="5" value="5"></el-option>
+              <el-option label="10" value="10"></el-option>
+              <el-option label="15" value="15"></el-option>
+            </el-select>
+          </el-form-item>
+        </div>
         <div v-if="textForm.subject=='volume'">
           <el-form-item label="选择日期范围">
             <el-date-picker
@@ -60,34 +83,31 @@
         <el-form-item>
           <hr/>
         </el-form-item>
-        <el-tabs class="visualization">
-          <el-tab-pane label="标题高频词" name="title">
-            <ve-wordcloud :data="titleData" :loading="loading" :data-empty="dataEmpty"></ve-wordcloud>
-          </el-tab-pane>
-          <el-tab-pane label="关键词高频词" name="kws">
-            <ve-wordcloud :data="kwsData"></ve-wordcloud>
-          </el-tab-pane>
-          <el-tab-pane label="摘要高频词" name="abstract">
-            <ve-wordcloud :data="abstractData"></ve-wordcloud>
-          </el-tab-pane>
-          <el-tab-pane label="期刊发文量" name="volume">
-            <ve-pie :data="volumeData"></ve-pie>
-          </el-tab-pane>
-          <el-tab-pane label="词关系网络" name="relation">
-            <div id="visualization" class="network">
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="主题分布图" name="classify">
-            <div v-for="(item, index) in chartList" :key="index">
-              <ve-bar :data="item"></ve-bar>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="作者合作网络" name="cooperation">
-            <div id="cooperation" class="cooperation">
-            </div>
-          </el-tab-pane>
-        </el-tabs>
       </el-form>
+      <div class="block1" v-if="textForm.subject=='frequency'">
+        <d2-text-center>标题高频词词云图</d2-text-center>
+        <ve-wordcloud :data="titleData"></ve-wordcloud>
+        <d2-text-center>关键词高频词词云图</d2-text-center>
+        <ve-wordcloud :data="kwsData"></ve-wordcloud>
+        <d2-text-center>摘要高频词词云图</d2-text-center>
+        <ve-wordcloud :data="abstractData"></ve-wordcloud>
+      </div>
+      <div class="block2" v-if="textForm.subject=='volume'">
+        <d2-text-center>期刊发文量饼图</d2-text-center>
+        <ve-pie :data="volumeData"></ve-pie>
+      </div>
+      <div class="block3" v-if="textForm.subject=='relation'">
+        <div id="visualization" class="network"></div>
+      </div>
+      <div class="block4" v-if="textForm.subject=='classify'">
+        <div v-for="(item, index) in chartList" :key="index" class="classify">
+          <d2-text-center>主题序号: {{ index + 1 }}</d2-text-center>
+          <ve-bar :data="item"></ve-bar>
+        </div>
+      </div>
+      <div class="block5" v-if="textForm.subject=='cooperation'">
+        <div id="cooperation" class="cooperation"></div>
+      </div>
     </d2-page-cover>
   </d2-container>
 </template>
@@ -111,7 +131,9 @@ export default {
       textForm: {
         subject: '',
         source: '',
-        date: ''
+        date: '',
+        theme: '',
+        themeword: ''
       },
       pickerOptions: {
         shortcuts: [{
@@ -156,9 +178,7 @@ export default {
       volumeData: {
         columns: ['word', 'count'],
         rows: []
-      },
-      loading: false,
-      dataEmpty: false
+      }
     }
   },
   methods: {
@@ -218,8 +238,6 @@ export default {
       this.network = new Network(container, data, options)
     },
     Analyze () {
-      this.loading = true
-      this.dataEmpty = true
       if (this.textForm.subject === 'frequency') {
         FrequencyAnalyze({
           source: this.textForm.source
@@ -228,19 +246,16 @@ export default {
             var result = res
             console.log(result)
             if (result !== 'failed') {
+              this.$message({
+                type: 'success',
+                message: '解析成功!'
+              })
               let kws = 'kws'
               let title = 'title'
               let abstract = 'abstract'
               this.titleData.rows = result[title]
               this.kwsData.rows = result[kws]
               this.abstractData.rows = result[abstract]
-              this.$message({
-                type: 'success',
-                message: '解析成功, 请点击下方tab!'
-              })
-              this.dataEmpty = !this.chartData.rows.length
-              console.log('1')
-              this.loading = false
             } else {
               this.$message({
                 type: 'info',
@@ -266,7 +281,7 @@ export default {
               this.volumeData.rows = result
               this.$message({
                 type: 'success',
-                message: '解析成功, 请点击下方tab!'
+                message: '解析成功!'
               })
             } else {
               this.$message({
@@ -289,7 +304,7 @@ export default {
               this.edges = result[edges]
               this.$message({
                 type: 'success',
-                message: '解析成功, 请点击下方tab!'
+                message: '解析成功!'
               })
             } else {
               this.$message({
@@ -300,7 +315,9 @@ export default {
           })
       } else if (this.textForm.subject === 'classify') {
         ClassifyAnalyze({
-          source: this.textForm.source
+          source: this.textForm.source,
+          theme: this.textForm.theme,
+          themeword: this.textForm.themeword
         })
           .then(res => {
             var result = res
@@ -309,7 +326,7 @@ export default {
               this.chartList = result
               this.$message({
                 type: 'success',
-                message: '解析成功, 请点击下方tab!'
+                message: '解析成功!'
               })
             } else {
               this.$message({
@@ -332,7 +349,7 @@ export default {
               this.edges2 = result[edges]
               this.$message({
                 type: 'success',
-                message: '解析成功, 请点击下方tab!'
+                message: '解析成功!'
               })
             } else {
               this.$message({
@@ -355,7 +372,7 @@ export default {
 
 <style scoped>
  .demo-textForm {
-  margin-right: 50px;
+  margin-right: 100px;
   margin-top: 100px;
  }
  .select-item {
@@ -372,6 +389,9 @@ export default {
  .cooperation {
   width: 800px;
   height: 600px;
+ }
+ .classify {
+  width: 800px;
  }
  .network {
   height: 400px;

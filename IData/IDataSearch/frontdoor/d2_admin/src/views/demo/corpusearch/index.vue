@@ -8,7 +8,7 @@
         <el-step title="创建子库" description="获取更有价值的数据并分析"></el-step>
         <el-step title="完成子库创建" description="子库信息保存完毕"></el-step>
       </el-steps>
-      <el-form :model="uploadForm" enctype="multipart/form-data">
+      <el-form :model="uploadForm" enctype="multipart/form-data" class="demo-uploadForm">
         <el-form-item label="上传词表文件">
           <el-upload
             action="http://127.0.0.1:8000/api/mockupload/"
@@ -141,6 +141,9 @@ export default {
 <style scoped>
   .button-save {
     float: right;
+  }
+  .demo-uploadForm {
+    margin-left: 150px;
   }
   .button-view {
     margin-top: 15px;

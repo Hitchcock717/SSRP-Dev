@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <el-dialog title="选择预测版块" :visible.sync="dialogFormVisible">
+    <el-dialog title="选择预测版块" :visible.sync="dialogFormVisible" :modal-append-to-body='false' class="dialog">
       <el-form :model="analysisForm">
         <el-form-item label="标题分类预测" :label-width="formLabelWidth">
           <el-button type="primary" @click="titlePrediction()">进 入</el-button>
