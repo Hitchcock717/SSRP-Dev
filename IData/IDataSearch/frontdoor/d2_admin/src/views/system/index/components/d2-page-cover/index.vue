@@ -3,7 +3,7 @@
     <div class="d2-page-cover__logo">
       <slot/>
     </div>
-    <p class="d2-page-cover__title">SSRP Platform 1.1.0</p>
+    <p class="d2-page-cover__title">Satellite 1.1.0</p>
     <p class="d2-page-cover__sub-title">科研雷达demo平台---基于d2.admin框架</p>
     <p class="d2-page-cover__build-time">FINAL BUILD TIME {{$buildTime}}</p>
     <slot name="footer"/>

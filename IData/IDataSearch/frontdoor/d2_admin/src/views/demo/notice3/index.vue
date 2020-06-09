@@ -70,6 +70,12 @@ export default {
       let hh = new Date().getHours()
       let min = new Date().getMinutes()
       let sec = new Date().getSeconds()
+      if (hh < 10) {
+        hh = '0' + hh
+      }
+      if (min < 10) {
+        min = '0' + min
+      }
       if (sec < 10) {
         sec = '0' + sec
       }

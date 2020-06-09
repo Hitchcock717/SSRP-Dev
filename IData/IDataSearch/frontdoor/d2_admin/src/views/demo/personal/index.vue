@@ -64,7 +64,7 @@ export default {
           { required: true, message: '请选择性别', trigger: 'change' }
         ],
         age: [
-          { required: true, message: '请输入姓名', trigger: 'blur' }
+          { required: true, message: '请输入年龄', trigger: 'blur' }
         ],
         mail: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },

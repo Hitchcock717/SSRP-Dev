@@ -37,7 +37,7 @@ class YagSendMail(object):
             print(e)
 
     def automatic_send_attachment(self, email):
-        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")
+        yag = yagmail.SMTP(user="841057707@qq.com", password="qviloameyckebfic", host="smtp.qq.com")
         import datetime
         today = datetime.date.today()
         title = '【' + str(today) + '】' + '每日推荐论文速递'
@@ -51,14 +51,14 @@ class YagSendMail(object):
     def long_interval_send_mail(self, email):
         import time
         print('现在时间时间是：\n' + time.strftime('%H:%M:%S', time.localtime()))
-        # 每天早上10点10分定时推送
+        # 默认每天早上10点10分定时推送
         hour = 10
-        minute = 10
+        minute = 25
         second = 00
         while True:
             current_time = time.localtime(time.time())
             if (current_time.tm_hour == hour) and (current_time.tm_min == minute) and (current_time.tm_sec == second):
-                SSRPRecommend(get_params()[0]).pool_recommend_data()
+                # SSRPRecommend(get_params()[0]).pool_recommend_data()
                 print('时间到，开始自动发送邮件')
                 time.sleep(1)
                 self.automatic_send_attachment(email)

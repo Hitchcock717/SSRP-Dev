@@ -14,7 +14,7 @@
       </div>
       <el-form :model="searchForm" ref="searchForm" label-width="100px" class="demo-Form">
         <el-form-item>
-          <el-button type="primary" class="spider" @click="startSpider">启动爬虫</el-button>
+          <el-button type="primary" class="spider" @click="startSpider">开始检索</el-button>
         </el-form-item>
       </el-form>
     </d2-page-cover>

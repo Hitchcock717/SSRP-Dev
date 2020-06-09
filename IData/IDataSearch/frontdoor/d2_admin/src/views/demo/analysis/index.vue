@@ -23,7 +23,7 @@
         <el-form-item label="作者特征预测" :label-width="formLabelWidth">
           <el-button type="primary" @click="authorPrediction()">进 入</el-button>
         </el-form-item>
-        <el-form-item label="学者推荐&著作预测" :label-width="formLabelWidth">
+        <el-form-item label="专家推荐&研究方向预测" :label-width="formLabelWidth">
           <el-button type="primary" @click="otherPrediction()">进 入</el-button>
         </el-form-item>
       </el-form>

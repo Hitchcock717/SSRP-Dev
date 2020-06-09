@@ -80,7 +80,7 @@ def scrapy(request):
         # ****** 截此为止, 数据已插入ES中 ****** #
 
         # ****** 自动发送邮件 ****** #
-        from backdoor.email import SendMail
+        from backdoor.gmail import SendMail
         SendMail().automatic_send_email(project, keywords)
 
         return Response('待办项目已完成!')
@@ -3513,15 +3513,14 @@ def getpersonal(request):
 
         base_router = 'http://127.0.0.1:8000/api/personal/'
 
-        data = Personal.objects.all()
+        data = Personal.objects.last()
         print(data)
 
         personals = []
         if data:
             raw_d_dict = []
-            for d in data:
-                d_dict = model_to_dict(d)
-                raw_d_dict.append(d_dict)
+            d_dict = model_to_dict(data)
+            raw_d_dict.append(d_dict)
 
             set_only = []
             set_only.append(raw_d_dict[0])
@@ -3548,7 +3547,7 @@ def getpersonal(request):
                     personals.append(ordered_li)
             print(personals)
 
-            return Response(personals[-1])
+            return Response(personals[0])
 
         else:
             return Response('failed')

@@ -17,5 +17,5 @@ class ForeverRun(object):
 
 
 if __name__ == '__main__':
-    ForeverRun().run2()
+    ForeverRun().run()
 
