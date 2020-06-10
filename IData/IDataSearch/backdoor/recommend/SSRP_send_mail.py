@@ -19,7 +19,7 @@ class YagSendMail(object):
         self.group = [self.main_email, self.back1]
 
     def automatic_send_mail(self, email):
-        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")  # qviloameyckebfic
+        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")
         content = ['自动邮件发送测试']
         try:
             yag.send(email, 'subject', content)
@@ -37,7 +37,7 @@ class YagSendMail(object):
             print(e)
 
     def automatic_send_attachment(self, email):
-        yag = yagmail.SMTP(user="841057707@qq.com", password="qviloameyckebfic", host="smtp.qq.com")
+        yag = yagmail.SMTP(user="*************", password="*************", host="smtp.qq.com")
         import datetime
         today = datetime.date.today()
         title = '【' + str(today) + '】' + '每日推荐论文速递'
@@ -87,11 +87,11 @@ class SMTPSendMail(object):
     def automatic_send_mail(self):
         # 第三方 SMTP 服务
         mail_host = "smtp.qq.com"  # 设置服务器
-        mail_user = "841057707@qq.com"  # 用户名
-        mail_pass = "qviloameyckebfic"  # 口令
+        mail_user = "*************"  # 用户名
+        mail_pass = "*************"  # 口令
 
-        sender = '841057707@qq.com'
-        receivers = ['zhaobowen9876@gmail.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+        sender = '*************'
+        receivers = ['*************']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
 
         message = MIMEText('Python 邮件发送测试...', 'plain', 'utf-8')
         message['From'] = Header("菜鸟教程", 'utf-8')
